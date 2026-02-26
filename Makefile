@@ -47,6 +47,9 @@ $(OBJDIR)/%.o: %.s
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
 
+mrproper: clean
+	rm -f $(ISO)
+
 debug_mk:
 	@echo "SRCDIR: $(SRCDIR)"
 	@echo "OBJDIR: $(OBJDIR)"
