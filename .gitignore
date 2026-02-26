@@ -53,7 +53,16 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# compilation temporary directories
+bin/
+build/
+obj/
+isodir/
+
+# Generated files
+*.iso
 *.iso
 *.bin
 
-isodir/
+
