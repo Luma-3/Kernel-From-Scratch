@@ -21,23 +21,23 @@
 
 .section .bss
 .align 16 /* 16 byte aligned stack for Complient of Sys V ABI */
-.stack_bottom:
+stack_bottom:
 .skip 16384 /* 16KB stack */
-.stack_top:
+stack_top:
 
 .section .text
 .global _start
 .type _start, @function
 _start:
 	/* Set up the stack pointer */
-	mov .stack_top, %esp
+	mov $stack_top, %esp
 
 	call kmain /* Call the kernel main function */
 
 	/* If kmain returns, we will just halt the CPU */
-.halt:
-	hlt
-	jmp .halt
+	cli /* Clear interrupts */
+1:	hlt /* Halt the CPU */
+	jmp 1b /* Infinite loop */
 
 .size _start, .-_start
 
