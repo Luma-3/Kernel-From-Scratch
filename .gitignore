@@ -58,6 +58,11 @@ dkms.conf
 bin/
 build/
 obj/
+isodir/
 
 # Generated files
 *.iso
+*.iso
+*.bin
+
+
