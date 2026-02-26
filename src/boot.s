@@ -26,9 +26,9 @@
 .stack_top:
 
 .section .text
-.global __start
-.type __start, @function
-__start:
+.global _start
+.type _start, @function
+_start:
 	/* Set up the stack pointer */
 	mov .stack_top, %esp
 
@@ -39,5 +39,5 @@ __start:
 	hlt
 	jmp .halt
 
-.size __start, .-__start
+.size _start, .-_start
 
