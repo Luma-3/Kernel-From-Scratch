@@ -59,6 +59,8 @@ bin/
 build/
 obj/
 isodir/
+cross/
+.toolchain_build/
 
 # Generated files
 *.iso
