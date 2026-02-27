@@ -10,14 +10,18 @@ ifeq ($(wildcard $(CC)),)
 $(error "Cross-compiler not found at $(CC). Please check CROSS_PATH.")
 endif
 
-CFLAGS	:= -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+CFLAGS	:= -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I. 
 LDFLAGS	:= -ffreestanding -O2 -nostdlib
 
 OBJDIR := obj
 BINDIR := bin
 
 
-SUBDIRS := boot kernel klibc
+SUBDIRS := \
+			boot 	\
+			kernel	\
+			klibc	\
+			drivers	\
 
 obj-y := # List of object files to be built
 

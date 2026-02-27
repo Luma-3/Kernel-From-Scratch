@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "../drivers/input/ps2/ps2.h"
+
 /* Hardware text mode color constants. */
 enum vga_color {
   VGA_COLOR_BLACK = 0,
@@ -92,7 +94,50 @@ void terminal_writestring(const char *data) {
   terminal_write(data, strlen(data));
 }
 
+void terminal_putint(unsigned int value) {
+  char buffer[12]; // Enough to hold -2^31 and null terminator
+  int index = 0;
+  bool is_negative = false;
+
+  if (value < 0) {
+    is_negative = true;
+    value = -value;
+  }
+
+  do {
+    buffer[index++] = '0' + (value % 10);
+    value /= 10;
+  } while (value > 0);
+
+  if (is_negative) {
+    buffer[index++] = '-';
+  }
+
+  // Reverse the buffer
+  for (int i = index - 1; i >= 0; i--) {
+    terminal_putchar(buffer[i]);
+  }
+}
+
+void pit_wait(uint32_t ticks) {
+  uint32_t start = pit_read();
+  while (1) {
+    uint32_t now = pit_read();
+    if ((start - now) >= ticks) {
+      break;
+    }
+    // terminal_writestring("Waiting...\n");
+    // terminal_putint((start - now));
+  }
+}
+
 void kmain(void) {
   terminal_initialize();
   terminal_writestring("Hello, kernel World!\n");
+
+  pit_init(100);
+  while (1) {
+    pit_wait(100); // Wait for 1 second (100 ticks at 100 Hz)
+    terminal_writestring("Tick\n");
+  }
 }
