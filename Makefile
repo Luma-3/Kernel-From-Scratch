@@ -17,7 +17,7 @@ OBJDIR := obj
 BINDIR := bin
 
 
-SUBDIRS := boot kernel klibc
+SUBDIRS := boot kernel klibc drivers
 
 obj-y := # List of object files to be built
 
