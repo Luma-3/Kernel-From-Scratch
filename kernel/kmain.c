@@ -6,9 +6,13 @@
 #error "This code must be compiled with a 32-bit target."
 #endif
 
-#include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
+#include <stddef.h>
+#include "../klibc/string/string.h"
+#include "../klibc/math/math.h"
+#include "../klibc/memory/mem.h"
+#include "../drivers/display/display.h"
+
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -30,14 +34,6 @@ enum vga_color {
   VGA_COLOR_WHITE = 15,
 };
 
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
-  return fg | bg << 4;
-}
-
-static inline uint16_t vga_entry(unsigned char uc, uint8_t color) {
-  return (uint16_t)uc | (uint16_t)color << 8;
-}
-
 size_t strlen(const char *str) {
   size_t len = 0;
   while (str[len])
@@ -45,54 +41,106 @@ size_t strlen(const char *str) {
   return len;
 }
 
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-#define VGA_MEMORY 0xB8000
-
 size_t terminal_row;
 size_t terminal_column;
-uint8_t terminal_color;
-uint16_t *terminal_buffer = (uint16_t *)VGA_MEMORY;
 
-void terminal_initialize(void) {
-  terminal_row = 0;
-  terminal_column = 0;
-  terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 
-  for (size_t y = 0; y < VGA_HEIGHT; y++) {
-    for (size_t x = 0; x < VGA_WIDTH; x++) {
-      const size_t index = y * VGA_WIDTH + x;
-      terminal_buffer[index] = vga_entry(' ', terminal_color);
-    }
+void terminal_putint(int value) {
+  char buffer[12]; // Enough to hold -2^31 and null terminator
+  int index = 0;
+  bool is_negative = false;
+
+  if (value < 0) {
+    is_negative = true;
+    value = -value;
   }
-}
 
-void terminal_setcolor(uint8_t color) { terminal_color = color; }
+  do {
+    buffer[index++] = '0' + (value % 10);
+    value /= 10;
+  } while (value > 0);
 
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
-  const size_t index = y * VGA_WIDTH + x;
-  terminal_buffer[index] = vga_entry(c, color);
-}
+  if (is_negative) {
+    buffer[index++] = '-';
+  }
 
-void terminal_putchar(char c) {
-  terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-  if (++terminal_column == VGA_WIDTH) {
-    terminal_column = 0;
-    if (++terminal_row == VGA_HEIGHT)
-      terminal_row = 0;
+  // Reverse the buffer
+  for (int i = index - 1; i >= 0; i--) {
+    display_put_char(buffer[i]);
   }
 }
 
 void terminal_write(const char *data, size_t size) {
   for (size_t i = 0; i < size; i++)
-    terminal_putchar(data[i]);
+    display_put_char(data[i]);
 }
 
 void terminal_writestring(const char *data) {
   terminal_write(data, strlen(data));
 }
 
+
+struct s_test {
+  int a;
+  long b;
+};
+
+void sleep(int seconds) {
+  for (volatile int i = 0; i < seconds * 1000000; i++);
+}
+
 void kmain(void) {
-  terminal_initialize();
-  terminal_writestring("Hello, kernel World!\n");
+  init_display(DRIVER_VGA);
+  char hello[] = "Hello, kernel World!\n";
+  if (k_strcmp(hello, "Hello World!\n") != 0) {
+      terminal_writestring("k_strcmp worked correctly.\n");
+  }
+  if (k_strncmp(hello, "Hello, kernel", 5) == 0) {
+      terminal_writestring("k_strncmp worked correctly.\n");
+  }
+  if (k_strrchr(hello, '\n') == (hello + (k_strrchr(hello, '\n') - hello))) {
+    terminal_writestring("k_strrchr worked correctly.\n");
+  }
+  if (k_strchr(hello, ',') == (hello + (k_strchr(hello, ',') - hello))) {
+    terminal_writestring("k_strchr worked correctly.\n");
+  }
+
+  const int a = -5;
+  const int b = 10;
+  if (k_abs(a) == 5) {
+      terminal_writestring("k_abs worked correctly.\n");
+  }
+  if (k_max(a, b) == b) {
+      terminal_writestring("k_max worked correctly.\n");
+  }
+  if (k_min(a, b) == a) {
+      terminal_writestring("k_min worked correctly.\n");
+  }
+  const long x = -100L;
+  const long y = 200L;
+  if (k_labs(x) == 100L) {
+      terminal_writestring("k_labs worked correctly.\n");
+  }
+  if (k_lmax(x, y) == y) {
+      terminal_writestring("k_lmax worked correctly.\n");
+  }
+  if (k_lmin(x, y) == x) {
+      terminal_writestring("k_lmin worked correctly.\n");
+  }
+
+  struct s_test test_struct = {42, 123456789L};
+  k_memset(&test_struct, 0, 4);
+  if (test_struct.a == 0 && test_struct.b == 123456789L) {
+      terminal_writestring("k_memset worked correctly.\n");
+  }
+
+  terminal_writestring(hello);
+  enum display_color color = COLOR_BLACK;
+  enum display_color bg_color = COLOR_WHITE;
+  while (1) {
+    display_set_color(color, bg_color);
+    color = (color + 1) % 16;
+    bg_color = (bg_color + 1) % 16;
+    sleep(1000);
+  }
 }
