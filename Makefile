@@ -64,7 +64,7 @@ debug_mk:
 
 GRUB_CFG := grub.cfg
 
-GRUB_MKRESCUE := $(shell which grub-mkrescue || which grub2-mkrescue)
+GRUB_MKRESCUE := $(CROSS_PATH)/bin/grub-mkrescue
 
 ifeq ($(shell which $(GRUB_MKRESCUE)),)
 $(error "grub-mkrescue not found. Please install GRUB tools.")
