@@ -13,10 +13,10 @@
 /**
  * Writes a byte to the specified I/O port.
  *
- * @param port The I/O port to write to.
  * @param value The byte value to write to the port.
+ * @param port The I/O port to write to.
  */
-void outb(uint16_t port, uint8_t value);
+void outb(uint8_t value, uint16_t port);
 
 /**
  * Reads a byte from the specified I/O port.
