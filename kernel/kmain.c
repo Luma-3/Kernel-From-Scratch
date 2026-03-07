@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../drivers/input/ps2/ps2.h"
+#include "ps2.h"
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -119,25 +119,15 @@ void terminal_putint(unsigned int value) {
   }
 }
 
-void pit_wait(uint32_t ticks) {
-  uint32_t start = pit_read();
-  while (1) {
-    uint32_t now = pit_read();
-    if ((start - now) >= ticks) {
-      break;
-    }
-    // terminal_writestring("Waiting...\n");
-    // terminal_putint((start - now));
-  }
-}
-
 void kmain(void) {
   terminal_initialize();
   terminal_writestring("Hello, kernel World!\n");
 
-  pit_init(100);
+  ps2_init();
   while (1) {
-    pit_wait(100); // Wait for 1 second (100 ticks at 100 Hz)
-    terminal_writestring("Tick\n");
+    uint8_t scancode = ps2_read();
+    terminal_writestring("Scancode: ");
+    terminal_putint(scancode);
+    terminal_putchar('\n');
   }
 }

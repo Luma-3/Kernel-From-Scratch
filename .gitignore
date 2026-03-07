@@ -67,4 +67,12 @@ cross/
 *.iso
 *.bin
 
+# IDE files
+
+compile_commands.json
+.vscode/
+.idea/
+.cache/
+
+
 

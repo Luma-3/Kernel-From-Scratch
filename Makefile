@@ -1,4 +1,4 @@
-CROSS_PATH := $(HOME)/opt/cross
+CROSS_PATH := $(HOME)/opt
 
 TARGET := i386-elf
 
@@ -10,26 +10,31 @@ ifeq ($(wildcard $(CC)),)
 $(error "Cross-compiler not found at $(CC). Please check CROSS_PATH.")
 endif
 
-CFLAGS	:= -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I. 
+CFLAGS	:= -std=gnu99 -ffreestanding -O2 -Wall -Wextra -MMD -MP
 LDFLAGS	:= -ffreestanding -O2 -nostdlib
 
 OBJDIR := obj
 BINDIR := bin
 
-
-SUBDIRS := \
-			boot 	\
-			kernel	\
-			klibc	\
-			drivers	\
+MODULES := arch/i386 drivers kernel klibc boot
 
 obj-y := # List of object files to be built
 
 # --- Aggregate subdirectories --- #
 
-include $(addsuffix /Makefile,$(SUBDIRS))
+include $(addsuffix /Makefile,$(MODULES))
 
 OBJS := $(addprefix $(OBJDIR)/,$(obj-y))
+
+# --- Include Header Files --- #
+
+INCLUDES_DIRS := $(sort $(dir $(obj-y)))
+
+INCLUDES := $(addprefix -I,$(INCLUDES_DIRS))
+
+CFLAGS += $(INCLUDES)
+
+-include $(OBJS:.o=.d)
 
 # --- Rules --- #
 
@@ -62,9 +67,18 @@ debug_mk:
 	@echo "obj-y: $(obj-y)"
 	@echo "OBJS: $(OBJS)"
 
-.PHONY: all clean debug_mk
+re: mrproper all
+
+.PHONY: all clean debug_mk mrproper re
+
+# --- Special Rules --- #
+
+lsp: clean
+	@echo "create compile commands database for lsp"
+	bear -- $(MAKE) all
 
 
+# --- ISO Creation --- #
 
 GRUB_CFG := grub.cfg
 
