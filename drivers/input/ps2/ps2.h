@@ -3,12 +3,25 @@
 
 #include <stdint.h>
 
-void outb(uint8_t value, uint16_t port);
-uint8_t inb(uint16_t port);
+#define PS2_DATA_PORT 0x60
+#define PS2_STATUS_PORT 0x64
 
-void pit_init(uint32_t freq_hz);
-void pit_wait(uint32_t ticks);
+/**
+ * This header file defines the interface for interacting with the PS/2
+ * controller,
+ */
+
+/**
+ * Initializes the PS/2 controller and enables keyboard interrupts.
+ */
 void ps2_init();
 
-uint16_t pit_read();
+/**
+ * Reads a byte of data from the PS/2 data port.
+ * This function blocks until data is available.
+ *
+ * @return The byte read from the PS/2 data port.
+ */
+uint8_t ps2_read();
+
 #endif // __KFS_PS2_H
