@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "ascii.h"
 #include "ps2.h"
 
 /* Hardware text mode color constants. */
@@ -129,11 +130,20 @@ void kmain(void) {
                              // into the buffer
 
         struct key_event event =
-            kdb_pop_event();      // Pop a key event from the buffer
-        if (event.keycode != 0) { // If the event is not empty
-            terminal_writestring("Key event: ");
-            terminal_putint(event.keycode);
-            terminal_putchar('\n');
+            kdb_pop_event(); // Pop a key event from the buffer
+
+        if (event.keycode != 0 &&
+            event.state.pressed) { // If the event is not empty
+            char ascii_char = keycode_to_ascii[event.keycode];
+            if (event.state.shift) {
+                // Handle shift for letters
+                if (ascii_char >= 'a' && ascii_char <= 'z') {
+                    ascii_char -= 32; // Convert to uppercase
+                }
+            }
+            if (ascii_char) {
+                terminal_putchar(ascii_char); // Print the ASCII character
+            }
         }
     }
 }

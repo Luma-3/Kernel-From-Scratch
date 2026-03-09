@@ -141,6 +141,7 @@ static const uint8_t ps2_1_keycode_lookup_table[256] = {
     [PS2_1SCANCODE_APOSTROPHE] = KEY_APOSTROPHE,
     [PS2_1SCANCODE_GRAVE] = KEY_GRAVE,
     [PS2_1SCANCODE_LEFTSHIFT] = KEY_LEFTSHIFT,
+    [PS2_1SCANCODE_RIGHTSHIFT] = KEY_RIGHTSHIFT,
     [PS2_1SCANCODE_BACKSLASH] = KEY_BACKSLASH,
     [PS2_1SCANCODE_Z] = KEY_Z,
     [PS2_1SCANCODE_X] = KEY_X,
@@ -149,6 +150,8 @@ static const uint8_t ps2_1_keycode_lookup_table[256] = {
     [PS2_1SCANCODE_B] = KEY_B,
     [PS2_1SCANCODE_N] = KEY_N,
     [PS2_1SCANCODE_M] = KEY_M,
+
+    [PS2_1SCANCODE_SPACE] = KEY_SPACE,
 };
 ///******************** PS/2 Controller Interface ********************///
 

@@ -38,5 +38,5 @@ struct key_event create_key_event(uint8_t scancode) {
 void ps2_keyboard_poll() {
     uint8_t scancode = ps2_read();
     struct key_event event = create_key_event(scancode);
-    kdb_push_event(event);
+    kbd_handle_event(event);
 }
