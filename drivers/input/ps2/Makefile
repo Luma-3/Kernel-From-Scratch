@@ -1,9 +1,8 @@
 
 #--- Standard Variables ---
 
-SUBDIRS := arch/i386
+SUBDIRS := drivers/input/ps2
 
 #--- Object to be compiled ---
 
-obj-y += $(SUBDIRS)/io.o
-
+obj-y += $(SUBDIRS)/ps2.o
