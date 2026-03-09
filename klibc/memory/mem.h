@@ -6,7 +6,8 @@
 #define __KFS_MEM_H
 
 #include <stddef.h>
+#include <stdint.h>
 
-void *k_memset(void *s, int c, size_t n);
+void *k_memset(void *s, int c, uint32_t n);
 
 #endif //__KFS_MEM_H

@@ -7,12 +7,13 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 /**
  * String manipulation functions for the kernel.
  * These functions are designed to be simple and efficient, suitable for use in a kernel environment.
  * They do not perform any dynamic memory allocation and assume that the input strings are properly null-terminated.
  */
-size_t k_strlen(const char *str);
+uint32_t k_strlen(const char *str);
 
 /**
  * Compares two strings lexicographically.
@@ -28,7 +29,7 @@ int k_strcmp(const char *s1, const char *s2);
  * @param n The maximum number of characters to compare.
  * @return An integer less than, equal to, or greater than zero if the first n characters of s1 are found, respectively, to be less than, to match, or be greater than the first n characters of s2.
  */
-int k_strncmp(const char *s1, const char *s2, size_t n);
+int k_strncmp(const char *s1, const char *s2, uint32_t n);
 /**
  * Finds the first occurrence of the substring needle in the string haystack.
  * @param haystack The string to search within.
@@ -43,7 +44,7 @@ const char *k_strstr(const char *haystack, const char *needle);
  * @param n The maximum number of characters to search.
  * @return A pointer to the beginning of the located substring, or NULL if the substring is not found within the first n characters of haystack.
  */
-const char *k_strnstr(const char *haystack, const char *needle, size_t n);
+const char *k_strnstr(const char *haystack, const char *needle, uint32_t n);
 
 /**
  * Finds the first occurrence of the character c in the string str.

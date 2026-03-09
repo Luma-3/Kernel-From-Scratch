@@ -4,7 +4,7 @@
 
 #include "string.h"
 
-size_t k_strlen(const char *str) {
+uint32_t k_strlen(const char *str) {
     const char *s = str;
 
     while (*s) {

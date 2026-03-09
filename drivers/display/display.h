@@ -57,13 +57,13 @@ struct s_display_command {
         } set_color;
         struct {
             char c;
-            size_t x;
-            size_t y;
+            uint32_t x;
+            uint32_t y;
         } put_char;
         struct {
             const char *str;
-            size_t x;
-            size_t y;
+            uint32_t x;
+            uint32_t y;
         } put_string;
     };
 };
@@ -73,24 +73,18 @@ struct s_diplay_color {
     enum display_color bg;
 };
 
-struct s_diplay_position {
-    size_t x;
-    size_t y;
-};
-
 struct s_diplay_data {
     void *framebuffer;
     struct  s_diplay_color e_color;
-    size_t width;
-    size_t height;
-    size_t bpp;
+    uint32_t width;
+    uint32_t height;
+    uint32_t bpp;
     uint8_t color;
 };
 
 struct s_display {
     enum driver_type type;
     display_data_t data;
-    struct s_diplay_position cursor;
     enum display_result (*execute_command)(display_t* , struct s_display_command *cmd);
 };
 
@@ -102,9 +96,10 @@ enum display_result  display_clear(void);
 
 enum display_result  display_set_color(enum display_color fg, enum display_color bg);
 
-enum display_result display_put_char_with_position(char c, size_t x, size_t y);
+enum display_result display_put_char(char c, uint32_t x, uint32_t y);
 
-enum display_result display_put_char(char c);
+
+const display_data_t *get_display_data(void);
 
 
 

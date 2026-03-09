@@ -37,6 +37,8 @@ void deinit_display() {
 }
 
 
+
+
 enum display_result display_clear(void) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
@@ -60,7 +62,7 @@ enum display_result  display_set_color(const enum display_color fg, const enum d
 }
 
 
-enum display_result  display_put_char_with_position(const char c, const size_t x, const size_t y) {
+enum display_result  display_put_char(const char c, const uint32_t x, const uint32_t y) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
     }
@@ -71,7 +73,7 @@ enum display_result  display_put_char_with_position(const char c, const size_t x
     return g_display.execute_command(&g_display, &cmd);
 }
 
-enum display_result  display_put_string_with_position(const char *str, const size_t x, const size_t y) {
+enum display_result  display_put_string(const char *str, const uint32_t x, const uint32_t y) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
     }
@@ -82,35 +84,6 @@ enum display_result  display_put_string_with_position(const char *str, const siz
     return g_display.execute_command(&g_display, &cmd);
 }
 
-enum display_result  display_put_char(const char c) {
-    if (c == '\n') {
-        g_display.cursor.x = 0;
-        if (++g_display.cursor.y >= g_display.data.height) {
-            g_display.cursor.y = 0;
-        }
-        return DISPLAY_SUCCESS;
-    }
-    if (c == '\r') {
-        g_display.cursor.x = 0;
-        return DISPLAY_SUCCESS;
-    }
-    if (c == '\t') {
-        g_display.cursor.x = (g_display.cursor.x + 8) & ~(8 - 1);
-        if (g_display.cursor.x >= g_display.data.width) {
-            g_display.cursor.x = 0;
-            if (++g_display.cursor.y >= g_display.data.height) {
-                g_display.cursor.y = 0;
-            }
-        }
-    }
-    if (display_put_char_with_position(c, g_display.cursor.x, g_display.cursor.y) == DISPLAY_ERROR) {
-        return DISPLAY_ERROR;
-    }
-    if (++g_display.cursor.x >= g_display.data.width) {
-        g_display.cursor.x = 0;
-        if (++g_display.cursor.y >= g_display.data.height) {
-            g_display.cursor.y = 0;
-        }
-    }
-    return DISPLAY_SUCCESS;
+const display_data_t *get_display_data(void) {
+    return &g_display.data;
 }

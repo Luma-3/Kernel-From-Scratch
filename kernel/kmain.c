@@ -12,75 +12,8 @@
 #include "../klibc/math/math.h"
 #include "../klibc/memory/mem.h"
 #include "../drivers/display/display.h"
-
-
 #include "../drivers/input/ps2/ps2.h"
-
-/* Hardware text mode color constants. */
-enum vga_color {
-  VGA_COLOR_BLACK = 0,
-  VGA_COLOR_BLUE = 1,
-  VGA_COLOR_GREEN = 2,
-  VGA_COLOR_CYAN = 3,
-  VGA_COLOR_RED = 4,
-  VGA_COLOR_MAGENTA = 5,
-  VGA_COLOR_BROWN = 6,
-  VGA_COLOR_LIGHT_GREY = 7,
-  VGA_COLOR_DARK_GREY = 8,
-  VGA_COLOR_LIGHT_BLUE = 9,
-  VGA_COLOR_LIGHT_GREEN = 10,
-  VGA_COLOR_LIGHT_CYAN = 11,
-  VGA_COLOR_LIGHT_RED = 12,
-  VGA_COLOR_LIGHT_MAGENTA = 13,
-  VGA_COLOR_LIGHT_BROWN = 14,
-  VGA_COLOR_WHITE = 15,
-};
-
-size_t strlen(const char *str) {
-  size_t len = 0;
-  while (str[len])
-    len++;
-  return len;
-}
-
-size_t terminal_row;
-size_t terminal_column;
-
-
-void terminal_putint(int value) {
-  char buffer[12]; // Enough to hold -2^31 and null terminator
-  int index = 0;
-  bool is_negative = false;
-
-  if (value < 0) {
-    is_negative = true;
-    value = -value;
-  }
-
-  do {
-    buffer[index++] = '0' + (value % 10);
-    value /= 10;
-  } while (value > 0);
-
-  if (is_negative) {
-    buffer[index++] = '-';
-  }
-
-  // Reverse the buffer
-  for (int i = index - 1; i >= 0; i--) {
-    display_put_char(buffer[i]);
-  }
-}
-
-void terminal_write(const char *data, size_t size) {
-  for (size_t i = 0; i < size; i++)
-    display_put_char(data[i]);
-}
-
-void terminal_writestring(const char *data) {
-  terminal_write(data, strlen(data));
-}
-
+#include "../terminal/terminal.h"
 
 struct s_test {
   int a;
@@ -93,6 +26,7 @@ void sleep(int seconds) {
 
 void kmain(void) {
   init_display(DRIVER_VGA);
+  init_terminal("Main Terminal");
   char hello[] = "Hello, kernel World!\n";
   if (k_strcmp(hello, "Hello World!\n") != 0) {
       terminal_writestring("k_strcmp worked correctly.\n");
@@ -137,12 +71,4 @@ void kmain(void) {
   }
 
   terminal_writestring(hello);
-  enum display_color color = COLOR_BLACK;
-  enum display_color bg_color = COLOR_WHITE;
-  while (1) {
-    display_set_color(color, bg_color);
-    color = (color + 1) % 16;
-    bg_color = (bg_color + 1) % 16;
-    sleep(1000);
-  }
 }

@@ -12,8 +12,8 @@
 #include <stdint.h>
 
 
-static inline void vga_putentryat(display_t *display, uint8_t color, char c,  size_t x, size_t y) {
-    const size_t index = y * display->data.width + x;
+static inline void vga_putentryat(display_t *display, uint8_t color, char c,  uint32_t x, uint32_t y) {
+    const uint32_t index = y * display->data.width + x;
     uint16_t*terminal_buffer = (uint16_t*) display->data.framebuffer;
     terminal_buffer[index] = VGA_ENTRY(c, color);
 }
@@ -22,9 +22,9 @@ static inline enum display_result vga_clear(display_data_t *settings) {
     uint16_t *terminal_buffer = (uint16_t*) settings->framebuffer;
     uint8_t terminal_color = settings->color;
     uint16_t reset_value = VGA_ENTRY(' ', terminal_color);
-    for (size_t y = 0; y < settings->height; y++) {
-        for (size_t x = 0; x < settings->width; x++) {
-            const size_t index = y * settings->width + x;
+    for (uint32_t y = 0; y < settings->height; y++) {
+        for (uint32_t x = 0; x < settings->width; x++) {
+            const uint32_t index = y * settings->width + x;
             terminal_buffer[index] = reset_value;
         }
     }
@@ -38,9 +38,9 @@ static inline enum display_result vga_set_color(display_data_t *settings, enum d
     settings->e_color.fg = fg;
     settings->e_color.bg = bg;
     settings->color = terminal_color;
-    for (size_t y = 0; y < settings->height; y++) {
-        for (size_t x = 0; x < settings->width; x++) {
-            const size_t index = y * settings->width + x;
+    for (uint32_t y = 0; y < settings->height; y++) {
+        for (uint32_t x = 0; x < settings->width; x++) {
+            const uint32_t index = y * settings->width + x;
             terminal_buffer[index] = VGA_ENTRY(VGA_EXTRACT_CHAR(terminal_buffer[index]), terminal_color);
         }
     }
@@ -68,8 +68,6 @@ enum display_result vga_execute_command(display_t *display, struct s_display_com
 }
 
 void init_vga(display_t *display) {
-    display->cursor.x = 0;
-    display->cursor.y = 0;
     display->data.framebuffer = (void *)VGA_MEMORY;
     display->data.width = VGA_WIDTH;
     display->data.height = VGA_HEIGHT;

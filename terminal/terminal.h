@@ -1,0 +1,37 @@
+#ifndef __KFS_TERMINAL_H
+#define __KFS_TERMINAL_H
+
+#include "../drivers/display/display.h"
+#include <stdbool.h>
+
+typedef struct s_terminal terminal_t;
+typedef struct s_cursor_position cursor_position_t;
+
+struct s_cursor_position {
+    uint32_t x;
+    uint32_t y;
+};
+
+
+
+struct s_terminal {
+    const char* name;
+    cursor_position_t cursor;
+    cursor_position_t default_cursor;
+};
+
+void init_terminal(const char* name);
+
+void terminal_put_char(const char c);
+
+void terminal_write(const char *data, uint32_t size);
+
+void terminal_writestring(const char *data);
+
+
+void terminal_write_int(int value);
+
+bool terminal_clear(void);
+
+
+#endif

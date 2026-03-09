@@ -21,7 +21,8 @@ SUBDIRS := \
 			boot 	\
 			kernel	\
 			klibc	\
-			drivers
+			drivers \
+			terminal
 
 obj-y := # List of object files to be built
 
