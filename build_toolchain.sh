@@ -21,6 +21,9 @@ GMP_VERSION="6.3.0"
 MPFR_VERSION="4.2.1"
 MPC_VERSION="1.3.1"
 
+BISON_VERSION="3.8.2"
+FLEX_VERSION="2.6.4"
+
 XORRISO_VERSION="1.5.6"
 GRUB_VERSION="2.12"
 
@@ -30,8 +33,64 @@ GDB_URL="https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.xz"
 GMP_URL="https://ftp.gnu.org/gnu/gmp/gmp-${GMP_VERSION}.tar.xz"
 MPFR_URL="https://ftp.gnu.org/gnu/mpfr/mpfr-${MPFR_VERSION}.tar.xz"
 MPC_URL="https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz"
+BISON_URL="https://ftp.gnu.org/gnu/bison/bison-${BISON_VERSION}.tar.xz"
+FLEX_URL="https://github.com/westes/flex/releases/download/v${FLEX_VERSION}/flex-${FLEX_VERSION}.tar.gz"
 XORRISO_URL="https://ftp.gnu.org/gnu/xorriso/xorriso-${XORRISO_VERSION}.tar.gz"
 GRUB_URL="https://ftp.gnu.org/gnu/grub/grub-${GRUB_VERSION}.tar.xz"
+
+# ── Mirrors GNU français (fallback si rate-limit) ────────────────────────────
+GNU_MIRROR_LIP6="https://ftp.lip6.fr/pub/gnu"
+GNU_MIRROR_IBCP="https://mirror.ibcp.fr/pub/gnu"
+GNU_MIRROR_UNIV_REIMS="https://ftp.univ-reims.fr/mirror/ftp.gnu.org/pub/gnu"
+
+# URLs miroir par paquet GNU
+GMP_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/gmp/gmp-${GMP_VERSION}.tar.xz"
+    "${GNU_MIRROR_IBCP}/gmp/gmp-${GMP_VERSION}.tar.xz"
+    "${GNU_MIRROR_UNIV_REIMS}/gmp/gmp-${GMP_VERSION}.tar.xz"
+)
+MPFR_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/mpfr/mpfr-${MPFR_VERSION}.tar.xz"
+    "${GNU_MIRROR_IBCP}/mpfr/mpfr-${MPFR_VERSION}.tar.xz"
+    "${GNU_MIRROR_UNIV_REIMS}/mpfr/mpfr-${MPFR_VERSION}.tar.xz"
+)
+MPC_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/mpc/mpc-${MPC_VERSION}.tar.gz"
+    "${GNU_MIRROR_IBCP}/mpc/mpc-${MPC_VERSION}.tar.gz"
+    "${GNU_MIRROR_UNIV_REIMS}/mpc/mpc-${MPC_VERSION}.tar.gz"
+)
+BINUTILS_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/binutils/binutils-${BINUTILS_VERSION}.tar.gz"
+    "${GNU_MIRROR_IBCP}/binutils/binutils-${BINUTILS_VERSION}.tar.gz"
+    "${GNU_MIRROR_UNIV_REIMS}/binutils/binutils-${BINUTILS_VERSION}.tar.gz"
+)
+GCC_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz"
+    "${GNU_MIRROR_IBCP}/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz"
+    "${GNU_MIRROR_UNIV_REIMS}/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz"
+)
+GDB_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/gdb/gdb-${GDB_VERSION}.tar.xz"
+    "${GNU_MIRROR_IBCP}/gdb/gdb-${GDB_VERSION}.tar.xz"
+    "${GNU_MIRROR_UNIV_REIMS}/gdb/gdb-${GDB_VERSION}.tar.xz"
+)
+BISON_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/bison/bison-${BISON_VERSION}.tar.xz"
+    "${GNU_MIRROR_IBCP}/bison/bison-${BISON_VERSION}.tar.xz"
+    "${GNU_MIRROR_UNIV_REIMS}/bison/bison-${BISON_VERSION}.tar.xz"
+)
+# Flex n'est pas sur GNU FTP — fallback vers le tarball GitHub uniquement
+FLEX_MIRRORS=()
+XORRISO_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/xorriso/xorriso-${XORRISO_VERSION}.tar.gz"
+    "${GNU_MIRROR_IBCP}/xorriso/xorriso-${XORRISO_VERSION}.tar.gz"
+    "${GNU_MIRROR_UNIV_REIMS}/xorriso/xorriso-${XORRISO_VERSION}.tar.gz"
+)
+GRUB_MIRRORS=(
+    "${GNU_MIRROR_LIP6}/grub/grub-${GRUB_VERSION}.tar.xz"
+    "${GNU_MIRROR_IBCP}/grub/grub-${GRUB_VERSION}.tar.xz"
+    "${GNU_MIRROR_UNIV_REIMS}/grub/grub-${GRUB_VERSION}.tar.xz"
+)
 
 JOBS="$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)"
 
@@ -86,8 +145,8 @@ header()  { echo -e "\n${BOLD}════════════════�
 check_deps() {
     header "Checking host dependencies"
     local missing=()
-    # Only check for build tools — GMP, MPFR, MPC are built from source
-    for cmd in gcc g++ make tar bison flex; do
+    # Only check for build tools — GMP, MPFR, MPC, bison, flex are built from source
+    for cmd in gcc g++ make tar m4; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
             missing+=("$cmd")
         fi
@@ -106,28 +165,45 @@ check_deps() {
         exit 1
     fi
     success "All build tools found"
-    info "GMP, MPFR, MPC will be built from source (no sudo needed)"
+    info "GMP, MPFR, MPC, bison, flex will be built from source (no sudo needed)"
 }
 
 # ── Download ─────────────────────────────────────────────────────────────────
+# Usage: download <dest_dir> <primary_url> [mirror_url...]
+# Essaie l'URL primaire, puis les miroirs en cas d'échec (rate-limit, timeout…)
 download() {
-    local url="$1"
-    local dest="$2"
+    local dest="$1"; shift
+    local urls=("$@")
     local filename
-    filename="$(basename "$url")"
+    filename="$(basename "${urls[0]}")"
 
     if [[ -f "${dest}/${filename}" ]]; then
         info "Already downloaded: ${filename}"
         return
     fi
 
-    info "Downloading ${filename}..."
-    if command -v wget >/dev/null 2>&1; then
-        wget -q -P "$dest" "$url"
-    elif command -v curl >/dev/null 2>&1; then
-        curl -L -o "${dest}/${filename}" "$url"
+    local success_flag=false
+    for url in "${urls[@]}"; do
+        info "Downloading ${filename} from ${url}..."
+        if command -v wget >/dev/null 2>&1; then
+            if wget -q --timeout=30 --tries=2 -P "$dest" "$url" 2>/dev/null; then
+                success_flag=true; break
+            fi
+        elif command -v curl >/dev/null 2>&1; then
+            if curl -L --max-time 60 --retry 2 --silent --show-error \
+                    -o "${dest}/${filename}" "$url" 2>/dev/null; then
+                success_flag=true; break
+            fi
+        fi
+        warn "Échec depuis ${url}, passage au miroir suivant..."
+    done
+
+    if $success_flag; then
+        success "Downloaded ${filename}"
+    else
+        error "Impossible de télécharger ${filename} depuis tous les miroirs"
+        exit 1
     fi
-    success "Downloaded ${filename}"
 }
 
 extract() {
@@ -252,6 +328,62 @@ build_mpc() {
     make install > "${LOGDIR}/mpc-install.log" 2>&1
 
     success "MPC ${MPC_VERSION} installed to ${LOCAL_DEPS_PREFIX}"
+}
+
+build_bison() {
+    header "Building Bison ${BISON_VERSION}"
+
+    if [[ -f "${PREFIX}/bin/bison" ]]; then
+        success "Bison already installed, skipping"
+        return
+    fi
+
+    local builddir="${BUILDDIR}/bison"
+    rm -rf "$builddir"
+    mkdir -p "$builddir"
+    cd "$builddir"
+
+    info "Configuring Bison..."
+    "${SRCDIR}/bison-${BISON_VERSION}/configure" \
+        --prefix="${PREFIX}" \
+        --disable-nls \
+        > "${LOGDIR}/bison-configure.log" 2>&1
+
+    info "Compiling Bison (${JOBS} jobs)..."
+    make -j"${JOBS}" > "${LOGDIR}/bison-make.log" 2>&1
+
+    info "Installing Bison..."
+    make install > "${LOGDIR}/bison-install.log" 2>&1
+
+    success "Bison ${BISON_VERSION} installed"
+}
+
+build_flex() {
+    header "Building Flex ${FLEX_VERSION}"
+
+    if [[ -f "${PREFIX}/bin/flex" ]]; then
+        success "Flex already installed, skipping"
+        return
+    fi
+
+    local builddir="${BUILDDIR}/flex"
+    rm -rf "$builddir"
+    mkdir -p "$builddir"
+    cd "$builddir"
+
+    info "Configuring Flex..."
+    "${SRCDIR}/flex-${FLEX_VERSION}/configure" \
+        --prefix="${PREFIX}" \
+        --disable-nls \
+        > "${LOGDIR}/flex-configure.log" 2>&1
+
+    info "Compiling Flex (${JOBS} jobs)..."
+    make -j"${JOBS}" > "${LOGDIR}/flex-make.log" 2>&1
+
+    info "Installing Flex..."
+    make install > "${LOGDIR}/flex-install.log" 2>&1
+
+    success "Flex ${FLEX_VERSION} installed"
 }
 
 build_binutils() {
@@ -474,7 +606,7 @@ verify_toolchain() {
     done
 
     # Check standalone tools (not prefixed with target)
-    for tool in grub-mkrescue xorriso; do
+    for tool in bison flex grub-mkrescue xorriso; do
         local bin="${PREFIX}/bin/${tool}"
         if [[ -x "$bin" ]]; then
             local info_str
@@ -507,6 +639,8 @@ print_summary() {
     echo "    ${PREFIX}/bin/${TARGET}-ld"
     echo "    ${PREFIX}/bin/${TARGET}-objdump"
     echo "    ${PREFIX}/bin/${TARGET}-gdb"
+    echo "    ${PREFIX}/bin/bison"
+    echo "    ${PREFIX}/bin/flex"
     echo "    ${PREFIX}/bin/grub-mkrescue"
     echo "    ${PREFIX}/bin/xorriso"
     echo ""
@@ -541,20 +675,24 @@ main() {
 
     # ── Download sources ──
     header "Downloading sources"
-    download "${GMP_URL}"      "${SRCDIR}"
-    download "${MPFR_URL}"     "${SRCDIR}"
-    download "${MPC_URL}"      "${SRCDIR}"
-    download "${BINUTILS_URL}" "${SRCDIR}"
-    download "${GCC_URL}"      "${SRCDIR}"
-    download "${GDB_URL}"      "${SRCDIR}"
-    download "${XORRISO_URL}"  "${SRCDIR}"
-    download "${GRUB_URL}"     "${SRCDIR}"
+    download "${SRCDIR}"  "${GMP_URL}"      "${GMP_MIRRORS[@]}"
+    download "${SRCDIR}"  "${MPFR_URL}"     "${MPFR_MIRRORS[@]}"
+    download "${SRCDIR}"  "${MPC_URL}"      "${MPC_MIRRORS[@]}"
+    download "${SRCDIR}"  "${BISON_URL}"    "${BISON_MIRRORS[@]}"
+    download "${SRCDIR}"  "${FLEX_URL}"     "${FLEX_MIRRORS[@]}"
+    download "${SRCDIR}"  "${BINUTILS_URL}" "${BINUTILS_MIRRORS[@]}"
+    download "${SRCDIR}"  "${GCC_URL}"      "${GCC_MIRRORS[@]}"
+    download "${SRCDIR}"  "${GDB_URL}"      "${GDB_MIRRORS[@]}"
+    download "${SRCDIR}"  "${XORRISO_URL}"  "${XORRISO_MIRRORS[@]}"
+    download "${SRCDIR}"  "${GRUB_URL}"     "${GRUB_MIRRORS[@]}"
 
     # ── Extract sources ──
     header "Extracting sources"
     extract "${SRCDIR}/gmp-${GMP_VERSION}.tar.xz"           "${SRCDIR}" "gmp-${GMP_VERSION}"
     extract "${SRCDIR}/mpfr-${MPFR_VERSION}.tar.xz"         "${SRCDIR}" "mpfr-${MPFR_VERSION}"
     extract "${SRCDIR}/mpc-${MPC_VERSION}.tar.gz"            "${SRCDIR}" "mpc-${MPC_VERSION}"
+    extract "${SRCDIR}/bison-${BISON_VERSION}.tar.xz"        "${SRCDIR}" "bison-${BISON_VERSION}"
+    extract "${SRCDIR}/flex-${FLEX_VERSION}.tar.gz"          "${SRCDIR}" "flex-${FLEX_VERSION}"
     extract "${SRCDIR}/binutils-${BINUTILS_VERSION}.tar.gz"  "${SRCDIR}" "binutils-${BINUTILS_VERSION}"
     extract "${SRCDIR}/gcc-${GCC_VERSION}.tar.gz"            "${SRCDIR}" "gcc-${GCC_VERSION}"
     extract "${SRCDIR}/gdb-${GDB_VERSION}.tar.xz"            "${SRCDIR}" "gdb-${GDB_VERSION}"
@@ -565,6 +703,10 @@ main() {
     build_gmp
     build_mpfr
     build_mpc
+
+    # ── Build parser/lexer tools ──
+    build_bison
+    build_flex
 
     # ── Build toolchain ──
     build_binutils

@@ -14,6 +14,8 @@
 #include "../drivers/display/display.h"
 
 
+#include "../drivers/input/ps2/ps2.h"
+
 /* Hardware text mode color constants. */
 enum vga_color {
   VGA_COLOR_BLACK = 0,
