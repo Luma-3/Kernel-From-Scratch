@@ -36,7 +36,7 @@ static inline enum display_result vga_clear(display_data_t *settings, enum displ
         for (uint32_t x = 0; x < settings->width; x++) {
             const uint32_t index = y * settings->width + x;
                 terminal_buffer[index] = VGA_ENTRY(
-                    mode & DISPLAY_CLEAR_CONTENT ? '\0' : VGA_EXTRACT_CHAR(terminal_buffer[index]),
+                    mode & DISPLAY_CLEAR_CONTENT ? ' ' : VGA_EXTRACT_CHAR(terminal_buffer[index]),
                      mode & DISPLAY_CLEAR_COLOR ? terminal_color : VGA_EXTRACT_COLOR(terminal_buffer[index]));
 
         }

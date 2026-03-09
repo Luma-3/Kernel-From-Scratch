@@ -13,10 +13,10 @@ void init_terminal(const char* name) {
     g_terminal.default_cursor.y = 0;
     g_terminal.fg_color = COLOR_LIGHT_GREY;
     g_terminal.bg_color = COLOR_BLACK;
-    terminal_writestring_with_color("Welcome to ", COLOR_LIGHT_GREY, COLOR_BLACK);
+    terminal_writestring("Welcome to ");
     terminal_writestring_with_color(name, COLOR_LIGHT_CYAN, COLOR_BLACK);
     terminal_put_char('\n');
-    terminal_writestring_with_color("__Kernel From Scratch__ is a simple kernel written in C, designed to run on x86_64 architecture. It serves as a learning project for understanding the basics of operating system development, including memory management, process scheduling, and hardware interaction.\n", COLOR_LIGHT_GREY, COLOR_BLACK);
+    terminal_writestring("__Kernel From Scratch__ is a simple kernel written in C, designed to run on x86_64 architecture. It serves as a learning project for understanding the basics of operating system development, including memory management, process scheduling, and hardware interaction.\n");
     g_terminal.default_cursor.y = g_terminal.cursor.y;
 }
 
