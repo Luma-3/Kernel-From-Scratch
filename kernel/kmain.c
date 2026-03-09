@@ -20,72 +20,6 @@ struct s_test {
   int a;
   long b;
 };
-
-
-// Version VGA - dessine une pomme avec des caractères
-void draw_apple_vga(uint32_t start_x, uint32_t start_y) {
-    // Tige (haut)
-    terminal_put_pixel(start_x + 4, start_y + 0, COLOR_BROWN);
-    terminal_put_pixel(start_x + 4, start_y + 1, COLOR_BROWN);
-    
-    // Feuille
-    terminal_put_pixel(start_x + 5, start_y + 1, COLOR_GREEN);
-    terminal_put_pixel(start_x + 6, start_y + 1, COLOR_GREEN);
-    terminal_put_pixel(start_x + 6, start_y + 2, COLOR_GREEN);
-    
-    // Haut de la pomme - ligne 2
-    terminal_put_pixel(start_x + 3, start_y + 2, COLOR_RED);
-    terminal_put_pixel(start_x + 4, start_y + 2, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 2, COLOR_RED);
-    
-    // Ligne 3 - élargissement
-    terminal_put_pixel(start_x + 2, start_y + 3, COLOR_RED);
-    terminal_put_pixel(start_x + 3, start_y + 3, COLOR_LIGHT_RED);
-    terminal_put_pixel(start_x + 4, start_y + 3, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 3, COLOR_RED);
-    terminal_put_pixel(start_x + 6, start_y + 3, COLOR_RED);
-    
-    // Ligne 4 - partie la plus large
-    terminal_put_pixel(start_x + 1, start_y + 4, COLOR_RED);
-    terminal_put_pixel(start_x + 2, start_y + 4, COLOR_LIGHT_RED);
-    terminal_put_pixel(start_x + 3, start_y + 4, COLOR_LIGHT_RED);
-    terminal_put_pixel(start_x + 4, start_y + 4, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 4, COLOR_RED);
-    terminal_put_pixel(start_x + 6, start_y + 4, COLOR_RED);
-    terminal_put_pixel(start_x + 7, start_y + 4, COLOR_RED);
-    
-    // Ligne 5
-    terminal_put_pixel(start_x + 1, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 2, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 3, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 4, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 6, start_y + 5, COLOR_RED);
-    terminal_put_pixel(start_x + 7, start_y + 5, COLOR_RED);
-    
-    // Ligne 6 - rétrécissement
-    terminal_put_pixel(start_x + 1, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 2, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 3, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 4, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 6, start_y + 6, COLOR_RED);
-    terminal_put_pixel(start_x + 7, start_y + 6, COLOR_RED);
-    
-    // Ligne 7
-    terminal_put_pixel(start_x + 2, start_y + 7, COLOR_RED);
-    terminal_put_pixel(start_x + 3, start_y + 7, COLOR_RED);
-    terminal_put_pixel(start_x + 4, start_y + 7, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 7, COLOR_RED);
-    terminal_put_pixel(start_x + 6, start_y + 7, COLOR_RED);
-    
-    // Ligne 8 - bas de la pomme
-    terminal_put_pixel(start_x + 3, start_y + 8, COLOR_RED);
-    terminal_put_pixel(start_x + 4, start_y + 8, COLOR_RED);
-    terminal_put_pixel(start_x + 5, start_y + 8, COLOR_RED);
-}
-
-
 // Version VBE - dessine une pomme 16x16 en pixel art (style Minecraft)
 void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
     // Définition des couleurs
@@ -149,6 +83,181 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
     }
 }
 
+
+void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
+    // Définition des couleurs
+    const uint32_t light_brown = 0xD2B48C; // Brun clair
+    const uint32_t brown = 0x8B4513;       // Brun
+    const uint32_t dark_brown = 0x654321;  // Brun foncé
+    
+    // Pixel art de la pomme 16x16
+    // ' ' = vide, 'L' = brun clair, 'B' = brun, 'D' = brun foncé
+    const char potato[16][17] = {
+        "                ",
+        "                ",
+        "                ",
+        "                ",
+        "        BBBB    ",
+        "     BBBDLLDB   ",
+        "    BDLLLDDDBB  ",
+        "   BLLLLLLLLDD  ",
+        "  BDLLLLLDDDBD  ",
+        "  BDLLLLLDDDBD  ",
+        "  DLLLLDDDBBD   ",
+        "   DLLLBBBDD    ",
+        "    DDDDDD      "
+    };
+        const uint32_t scale = 4;
+    for (uint32_t y = 0; y < 16; y++) {
+        for (uint32_t x = 0; x < 16; x++) {
+            char pixel = potato[y][x];
+            uint32_t color;
+            
+            switch (pixel) {
+                case 'L': color = light_brown; break;
+                case 'B': color = brown; break;
+                case 'D': color = dark_brown; break;
+                case ' ': continue; // Ne rien dessiner pour les espaces
+                default: continue;
+            }
+            
+            // Dessiner un bloc de scale x scale pixels pour chaque pixel du sprite
+            for (uint32_t sy = 0; sy < scale; sy++) {
+                for (uint32_t sx = 0; sx < scale; sx++) {
+                    terminal_put_pixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+                }
+            }
+        }
+    }
+}
+
+void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
+    // Définition des couleurs pour Saturne
+    const uint32_t yellow = 0xF4D03F;        // Jaune doré (planète)
+    const uint32_t dark_yellow = 0xD4AC0D;   // Jaune foncé
+    const uint32_t orange = 0xE59866;        // Orange (bandes)
+    const uint32_t beige = 0xFAD7A0;         // Beige clair
+    const uint32_t ring_light = 0xD5DBDB;    // Anneau clair
+    const uint32_t ring_med = 0xAEB6BF;      // Anneau moyen
+    const uint32_t ring_dark = 0x85929E;     // Anneau foncé
+
+    // Pixel art de Saturne 16x16 - Vue de face
+    // ' ' = vide, 'Y' = jaune, 'D' = jaune foncé, 'O' = orange, 'B' = beige
+    // 'L' = anneau clair, 'M' = anneau moyen, 'R' = anneau foncé
+    const char saturn[16][17] = {
+        "                ",
+        "      DYYD      ",
+        "    DDYYYYDD    ",
+        "   DYYYYYYYYY   ",
+        "  YOOOOOOOOOOY  ",
+        " YBBBBBBBBBBBBY ",
+        " YOOOOOOOOOOOOY ",
+        "RMRRRRMRRRLRRRML",
+        "LRRRRLRRRRRMRRRM",
+        " YOOOOOOOOOOOOY ",
+        " YBBBBBBBBBBBBY ",
+        "  YOOOOOOOOOOY  ",
+        "   DYYYYYYYYY   ",
+        "    DDYYYYDD    ",
+        "      DYYD      ",
+        "                "
+    };
+
+    const uint32_t scale = 4;
+    for (uint32_t y = 0; y < 16; y++) {
+        for (uint32_t x = 0; x < 16; x++) {
+            char pixel = saturn[y][x];
+            uint32_t color;
+
+            switch (pixel) {
+                case 'Y': color = yellow; break;
+                case 'D': color = dark_yellow; break;
+                case 'O': color = orange; break;
+                case 'B': color = beige; break;
+                case 'L': color = ring_light; break;
+                case 'M': color = ring_med; break;
+                case 'R': color = ring_dark; break;
+                case ' ': continue;
+                default: continue;
+            }
+
+            for (uint32_t sy = 0; sy < scale; sy++) {
+                for (uint32_t sx = 0; sx < scale; sx++) {
+                    terminal_put_pixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+                }
+            }
+        }
+    }
+}
+
+void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
+  // Définition des couleurs
+  const uint32_t light_magenta = 0xFF77FF;   // Magenta clair
+  const uint32_t dark_pink = 0xFF69B4;        // Rose foncé
+  const uint32_t pink = 0xFFC0CB;       // Rose
+  const uint32_t light_pink = 0xFFB6C1; //
+  const uint32_t pale_pink = 0xFFB5C5;     // Rose pâle
+  const uint32_t blue = 0x1E90FF;      // Bleu
+  const uint32_t dark_blue = 0x00008B; // Bleu foncé
+  const uint32_t dark_gray = 0xA9A9A9;    // Gris foncé
+  const uint32_t gray = 0xD3D3D3;         // Gris clair
+  const uint32_t light_gray = 0xDCDCDC;   // Gris très clair
+  const uint32_t dark_purple = 0x800080;    // Violet foncé
+
+  // Pixel art de l'axolote sur un seau 16x16
+  // ' ' = vide, 'D' = rose foncé, 'P' = rose, 'L' = rose clair, 'A' = rose pâle, 'B' = bleu, 'b' = bleu foncé, 'G' = gris foncé, 'g' = gris clair, 'l' = gris très clair , 'V' = violet foncé, "R" = magenta clair
+  const char axolote[16][17] = {
+      "    D      D    ",
+      "  P PD    DP P  ",
+      "  DPLAAAAAALPD  ",
+      "   DVAALLAAVD   ",
+      "  DDLAAAAAALDD  ",
+      "  GbRRRRRRRRbG  ",
+      "  GBGRBBBgRGGG  ",
+      "  GlgRGbBGRggG  ",
+      "  GlDADgBDADgG  ",
+      "  GlgDggggDggG  ",
+      "  GglllgBggggG  ",
+      "  GlllgggggggG  ",
+      "   GglggggggG   ",
+      "   GggggggggG   ",
+      "    GglggggG    ",
+      "     GGGGGG     "
+  };
+
+
+          const uint32_t scale = 4;
+    for (uint32_t y = 0; y < 16; y++) {
+        for (uint32_t x = 0; x < 16; x++) {
+            char pixel = axolote[y][x];
+            uint32_t color;
+            
+            switch (pixel) {
+                case 'D': color = dark_pink; break;
+                case 'P': color = pink; break;
+                case 'L': color = light_pink; break;
+                case 'A': color = pale_pink; break;
+                case 'B': color = blue; break;
+                case 'b': color = dark_blue; break;
+                case 'G': color = dark_gray; break;
+                case 'g': color = gray; break;
+                case 'l': color = light_gray; break;
+                case 'V': color = dark_purple; break;
+                case 'R': color = light_magenta; break;
+                case ' ': continue; // Ne rien dessiner pour les espaces
+                default: continue;
+            }
+            
+            // Dessiner un bloc de scale x scale pixels pour chaque pixel du sprite
+            for (uint32_t sy = 0; sy < scale; sy++) {
+                for (uint32_t sx = 0; sx < scale; sx++) {
+                    terminal_put_pixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+                }
+            }
+        }
+    }
+}
+
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
   if (mb_magic != MULTIBOOT1_BOOTLOADER_MAGIC) {
     return;
@@ -181,9 +290,11 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
       display_boot_config.color_info.rgb.framebuffer_red_mask_size = mbi->color_info.rgb.framebuffer_red_mask_size;
     init_display(DRIVER_VBE, &display_boot_config);
     draw_apple_vbe(100, 100);
+    draw_potato_vbe(200, 100);
+    draw_axelote_on_bucket_vbe(300, 100);
+    draw_saturn_vbe(400, 100);
   }else {
     init_display(DRIVER_VGA, NULL);
-    draw_apple_vga(10, 10);
   }
 
   init_terminal("Main Terminal");
