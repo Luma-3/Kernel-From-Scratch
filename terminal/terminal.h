@@ -37,6 +37,10 @@ void terminal_writestring_with_color(const char *data, const enum display_color 
 
 void terminal_write_int(int value);
 
+void terminal_cursor_move(uint32_t x, uint32_t y);
+
+void terminal_put_pixel(uint32_t x, uint32_t y, uint32_t pixel_color);
+
 bool terminal_clear(void);
 
 
