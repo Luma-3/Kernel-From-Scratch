@@ -5,17 +5,54 @@ terminal_t g_terminal = {0};
 
 void init_terminal(const char* name) {
     display_set_color(COLOR_LIGHT_GREY, COLOR_BLACK);
-    display_clear();
-    display_put_char('A', 0, 0);
+    display_clear(DISPLAY_CLEAR_ALL);
     g_terminal.name = name;
     g_terminal.cursor.x = 0;
     g_terminal.cursor.y = 0;
     g_terminal.default_cursor.x = 0;
     g_terminal.default_cursor.y = 0;
-    terminal_writestring(name);
+    g_terminal.fg_color = COLOR_LIGHT_GREY;
+    g_terminal.bg_color = COLOR_BLACK;
+    terminal_writestring_with_color("Welcome to ", COLOR_LIGHT_GREY, COLOR_BLACK);
+    terminal_writestring_with_color(name, COLOR_LIGHT_CYAN, COLOR_BLACK);
     terminal_put_char('\n');
-    terminal_writestring("______________________________\n");
+    terminal_writestring_with_color("__Kernel From Scratch__ is a simple kernel written in C, designed to run on x86_64 architecture. It serves as a learning project for understanding the basics of operating system development, including memory management, process scheduling, and hardware interaction.\n", COLOR_LIGHT_GREY, COLOR_BLACK);
     g_terminal.default_cursor.y = g_terminal.cursor.y;
+}
+
+
+void terminal_put_char_with_color(const char c, const enum display_color fg, const enum display_color bg) {
+    const display_data_t *display_data = get_display_data();
+    if (c == '\n') {
+        g_terminal.cursor.x = 0;
+        if (++g_terminal.cursor.y >= display_data->height) {
+            g_terminal.cursor.y = g_terminal.default_cursor.y;
+        }
+        return;
+    }
+    if (c == '\r') {
+        g_terminal.cursor.x = g_terminal.default_cursor.x;
+        return;
+    }
+    if (c == '\t') {
+        g_terminal.cursor.x = (g_terminal.cursor.x + 8) & ~(8 - 1);
+        if (g_terminal.cursor.x >= display_data->width) {
+            g_terminal.cursor.x = 0;
+            if (++g_terminal.cursor.y >= display_data->height) {
+                g_terminal.cursor.y = g_terminal.default_cursor.y;
+            }
+        }
+    }
+    if (display_put_char(c, g_terminal.cursor.x, g_terminal.cursor.y, fg, bg) == DISPLAY_ERROR) {
+        return;
+    }
+    if (++g_terminal.cursor.x >= display_data->width) {
+        g_terminal.cursor.x = 0;
+        if (++g_terminal.cursor.y >= display_data->height) {
+            g_terminal.cursor.y = g_terminal.default_cursor.y;
+        }
+    }
+    return;
 }
 
 
@@ -41,7 +78,7 @@ void terminal_put_char(const char c) {
             }
         }
     }
-    if (display_put_char(c, g_terminal.cursor.x, g_terminal.cursor.y) == DISPLAY_ERROR) {
+    if (display_put_char(c, g_terminal.cursor.x, g_terminal.cursor.y, g_terminal.fg_color, g_terminal.bg_color) == DISPLAY_ERROR) {
         return;
     }
     if (++g_terminal.cursor.x >= display_data->width) {
@@ -53,14 +90,25 @@ void terminal_put_char(const char c) {
     return;
 }
 
+
 void terminal_write(const char *data, uint32_t size) {
     for (uint32_t i = 0; i < size; i++) {
         terminal_put_char(data[i]);
     }
 }
 
+void terminal_write_with_color(const char *data, uint32_t size, const enum display_color fg, const enum display_color bg) {
+    for (uint32_t i = 0; i < size; i++) {
+        terminal_put_char_with_color(data[i], fg, bg);
+    }
+}
+
 void terminal_writestring(const char *data) {
      terminal_write(data, k_strlen(data));
+}
+
+void terminal_writestring_with_color(const char *data, const enum display_color fg, const enum display_color bg) {
+     terminal_write_with_color(data, k_strlen(data), fg, bg);
 }
 
 
@@ -88,7 +136,7 @@ void terminal_write_int(int value) {
 }
 
 bool terminal_clear(void) {
-    if (display_clear() == DISPLAY_ERROR) {
+    if (display_clear(DISPLAY_CLEAR_ALL) == DISPLAY_ERROR) {
         return false;
     }
     g_terminal.cursor.x = 0;

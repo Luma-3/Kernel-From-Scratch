@@ -20,10 +20,6 @@ struct s_test {
   long b;
 };
 
-void sleep(int seconds) {
-  for (volatile int i = 0; i < seconds * 1000000; i++);
-}
-
 void kmain(void) {
   init_display(DRIVER_VGA);
   init_terminal("Main Terminal");

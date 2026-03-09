@@ -39,12 +39,13 @@ void deinit_display() {
 
 
 
-enum display_result display_clear(void) {
+enum display_result display_clear(enum display_clear_mode mode) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
     }
     struct s_display_command cmd = {
-        .cmd = DISPLAY_CMD_CLEAR
+        .cmd = DISPLAY_CMD_CLEAR,
+        .clear = { .flag = mode }
     };
     return g_display.execute_command(&g_display, &cmd);
 }
@@ -62,24 +63,36 @@ enum display_result  display_set_color(const enum display_color fg, const enum d
 }
 
 
-enum display_result  display_put_char(const char c, const uint32_t x, const uint32_t y) {
+enum display_result  display_put_char(const char c, const uint32_t x, const uint32_t y, const enum display_color fg, const enum display_color bg) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
     }
     struct s_display_command cmd = {
         .cmd = DISPLAY_CMD_PUT_CHAR,
-        .put_char = { .c = c, .x = x, .y = y }
+        .put_char = {
+             .c = c, 
+             .x = x,
+             .y = y,
+             .fg = fg,
+            .bg = bg
+            }
     };
     return g_display.execute_command(&g_display, &cmd);
 }
 
-enum display_result  display_put_string(const char *str, const uint32_t x, const uint32_t y) {
+enum display_result  display_put_string(const char *str, const uint32_t x, const uint32_t y, const enum display_color fg, const enum display_color bg) {
     if (g_display.execute_command == NULL) {
         return DISPLAY_ERROR;
     }
     struct s_display_command cmd = {
         .cmd = DISPLAY_CMD_PUT_STRING,
-        .put_string = { .str = str, .x = x, .y = y }
+        .put_string = {
+            .str = str,
+             .x = x,
+             .y = y,
+            .fg = fg,
+            .bg = bg
+        }
     };
     return g_display.execute_command(&g_display, &cmd);
 }

@@ -8,6 +8,7 @@
 # include <stddef.h>
 #include <stdint.h>
 #include <stdint.h>
+# include <stdbool.h>
 
 typedef struct s_diplay_data display_data_t;
 typedef struct s_display display_t;
@@ -18,6 +19,7 @@ enum driver_type {
 };
 
 enum display_color {
+    COLOR_NONE = -1,
     COLOR_BLACK = 0,
     COLOR_BLUE = 1,
     COLOR_GREEN = 2,
@@ -43,6 +45,13 @@ enum display_command {
     DISPLAY_CMD_PUT_STRING,
 };
 
+enum display_clear_mode {
+    DISPLAY_CLEAR_NONE = 0,
+    DISPLAY_CLEAR_COLOR = 1 << 0,
+    DISPLAY_CLEAR_CONTENT = 1 << 1,
+    DISPLAY_CLEAR_ALL = DISPLAY_CLEAR_COLOR | DISPLAY_CLEAR_CONTENT
+};
+
 enum display_result {
     DISPLAY_SUCCESS,
     DISPLAY_ERROR,
@@ -52,6 +61,9 @@ struct s_display_command {
     enum display_command cmd;
     union {
         struct {
+            enum display_clear_mode flag;
+        } clear;
+        struct {
             enum display_color fg;
             enum display_color bg;
         } set_color;
@@ -59,11 +71,16 @@ struct s_display_command {
             char c;
             uint32_t x;
             uint32_t y;
+            bool use_default_color;
+            enum display_color fg;
+            enum display_color bg;
         } put_char;
         struct {
             const char *str;
             uint32_t x;
             uint32_t y;
+            enum display_color fg;
+            enum display_color bg;
         } put_string;
     };
 };
@@ -79,7 +96,6 @@ struct s_diplay_data {
     uint32_t width;
     uint32_t height;
     uint32_t bpp;
-    uint8_t color;
 };
 
 struct s_display {
@@ -92,11 +108,10 @@ void init_display(enum driver_type type);
 
 void deinit_display(void);
 
-enum display_result  display_clear(void);
-
+enum display_result  display_clear(enum display_clear_mode mode);
 enum display_result  display_set_color(enum display_color fg, enum display_color bg);
 
-enum display_result display_put_char(char c, uint32_t x, uint32_t y);
+enum display_result display_put_char(char c, uint32_t x, uint32_t y, enum display_color fg, enum display_color bg);
 
 
 const display_data_t *get_display_data(void);
