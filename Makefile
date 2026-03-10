@@ -1,3 +1,4 @@
+
 CROSS_PATH := $(HOME)/opt
 
 TARGET := i386-elf
@@ -25,21 +26,9 @@ obj-y := # List of object files to be built
 include $(addsuffix /Makefile,$(MODULES))
 
 OBJS := $(addprefix $(OBJDIR)/,$(obj-y))
-
-# --- Include Header Files --- #
-
-INCLUDES_DIRS := $(sort $(dir $(obj-y)))
-
-INCLUDES := $(addprefix -I,$(INCLUDES_DIRS))
-
-CFLAGS += $(INCLUDES)
-
--include $(OBJS:.o=.d)
-
 # --- Rules --- #
 
 all: $(BINDIR)/kernel.bin
-
 
 $(BINDIR)/kernel.bin: $(OBJS)
 	@mkdir -p $(dir $@)
@@ -70,6 +59,18 @@ debug_mk:
 re: mrproper all
 
 .PHONY: all clean debug_mk mrproper re
+
+
+
+# --- Include Header Files --- #
+
+INCLUDES_DIRS := $(sort $(dir $(obj-y)))
+
+INCLUDES := $(addprefix -I,$(INCLUDES_DIRS))
+
+CFLAGS += $(INCLUDES)
+
+-include $(OBJS:.o=.d)
 
 # --- Special Rules --- #
 

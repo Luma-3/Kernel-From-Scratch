@@ -1,9 +1,9 @@
 
 #--- Standard Variables ---
 
-SUBDIRS := arch/i386
+DIR = arch/i386
 
 #--- Object to be compiled ---
 
-obj-y += $(SUBDIRS)/io.o
+obj-y += $(DIR)/io.o
 

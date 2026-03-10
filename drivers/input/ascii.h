@@ -28,7 +28,6 @@ static const uint8_t keycode_to_ascii[256] = {
     [KEY_B] = 'b',     [KEY_N] = 'n',      [KEY_M] = 'm',
 
     [KEY_SPACE] = ' ', [KEY_EQUALS] = '=',
-
 };
 
 #endif // !__KFS_ASCII_H

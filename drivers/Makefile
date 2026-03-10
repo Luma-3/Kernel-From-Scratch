@@ -1,13 +1,13 @@
 
 #--- Standard Variables ---
 
-SUBDIRS := drivers
+DIR = drivers
 
 #--- Object to be compiled ---
 
 
 #--- Sub directories ---
 
-SUBDIRS := $(SUBDIRS)/input
+SUBDIRS := $(DIR)/input
 
 include $(addsuffix /Makefile,$(SUBDIRS))
