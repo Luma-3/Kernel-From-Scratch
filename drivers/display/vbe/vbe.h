@@ -1,15 +1,17 @@
 #ifndef __KFS_VBE_H
 # define __KFS_VBE_H
 
+#define VBE_FONT_WIDTH 8u
+#define VBE_FONT_HEIGHT 16u
+#define VBE_FONT_SOURCE_WIDTH 8u
+#define VBE_FONT_SOURCE_HEIGHT 8u
+#define VBE_FONT_SCALE_X (VBE_FONT_WIDTH / VBE_FONT_SOURCE_WIDTH)
+#define VBE_FONT_SCALE_Y (VBE_FONT_HEIGHT / VBE_FONT_SOURCE_HEIGHT)
 
-#define PACK_COLOR(r, g, b, config) \
-     (((uint32_t)(r) & (config)->color_info.rgb.framebuffer_red_mask_size)  << (16 - (config)->color_info.rgb.framebuffer_red_field_position)) | \
-      (((uint32_t)(g) & (config)->color_info.rgb.framebuffer_green_mask_size) << 16 -  ((config)->color_info.rgb.framebuffer_green_field_position)) | \
-      (((uint32_t)(b) & (config)->color_info.rgb.framebuffer_blue_mask_size) << 16 -  ((config)->color_info.rgb.framebuffer_blue_field_position))
-typedef struct s_display display_t;
-typedef struct s_display_boot_config display_boot_config_t;
+struct s_display;
+struct s_display_boot_config;
 
-void init_vbe(display_t *display, const display_boot_config_t *boot_config);
+void init_vbe(struct s_display *display, const struct s_display_boot_config *boot_config);
 
 
 #endif

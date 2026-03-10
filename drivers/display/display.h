@@ -92,14 +92,21 @@ struct s_display_command {
     };
 };
 
-struct s_diplay_color {
+struct s_display_color {
     enum display_color fg;
     enum display_color bg;
 };
 
+struct s_diplay_font
+{
+    uint32_t width;
+    uint32_t height;
+};
+
+
 struct s_diplay_data {
     void *framebuffer;
-    struct  s_diplay_color e_color;
+    struct  s_display_color e_color;
     uint32_t width;
     uint32_t height;
     uint32_t pitch;
@@ -120,6 +127,7 @@ struct s_diplay_data {
             uint8_t framebuffer_blue_mask_size;
         } rgb;
     } color_info;
+    struct s_diplay_font font;
 };
 
 struct s_display_boot_config {
@@ -147,10 +155,10 @@ struct s_display_boot_config {
 struct s_display {
     enum driver_type type;
     display_data_t data;
-    enum display_result (*execute_command)(display_t* , struct s_display_command *cmd);
+    enum display_result (*execute_command)(struct s_display* , struct s_display_command *cmd);
 };
 
-void init_display(enum driver_type type, const display_boot_config_t *boot_config);
+void init_display(enum driver_type type, const struct s_display_boot_config *boot_config);
 
 void deinit_display(void);
 

@@ -1,5 +1,5 @@
 
-override DIR := $(DIR)/display
+DIR = drivers/display
 # --- Objects to be compiled ---
 
 obj-y += $(DIR)/display.o

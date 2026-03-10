@@ -111,7 +111,7 @@ enum display_result vga_execute_command(display_t *display, struct s_display_com
     }
 }
 
-void init_vga(display_t *display) {
+void init_vga(struct s_display *display) {
     display->data.framebuffer = (void *)VGA_MEMORY;
     display->data.width = VGA_WIDTH;
     display->data.height = VGA_HEIGHT;
@@ -119,7 +119,7 @@ void init_vga(display_t *display) {
     display->data.bpp = 16;
     display->data.char_width = VGA_WIDTH;
     display->data.char_height = VGA_HEIGHT;
-    display->data.e_color = (struct s_diplay_color) {
+    display->data.e_color = (struct s_display_color) {
         .fg = COLOR_LIGHT_GREY,
         .bg = COLOR_BLACK
     };

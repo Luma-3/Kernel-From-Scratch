@@ -6,13 +6,13 @@
 # include "vga/vga.h"
 # include "vbe/vbe.h"
 
-display_t g_display = {
+struct s_display g_display = {
     .type = DRIVER_NONE,
     .execute_command = NULL
 };
 
 
-void init_display(const enum driver_type type, const display_boot_config_t *boot_config) {
+void init_display(const enum driver_type type, const struct s_display_boot_config*boot_config) {
     g_display.type = type;
 
     switch (type) {

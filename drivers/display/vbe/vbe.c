@@ -1,8 +1,6 @@
 # include "vbe.h"
 # include "font_default.c"
 # include "../display.h"
-#define VBE_CHAR_WIDTH 8u
-#define VBE_CHAR_HEIGHT 8u
 
 static inline void vbe_putpixel(display_t *display, uint32_t x, uint32_t y, uint32_t color) {
     if (x >= display->data.width || y >= display->data.height) return;
@@ -20,23 +18,23 @@ static inline void vbe_putpixel(display_t *display, uint32_t x, uint32_t y, uint
 }
 static inline void vbe_putentryat(display_t *display, uint32_t fg_color, uint32_t bg_color, char c, uint32_t x, uint32_t y) {
 
-    uint32_t px = x * VBE_CHAR_WIDTH;   // cell -> pixel
-    uint32_t py = y * VBE_CHAR_HEIGHT;   // cell -> pixel
+    uint32_t px = x * VBE_FONT_WIDTH;   // cell -> pixel
+    uint32_t py = y * VBE_FONT_HEIGHT;   // cell -> pixel
 
-    const uint8_t *glyph = fontdata_8x8 + ((uint8_t)c * VBE_CHAR_HEIGHT);
+    const uint8_t *glyph = fontdata_8x8 + ((uint8_t)c * VBE_FONT_SOURCE_HEIGHT);
 
 
 
-    for (uint32_t cy = 0; cy < VBE_CHAR_HEIGHT; cy++) {
-        uint8_t row = glyph[cy];
-        for (uint32_t cx = 0; cx < VBE_CHAR_WIDTH; cx++) {
-            uint32_t col = (row & (1u << (7 - cx))) ? fg_color : bg_color;
+    for (uint32_t cy = 0; cy < VBE_FONT_HEIGHT; cy++) {
+        uint8_t row = glyph[cy / VBE_FONT_SCALE_Y];
+        for (uint32_t cx = 0; cx < VBE_FONT_WIDTH; cx++) {
+            uint32_t col = (row & (1u << (7 - (cx / VBE_FONT_SCALE_X)))) ? fg_color : bg_color;
             vbe_putpixel(display, px + cx, py + cy, col);
         }
     }
 }
 
-static inline enum display_result vbe_execute_command(display_t *display, struct s_display_command *command) {
+static inline enum display_result vbe_execute_command(struct s_display*display, struct s_display_command *command) {
     switch (command->cmd) {
         case DISPLAY_CMD_CLEAR:
              // Implement VBE-specific clear logic here
@@ -58,7 +56,7 @@ static inline enum display_result vbe_execute_command(display_t *display, struct
     }
 }
 
-void init_vbe(display_t *display, const display_boot_config_t *boot_config) {
+void init_vbe(struct s_display *display, const display_boot_config_t *boot_config) {
 	display->type = DRIVER_VBE;
 	display->execute_command = &vbe_execute_command;
     display->data.e_color.fg = COLOR_WHITE;
@@ -69,8 +67,10 @@ void init_vbe(display_t *display, const display_boot_config_t *boot_config) {
         display->data.height = boot_config->framebuffer_height;
         display->data.pitch = boot_config->framebuffer_pitch;
         display->data.bpp = boot_config->framebuffer_bpp;
-        display->data.char_width = boot_config->framebuffer_width / VBE_CHAR_WIDTH;
-        display->data.char_height = boot_config->framebuffer_height / VBE_CHAR_HEIGHT;
+        display->data.char_width = boot_config->framebuffer_width / VBE_FONT_WIDTH;
+        display->data.char_height = boot_config->framebuffer_height / VBE_FONT_HEIGHT;
+        display->data.font.width = VBE_FONT_WIDTH;
+        display->data.font.height = VBE_FONT_HEIGHT;
         display->data.color_info.rgb.framebuffer_blue_field_position = boot_config->color_info.rgb.framebuffer_blue_field_position;
         display->data.color_info.rgb.framebuffer_blue_mask_size = boot_config->color_info.rgb.framebuffer_blue_mask_size;
         display->data.color_info.rgb.framebuffer_green_field_position = boot_config->color_info.rgb.framebuffer_green_field_position;

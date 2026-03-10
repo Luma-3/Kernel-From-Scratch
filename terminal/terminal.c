@@ -17,7 +17,7 @@ void init_terminal(const char* name) {
     terminal_writestring_with_color(name, COLOR_CYAN, COLOR_BLACK);
     terminal_put_char('\n');
     g_terminal.default_cursor.y = g_terminal.cursor.y;
-    terminal_writestring("__Kernel From Scratch__ is a simple kernel written in C, designed to run on x86_64 architecture. It serves as a learning project for understanding the basics of operating system development, including memory management, process scheduling, and hardware interaction.\n");
+    terminal_writestring("__Kernel From Scratch__ is a simple kernel written in C, designed to run on x86 architecture. It serves as a learning project for understanding the basics of operating system development, including memory management, process scheduling, and hardware interaction.\n");
     terminal_put_char('\n');
     terminal_write_int(get_display_data()->char_width);
     terminal_put_char('x');

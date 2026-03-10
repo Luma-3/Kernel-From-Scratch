@@ -15,10 +15,9 @@
 # define VGA_EXTRACT_CHAR(entry) ((char)(entry & 0xFF))
 # define VGA_EXTRACT_COLOR(entry) ((uint8_t)((entry >> 8) & 0xFF))
 
+struct s_display;
 
-typedef struct s_display display_t;
-
-void init_vga(display_t *display);
+void init_vga(struct s_display *display);
 
 
 #endif //__KFS_VGA_H

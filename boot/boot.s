@@ -19,8 +19,8 @@
 .long	0
 .long	0
 .long 0 /* mode_type: 0 = graphics */
-.long 1920 /* width */
-.long 1080 /* height */
+.long 1280 /* width */
+.long 720 /* height */
 .long 32 /* depth */
 
 /* 
