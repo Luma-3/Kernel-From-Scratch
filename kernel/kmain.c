@@ -7,6 +7,8 @@
 #endif
 
 #include <stdint.h>
+#include "ps2.h"
+#include "ascii.h"
 #include <stddef.h>
 #include "../boot/multiboot.h"
 #include "../klibc/string/string.h"
@@ -16,10 +18,6 @@
 #include "../drivers/input/ps2/ps2.h"
 #include "../terminal/terminal.h"
 
-struct s_test {
-  int a;
-  long b;
-};
 // Version VBE - dessine une pomme 16x16 en pixel art (style Minecraft)
 void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
     // Définition des couleurs
@@ -82,7 +80,6 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
         }
     }
 }
-
 
 void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
     // Définition des couleurs
@@ -298,51 +295,28 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
   }
 
   init_terminal("Main Terminal");
+  terminal_cursor_move(0, 200);
 
-  // init_display(preferred_driver, preferred_driver == DRIVER_VBE ? &display_boot_config : NULL);
+    ps2_init();
+    while (1) {
+        ps2_keyboard_poll(); // Poll the keyboard for key events and push them
+                             // into the buffer
 
-  // char hello[] = "Hello, kernel World!\n";
-  // if (k_strcmp(hello, "Hello World!\n") != 0) {
-  //     terminal_writestring("k_strcmp worked correctly.\n");
-  // }
-  // if (k_strncmp(hello, "Hello, kernel", 5) == 0) {
-  //     terminal_writestring("k_strncmp worked correctly.\n");
-  // }
-  // if (k_strrchr(hello, '\n') == (hello + (k_strrchr(hello, '\n') - hello))) {
-  //   terminal_writestring("k_strrchr worked correctly.\n");
-  // }
-  // if (k_strchr(hello, ',') == (hello + (k_strchr(hello, ',') - hello))) {
-  //   terminal_writestring("k_strchr worked correctly.\n");
-  // }
+        struct key_event event =
+            kdb_pop_event(); // Pop a key event from the buffer
 
-  // const int a = -5;
-  // const int b = 10;
-  // if (k_abs(a) == 5) {
-  //     terminal_writestring("k_abs worked correctly.\n");
-  // }
-  // if (k_max(a, b) == b) {
-  //     terminal_writestring("k_max worked correctly.\n");
-  // }
-  // if (k_min(a, b) == a) {
-  //     terminal_writestring("k_min worked correctly.\n");
-  // }
-  // const long x = -100L;
-  // const long y = 200L;
-  // if (k_labs(x) == 100L) {
-  //     terminal_writestring("k_labs worked correctly.\n");
-  // }
-  // if (k_lmax(x, y) == y) {
-  //     terminal_writestring("k_lmax worked correctly.\n");
-  // }
-  // if (k_lmin(x, y) == x) {
-  //     terminal_writestring("k_lmin worked correctly.\n");
-  // }
-
-  // struct s_test test_struct = {42, 123456789L};
-  // k_memset(&test_struct, 0, 4);
-  // if (test_struct.a == 0 && test_struct.b == 123456789L) {
-  //     terminal_writestring("k_memset worked correctly.\n");
-  // }
-
-  // terminal_writestring(hello);
+        if (event.keycode != 0 &&
+            event.state.pressed) { // If the event is not empty
+            char ascii_char = keycode_to_ascii[event.keycode];
+            if (event.state.shift) {
+                // Handle shift for letters
+                if (ascii_char >= 'a' && ascii_char <= 'z') {
+                    ascii_char -= 32; // Convert to uppercase
+                }
+            }
+            if (ascii_char) {
+                terminal_put_char(ascii_char); // Print the ASCII character
+            }
+        }
+    }
 }

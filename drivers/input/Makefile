@@ -1,13 +1,14 @@
 
 #--- Standard Variables ---
 
-DIR = drivers
+DIR := drivers/input
 
 #--- Object to be compiled ---
 
+obj-y += $(DIR)/keyevent.o
 
 #--- Sub directories ---
 
-SUBDIRS := $(DIR)/input $(DIR)/display
+SUBDIRS := $(DIR)/ps2
 
 include $(addsuffix /Makefile,$(SUBDIRS))
