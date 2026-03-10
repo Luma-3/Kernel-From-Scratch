@@ -40,7 +40,8 @@ static void update_kbd_state(struct key_event event) {
 void kbd_handle_event(struct key_event event) {
     update_kbd_state(event);
 
-    event.state.shift = current_kbd_state.shift | current_kbd_state.caps_lock;
+    event.state.shift = current_kbd_state.shift;
+    event.state.caps_lock = current_kbd_state.caps_lock;
     event.state.alt = current_kbd_state.alt;
     event.state.ctrl = current_kbd_state.ctrl;
 

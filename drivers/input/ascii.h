@@ -63,6 +63,11 @@ static const uint8_t keycode_ascii[128] = {
     [KEY_RIGHTBRACKET] = ']',
 
     [KEY_SPACE] = ' ',
+
+    [KEY_BACKSPACE] = '\b',
+    [KEY_TAB] = '\t',
+    [KEY_ENTER] = '\n',
+
 };
 
 static const uint8_t keycode_ascii_shift[128] = {
@@ -115,6 +120,10 @@ static const uint8_t keycode_ascii_shift[128] = {
     [KEY_LEFTBRACKET] = '{',
     [KEY_RIGHTBRACKET] = '}',
 
+    [KEY_SPACE] = ' ',
+    [KEY_BACKSPACE] = '\b',
+    [KEY_TAB] = '\t',
+    [KEY_ENTER] = '\n',
 };
 
 #endif // !__KFS_ASCII_H

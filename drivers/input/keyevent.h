@@ -79,7 +79,7 @@
 #define KEY_LEFTSHIFT 0x2A
 
 #define KEY_LEFTALT 0x38
-#define KEY_RIGHTALT 0xB8a
+#define KEY_RIGHTALT 0xB8
 
 #define KEY_F1 0x3B
 #define KEY_F2 0x3C
@@ -101,6 +101,7 @@ struct key_event {
         uint8_t shift : 1;
         uint8_t ctrl : 1;
         uint8_t alt : 1;
+        uint8_t caps_lock : 1;
     } state;
 };
 

@@ -290,6 +290,26 @@ void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
     }
 }
 
+// Function test for correctly print in terminal
+void term_get_keyevent() {
+    struct key_event event = kdb_pop_event();
+    if (event.keycode == 0 || !event.state.pressed)
+        return;
+
+    char to_print = 0;
+
+    if (event.state.shift == 1) {
+        to_print = keycode_ascii_shift[event.keycode];
+    } else {
+        to_print = keycode_ascii[event.keycode];
+    }
+
+    if (to_print == 0)
+        return;
+
+    terminal_put_char(to_print);
+}
+
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     if (mb_magic != MULTIBOOT1_BOOTLOADER_MAGIC) {
         return;
@@ -339,27 +359,8 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
 
     ps2_init();
     while (1) {
-        ps2_keyboard_poll(); // Poll the keyboard for key events and push them
-                             // into the buffer
-
-        struct key_event event =
-            kdb_pop_event(); // Pop a key event from the buffer
-
-        if (event.keycode != 0 &&
-            event.state.pressed) { // If the event is not empty
-
-            terminal_writestring("Caps Lock: ");
-            terminal_write_int(current_kbd_state.caps_lock);
-            char ascii_char = keycode_to_ascii[event.keycode];
-            if (event.state.shift) {
-                // Handle shift for letters
-                if (ascii_char >= 'a' && ascii_char <= 'z') {
-                    ascii_char -= 32; // Convert to uppercase
-                }
-            }
-            if (ascii_char) {
-                terminal_put_char(ascii_char); // Print the ASCII character
-            }
-        }
+        ps2_keyboard_poll(); // Poll the keyboard for key events and push
+                             // them into the buffer
+        term_get_keyevent();
     }
 }
