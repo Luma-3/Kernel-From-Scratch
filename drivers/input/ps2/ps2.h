@@ -152,6 +152,8 @@ static const uint8_t ps2_1_keycode_lookup_table[256] = {
     [PS2_1SCANCODE_M] = KEY_M,
 
     [PS2_1SCANCODE_SPACE] = KEY_SPACE,
+    [PS2_1SCANCODE_CAPSLOCK] = KEY_CAPSLOCK,
+
 };
 ///******************** PS/2 Controller Interface ********************///
 

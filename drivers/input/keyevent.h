@@ -78,6 +78,22 @@
 #define KEY_RIGHTSHIFT 0x36
 #define KEY_LEFTSHIFT 0x2A
 
+#define KEY_LEFTALT 0x38
+#define KEY_RIGHTALT 0xB8a
+
+#define KEY_F1 0x3B
+#define KEY_F2 0x3C
+#define KEY_F3 0x3D
+#define KEY_F4 0x3E
+#define KEY_F5 0x3F
+#define KEY_F6 0x40
+#define KEY_F7 0x41
+#define KEY_F8 0x42
+#define KEY_F9 0x43
+#define KEY_F10 0x44
+#define KEY_F11 0x45
+#define KEY_F12 0x46
+
 struct key_event {
     uint8_t keycode;
     struct {
@@ -92,9 +108,10 @@ struct kbd_state {
     uint8_t shift : 1;
     uint8_t ctrl : 1;
     uint8_t alt : 1;
+    uint8_t caps_lock : 1;
 };
 
-static struct kbd_state current_kbd_state = {0};
+static struct kbd_state current_kbd_state = {0, 0, 0, 0};
 
 #define KEY_EVENT_BUFFER_SIZE 128
 
