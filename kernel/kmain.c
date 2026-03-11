@@ -33,7 +33,7 @@ void term_get_keyevent() {
     if (to_print == 0)
         return;
 
-    terminal_put_char(to_print);
+    // terminal_put_char(to_print);
 }
 
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
@@ -107,7 +107,7 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
         return;
     }
 
-    //   init_terminal("Main Terminal");
+    init_terminal("Main Terminal");
     //   terminal_cursor_move(0, 200);
 
     ps2_init();

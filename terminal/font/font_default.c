@@ -1,6 +1,7 @@
 
+#include <stdint.h>
 
-unsigned char fontdata_8x8[] = {
+uint8_t fontdata_8x8[] = {
     /* 0 0x00 '^@' */
     0x00, /* 00000000 */
     0x00, /* 00000000 */
@@ -921,7 +922,7 @@ unsigned char fontdata_8x8[] = {
     0x3c, /* 00111100 */
     0x00, /* 00000000 */
 
-    /* 92 0x5c '\' */
+/* 92 0x5c '\' */ #define TERM_SUCCESS 0x00
     0xc0, /* 11000000 */
     0x60, /* 01100000 */
     0x30, /* 00110000 */
@@ -2561,3 +2562,5 @@ unsigned char fontdata_8x8[] = {
     0x00, /* 00000000 */
     0x00, /* 00000000 */
 };
+
+

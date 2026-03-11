@@ -4,27 +4,40 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct s_terminal terminal_t;
-typedef struct s_cursor_position cursor_position_t;
+#define MAX_TERMINALS 3
+#define CHAR_BY_LINE 160
+#define LINE_BY_SCREEN 45
 
-struct s_cursor_position {
+enum kterm_err {
+    KTERM_SUCCESS = 0,
+    KTERM_ERR_TOO_MANY_TERM = -1,
+    KTERM_ERR_INVALID_TERM = -2,
+    KTERM_ERR_INVALID_CHAR = -3,
+};
+
+struct cursor_pos {
     uint32_t x;
     uint32_t y;
 };
 
-struct s_terminal {
+struct terminal {
+    uint32_t id;
     const char *name;
-    cursor_position_t cursor;
-    cursor_position_t default_cursor;
+    struct cursor_pos cursor;
+
+    uint32_t char_by_line;
+    uint32_t line_by_screen;
+    uint8_t buffer[]
     // enum display_color fg_color;
     // enum display_color bg_color;
+    // TODO: probably should be removed and manage this otherwise
 };
 
-void init_terminal(const char *name);
+int32_t init_terminal(const char *name);
 
 // void terminal_put_char_with_color(const char c, const enum display_color fg,
 //                                   const enum display_color bg);
-void terminal_put_char(const char c);
+// void terminal_put_char(const char c);
 
 void terminal_write(const char *data, uint32_t size);
 
@@ -45,5 +58,10 @@ void terminal_cursor_move(uint32_t x, uint32_t y);
 void terminal_put_pixel(uint32_t x, uint32_t y, uint32_t pixel_color);
 
 bool terminal_clear(void);
+
+// NEW API
+
+int32_t term_write(const uint8_t term_id, const int8_t *data,
+                   const uint32_t size);
 
 #endif

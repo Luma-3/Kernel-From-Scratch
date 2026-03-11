@@ -1,41 +1,145 @@
 #include "terminal.h"
-#include "../klibc/string/string.h"
+#include "font.h"
+#include "vbe.h"
 
-terminal_t g_terminal = {0};
+#include <stdint.h>
 
-void init_terminal(const char *name) {
+static struct terminal terminals[MAX_TERMINALS] = {0};
+
+static uint8_t terminal_count = 0;
+
+int32_t init_terminal(const char *name) {
+
+    if (terminal_count >= MAX_TERMINALS) {
+        return KTERM_ERR_TOO_MANY_TERM;
+    }
+    struct terminal *term = (struct terminal *)&terminals[terminal_count];
+
+    terminal_count++;
+
+    term->name = name;
+    term->cursor.x = 0;
+    term->cursor.y = 0;
+
+    term_write(term->id, (const int8_t *)"Terminal ", 9);
+
     // display_set_color(COLOR_LIGHT_GREY, COLOR_BLACK);
     // display_clear(DISPLAY_CLEAR_ALL);
-    g_terminal.name = name;
-    g_terminal.cursor.x = 0;
-    g_terminal.cursor.y = 0;
-    g_terminal.default_cursor.x = 0;
-    g_terminal.default_cursor.y = 0;
+
     // g_terminal.fg_color = COLOR_LIGHT_GREY;
     // g_terminal.bg_color = COLOR_BLACK;
-    terminal_writestring("Welcome to ");
+    // terminal_writestring("Welcome to ");
+
     // terminal_writestring_with_color(name, COLOR_CYAN, COLOR_BLACK);
-    terminal_put_char('\n');
-    g_terminal.default_cursor.y = g_terminal.cursor.y;
-    terminal_writestring(
-        "__Kernel From Scratch__ is a simple kernel written in C, designed to "
-        "run on x86 architecture. It serves as a learning project for "
-        "understanding the basics of operating system development, including "
-        "memory management, process scheduling, and hardware interaction.\n");
-    terminal_put_char('\n');
+    // terminal_put_char('\n');
+    // g_terminal.default_cursor.y = g_terminal.cursor.y;
+    // terminal_writestring(
+    // "__Kernel From Scratch__ is a simple kernel written in C, designed to "
+    //     "run on x86 architecture. It serves as a learning project for "
+    //     "understanding the basics of operating system development, including
+    //     " "memory management, process scheduling, and hardware
+    //     interaction.\n");
+    // terminal_put_char('\n');
     // terminal_write_int(get_display_data()->char_width);
-    terminal_put_char('x');
+    // terminal_put_char('x');
     // terminal_write_int(get_display_data()->char_height);
-    terminal_put_char('\n');
+    // terminal_put_char('\n');
 
     // terminal_write_int(get_display_data()->color_info.rgb.framebuffer_red_field_position);
-    terminal_put_char('\n');
+    // terminal_put_char('\n');
 
     // terminal_write_int(get_display_data()->color_info.rgb.framebuffer_green_field_position);
-    terminal_put_char('\n');
+    // terminal_put_char('\n');
 
     // terminal_write_int(
     // get_display_data()->color_info.rgb.framebuffer_blue_field_position);
+}
+
+void handle_special_char(const uint8_t term_id, const int8_t c) {
+    struct terminal *term = &terminals[term_id];
+
+    if (c == '\n') {
+        term->cursor.x = 0;
+        if (++term->cursor.y >= term->line_by_screen) {
+            term->cursor.y = 0;
+        }
+        return;
+    }
+    if (c == '\r') {
+        term->cursor.x = 0;
+        return;
+    }
+    if (c == '\t') {
+        term->cursor.x = (term->cursor.x + 8) & ~(8 - 1);
+        if (term->cursor.x >= term->char_by_line) {
+            term->cursor.x = 0;
+            if (++term->cursor.y >= term->line_by_screen) {
+                term->cursor.y = 0;
+            }
+        }
+    }
+    if (c == '\b') {
+        if (term->cursor.x > 0) {
+            term->cursor.x--;
+        } else if (term->cursor.y > 0) {
+            term->cursor.y--;
+            term->cursor.x = term->char_by_line - 1;
+        }
+        // TODO: clear the char on the screen
+        // TODO: handle blank char
+    }
+}
+
+void char_to_font(int8_t c, uint8_t *buffer) {
+    for (int i = 0; i < 8; i++) {
+        buffer[i] = fontdata_8x8[c * 8 + i];
+    }
+}
+
+static int32_t draw_font(uint32_t x, uint32_t y, const uint8_t *bitmap,
+                         uint32_t fg_color, uint32_t bg_color) {
+    for (uint32_t i = 0; i < 8; ++i) {
+        uint8_t raw_data = bitmap[i];
+
+        for (uint32_t j = 0; j < 8; ++j) {
+        }
+    }
+}
+
+int32_t term_put_char(const uint8_t term_id, const int8_t c) {
+    if (term_id >= terminal_count) {
+        return KTERM_ERR_INVALID_TERM;
+    }
+
+    // handle_special_char(term_id, c);
+
+    uint8_t font_buffer[8];
+    char_to_font(c, font_buffer);
+
+    if (vbe_putbitmap(terminals[term_id].cursor.x * 8,
+                      terminals[term_id].cursor.y * 8,
+                      (const uint32_t *)font_buffer, 8, 8) != VBE_SUCCESS) {
+        return KTERM_ERR_INVALID_CHAR;
+    }
+
+    return KTERM_SUCCESS;
+}
+
+int32_t term_write(const uint8_t term_id, const int8_t *data,
+                   const uint32_t size) {
+    int32_t r = 0;
+    if (term_id >= terminal_count) {
+        return KTERM_ERR_INVALID_TERM;
+    }
+    for (uint32_t i = 0; i < size; i++) {
+
+        if (term_put_char(term_id, data[i]) != KTERM_SUCCESS) {
+            r = KTERM_ERR_INVALID_TERM;
+            break;
+        }
+        r++;
+    }
+    return r;
 }
 
 // void terminal_put_char_with_color(const char c, const enum display_color fg,
@@ -154,7 +258,7 @@ void terminal_write_int(int value) {
     }
     // Reverse the buffer
     for (int i = index - 1; i >= 0; i--) {
-        terminal_put_char(buffer[i]);
+        // terminal_put_char(buffer[i]);
     }
 }
 
