@@ -219,6 +219,21 @@ enum vbe_result vbe_clear(uint32_t color) {
     return VBE_SUCCESS;
 }
 
+enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color) {
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    if (x >= vbe_info.width || y >= vbe_info.height ||
+         x + width > vbe_info.width || y + height > vbe_info.height) return VBE_ERROR;
+
+    for (uint32_t j = 0; j < height; j++) {
+        for (uint32_t i = 0; i < width; i++) {
+            off = (y + j) * vbe_info.pitch + (x + i) * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+        }
+    }
+    return VBE_SUCCESS;
+}
+
 bool vbe_detect(multiboot_info_t *mbi) {
     return (mbi->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) != 0u &&
       mbi->framebuffer_addr != 0u &&
