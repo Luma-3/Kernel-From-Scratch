@@ -17,6 +17,7 @@
 #include "ps2.h"
 #include "kpixel_art.h"
 #include "vbe.h"
+#include "../terminal/font_default.c"
 
 
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
@@ -41,6 +42,16 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
   }else {
     return;
   }
+  char c = 'A';
+
+  uint8_t *glyph = fontdata_8x8 + ((uint8_t)c * 8);
+  vbe_draw_glyph_with_size(50, 50, glyph, 8, 8, 0xFFFFFF, 8, 16);
+  c = 'B';
+  glyph = fontdata_8x8 + ((uint8_t)c * 8);
+  vbe_draw_glyph_with_size(70, 50, glyph, 8, 8, 0xFFFFFF, 8, 16);
+  c = 'C';
+  glyph = fontdata_8x8 + ((uint8_t)c * 8);
+  vbe_draw_glyph_with_size(90, 50, glyph, 8, 8, 0xFFFFFF, 8, 16);
 
 //   init_terminal("Main Terminal");
 //   terminal_cursor_move(0, 200);
