@@ -64,7 +64,7 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
-    vbe_putbitmap_scaled(start_x, start_y + 200, apple_bitmap, 16, 16, scale);
+    vbe_draw_bitmap_scaled(start_x, start_y + 200, apple_bitmap, 16, 16, scale);
 }
 
 void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
@@ -114,7 +114,7 @@ void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
-    vbe_putbitmap_scaled(start_x, start_y + 200, potato_bitmap, 16, 16, scale);
+    vbe_draw_bitmap_scaled(start_x, start_y + 200, potato_bitmap, 16, 16, scale);
 }
 
 void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
@@ -176,7 +176,7 @@ void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
-    vbe_putbitmap_scaled(start_x, start_y + 200, saturn_bitmap, 16, 16, scale);
+    vbe_draw_bitmap_scaled(start_x, start_y + 200, saturn_bitmap, 16, 16, scale);
 }
 
 void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
@@ -246,5 +246,5 @@ void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
-    vbe_putbitmap_scaled(start_x, start_y + 200, axolote_bitmap, 16, 16, scale);
+    vbe_draw_bitmap_scaled(start_x, start_y + 200, axolote_bitmap, 16, 16, scale);
 }

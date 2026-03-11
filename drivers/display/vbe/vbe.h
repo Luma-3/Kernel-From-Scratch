@@ -13,7 +13,7 @@ enum vbe_result {
 };
 
 typedef struct s_vbe_info {
-    uint32_t framebuffer_addr;
+    uint64_t framebuffer_addr;
     uint32_t width;
     uint32_t height;
     uint32_t pitch;
@@ -40,12 +40,16 @@ bool vbe_detect(multiboot_info_t *mbi);
 
 enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
 
-enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height);
+enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height);
 
-enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale);
+enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale);
+
+enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color);
+
+enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t scale);
+
+enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t new_width, uint32_t new_height);
 
 enum vbe_result vbe_clear(uint32_t color);
-
-
 
 #endif
