@@ -3,7 +3,6 @@
 # include "mem.h"
 static struct s_vbe_info vbe_info = {0};
 
-
 uintptr_t vbe_get_framebuffer_addr() {
     return (uintptr_t)vbe_info.framebuffer_addr;
 }
@@ -207,18 +206,6 @@ enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uin
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_clear(uint32_t color) {
-    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
-    uint32_t off;
-    for (uint32_t y = 0; y < vbe_info.height; y++) {
-        for (uint32_t x = 0; x < vbe_info.width; x++) {
-            off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
-        }
-    }
-    return VBE_SUCCESS;
-}
-
 enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color) {
     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
     uint32_t off;
@@ -232,6 +219,81 @@ enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t h
         }
     }
     return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_draw_circle(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color) {
+    if(vbe_info.bpp != 24 && vbe_info.bpp != 32) return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    int32_t x = radius;
+    int32_t y = 0;
+    int32_t err = 0;
+
+    while (x >= y) {
+        off = (center_y + y) * vbe_info.pitch + (center_x + x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y + y) * vbe_info.pitch + (center_x - x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - y) * vbe_info.pitch + (center_x + x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - y) * vbe_info.pitch + (center_x - x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+
+        off = (center_y + x) * vbe_info.pitch + (center_x + y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y + x) * vbe_info.pitch + (center_x - y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - x) * vbe_info.pitch + (center_x + y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - x) * vbe_info.pitch + (center_x - y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+
+        y++;
+        err += 1 + 2*y;
+        if (2*(err-x) + 1 > 0) {
+            x--;
+            err += 1 - 2*x;
+        }
+    }
+    return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color) {
+    if(vbe_info.bpp != 24 && vbe_info.bpp != 32) return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    int32_t x = radius;
+    int32_t y = 0;
+    int32_t err = 0;
+
+    while (x >= y) {
+        for (int32_t i = center_x - x; i <= center_x + x; i++) {
+            off = (center_y + y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+            off = (center_y - y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+        }
+        for (int32_t i = center_x - y; i <= center_x + y; i++) {
+            off = (center_y + x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+            off = (center_y - x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+        }
+
+        y++;
+        err += 1 + 2*y;
+        if (2*(err-x) + 1 > 0) {
+            x--;
+            err += 1 - 2*x;
+        }
+    }
+    return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_clear(uint32_t color) {
+    return vbe_fill_rect(0, 0, vbe_info.width, vbe_info.height, color);
 }
 
 bool vbe_detect(multiboot_info_t *mbi) {

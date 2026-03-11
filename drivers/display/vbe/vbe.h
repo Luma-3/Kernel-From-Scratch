@@ -63,9 +63,13 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, ui
 
 enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t new_width, uint32_t new_height);
 
-enum vbe_result vbe_clear(uint32_t color);
+enum vbe_result vbe_draw_circle(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color);
+
+enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color);
 
 enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color);
+
+enum vbe_result vbe_clear(uint32_t color);
 
 void vbe_init(multiboot_info_t *mbi);
 
