@@ -33,7 +33,8 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
         "    RRRRRRRR    ",
         "     RRRRRR     ",
     };
-    
+
+    uint32_t apple_bitmap[16 * 16] = {0};
     // Dessiner la pomme pixel par pixel avec scaling 4x pour qu'elle soit visible
     const uint32_t scale = 4;
     for (uint32_t y = 0; y < 16; y++) {
@@ -53,6 +54,7 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
                 case ' ': continue; // Ne rien dessiner pour les espaces
                 default: continue;
             }
+            apple_bitmap[y * 16 + x] = color;
             
             // Dessiner un bloc de scale x scale pixels pour chaque pixel du sprite
             for (uint32_t sy = 0; sy < scale; sy++) {
@@ -62,6 +64,7 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
+    vbe_putbitmap_scaled(start_x, start_y + 200, apple_bitmap, 16, 16, scale);
 }
 
 void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
@@ -87,6 +90,7 @@ void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
         "   DLLLBBBDD    ",
         "    DDDDDD      "
     };
+    uint32_t potato_bitmap[16 * 16] = {0};
         const uint32_t scale = 4;
     for (uint32_t y = 0; y < 16; y++) {
         for (uint32_t x = 0; x < 16; x++) {
@@ -100,6 +104,7 @@ void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
                 case ' ': continue; // Ne rien dessiner pour les espaces
                 default: continue;
             }
+            potato_bitmap[y * 16 + x] = color;
             
             // Dessiner un bloc de scale x scale pixels pour chaque pixel du sprite
             for (uint32_t sy = 0; sy < scale; sy++) {
@@ -109,6 +114,7 @@ void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
+    vbe_putbitmap_scaled(start_x, start_y + 200, potato_bitmap, 16, 16, scale);
 }
 
 void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
@@ -143,6 +149,7 @@ void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
         "                "
     };
 
+    uint32_t saturn_bitmap[16 * 16] = {0};
     const uint32_t scale = 4;
     for (uint32_t y = 0; y < 16; y++) {
         for (uint32_t x = 0; x < 16; x++) {
@@ -161,6 +168,7 @@ void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
                 default: continue;
             }
 
+            saturn_bitmap[y * 16 + x] = color;
             for (uint32_t sy = 0; sy < scale; sy++) {
                 for (uint32_t sx = 0; sx < scale; sx++) {
                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
@@ -168,6 +176,7 @@ void draw_saturn_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
+    vbe_putbitmap_scaled(start_x, start_y + 200, saturn_bitmap, 16, 16, scale);
 }
 
 void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
@@ -206,6 +215,7 @@ void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
   };
 
 
+  uint32_t axolote_bitmap[16 * 16] = {0};
           const uint32_t scale = 4;
     for (uint32_t y = 0; y < 16; y++) {
         for (uint32_t x = 0; x < 16; x++) {
@@ -227,7 +237,7 @@ void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
                 case ' ': continue; // Ne rien dessiner pour les espaces
                 default: continue;
             }
-            
+            axolote_bitmap[y * 16 + x] = color;
             // Dessiner un bloc de scale x scale pixels pour chaque pixel du sprite
             for (uint32_t sy = 0; sy < scale; sy++) {
                 for (uint32_t sx = 0; sx < scale; sx++) {
@@ -236,4 +246,5 @@ void draw_axelote_on_bucket_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
+    vbe_putbitmap_scaled(start_x, start_y + 200, axolote_bitmap, 16, 16, scale);
 }

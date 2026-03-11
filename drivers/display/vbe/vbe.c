@@ -22,28 +22,26 @@ inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint8_t *bitmap, uint32_t width, uint32_t height, uint32_t color) {
+enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
-            if (bitmap[j * width + i]) {
-                if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
-                    return VBE_ERROR;
-                }
+            uint32_t color = bitmap[j * width + i];
+            if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
+                return VBE_ERROR;
             }
         }
     }
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint8_t *bitmap, uint32_t width, uint32_t height, uint32_t color, uint32_t scale) {
+enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
-            if (bitmap[j * width + i]) {
-                for (uint32_t sy = 0; sy < scale; sy++) {
-                    for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, color) != VBE_SUCCESS) {
-                            return VBE_ERROR;
-                        }
+            uint32_t color = bitmap[j * width + i];
+            for (uint32_t sy = 0; sy < scale; sy++) {
+                for (uint32_t sx = 0; sx < scale; sx++) {
+                    if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, color) != VBE_SUCCESS) {
+                        return VBE_ERROR;
                     }
                 }
             }
