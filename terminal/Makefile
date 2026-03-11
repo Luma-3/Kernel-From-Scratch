@@ -1,4 +1,4 @@
 
 # --- Object to be compiled ---
 
-obj-y += terminal/terminal.o
+# obj-y += terminal/terminal.o
