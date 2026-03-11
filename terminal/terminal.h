@@ -7,6 +7,8 @@
 #define MAX_TERMINALS 3
 #define CHAR_BY_LINE 160
 #define LINE_BY_SCREEN 45
+#define FONT_WIDTH 8u
+#define FONT_HEIGHT 16u
 
 enum kterm_err {
     KTERM_SUCCESS = 0,
@@ -27,41 +29,18 @@ struct terminal {
 
     uint32_t char_by_line;
     uint32_t line_by_screen;
-    uint8_t buffer[]
-    // enum display_color fg_color;
-    // enum display_color bg_color;
-    // TODO: probably should be removed and manage this otherwise
+    uint32_t font_height;
+    uint32_t font_width;
+    uint32_t fg_color;
+    uint32_t bg_color;
+    uint8_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
 };
 
 int32_t init_terminal(const char *name);
 
-// void terminal_put_char_with_color(const char c, const enum display_color fg,
-//                                   const enum display_color bg);
-// void terminal_put_char(const char c);
-
-void terminal_write(const char *data, uint32_t size);
-
-// void terminal_write_with_color(const char *data, uint32_t size,
-//                                const enum display_color fg,
-//                                const enum display_color bg);
-
-void terminal_writestring(const char *data);
-
-// void terminal_writestring_with_color(const char *data,
-//                                      const enum display_color fg,
-//                                      const enum display_color bg);
-
-void terminal_write_int(int value);
-
-void terminal_cursor_move(uint32_t x, uint32_t y);
-
-void terminal_put_pixel(uint32_t x, uint32_t y, uint32_t pixel_color);
-
-bool terminal_clear(void);
-
-// NEW API
-
-int32_t term_write(const uint8_t term_id, const int8_t *data,
+int32_t term_write(const uint8_t term_id, const uint8_t *data,
                    const uint32_t size);
+
+void term_poll();
 
 #endif

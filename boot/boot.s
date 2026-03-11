@@ -32,7 +32,7 @@
 .section .bss
 .align 16 /* 16 byte aligned stack for Complient of Sys V ABI */
 stack_bottom:
-.skip 16384 /* 16KB stack */
+.skip 64 * 1024 /* 16KB stack */
 stack_top:
 
 .section .text

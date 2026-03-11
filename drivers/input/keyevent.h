@@ -141,6 +141,6 @@ void kdb_push_event(struct key_event event);
  *
  * @return The key event popped from the buffer.
  */
-struct key_event kdb_pop_event();
+struct key_event kbd_pop_event();
 
 #endif // !__KFS_KEYEVENT_H

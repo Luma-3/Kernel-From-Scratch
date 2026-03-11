@@ -11,7 +11,7 @@ void kdb_push_event(struct key_event event) {
     }
 }
 
-struct key_event kdb_pop_event() {
+struct key_event kbd_pop_event() {
     // Return an empty event if the buffer is empty
     struct key_event event = {0};
     if (key_event_buffer_head != key_event_buffer_tail) {

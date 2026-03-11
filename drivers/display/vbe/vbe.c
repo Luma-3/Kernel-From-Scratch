@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-#include "vbe.h"
-#include "multiboot.h"
 
-struct s_vbe_info vbe_info = {0};
-=======
-# include "vbe.h"
-# include "multiboot.h"
-# include "mem.h"
+#include "vbe.h"
+#include "mem.h"
+#include "multiboot.h"
 static struct s_vbe_info vbe_info = {0};
->>>>>>> KFS1/feat/drivers/vbe
 
 inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     if (x >= vbe_info.width || y >= vbe_info.height)
@@ -29,12 +23,8 @@ inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     return VBE_SUCCESS;
 }
 
-<<<<<<< HEAD
-enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
-                              uint32_t width, uint32_t height) {
-=======
-enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height) {
->>>>>>> KFS1/feat/drivers/vbe
+enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
+                                uint32_t width, uint32_t height) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
@@ -46,13 +36,9 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, 
     return VBE_SUCCESS;
 }
 
-<<<<<<< HEAD
-enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y,
-                                     const uint32_t *bitmap, uint32_t width,
-                                     uint32_t height, uint32_t scale) {
-=======
-enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale) {
->>>>>>> KFS1/feat/drivers/vbe
+enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y,
+                                       const uint32_t *bitmap, uint32_t width,
+                                       uint32_t height, uint32_t scale) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
@@ -69,7 +55,9 @@ enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y, const uint32_t *b
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height,  uint32_t fg_color, uint32_t bg_color) {
+enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph,
+                               uint32_t glyph_width, uint32_t glyph_height,
+                               uint32_t fg_color, uint32_t bg_color) {
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
@@ -87,14 +75,18 @@ enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t 
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height,  uint32_t fg_color, uint32_t bg_color, uint32_t scale) {
+enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph,
+                                      uint32_t glyph_width,
+                                      uint32_t glyph_height, uint32_t fg_color,
+                                      uint32_t bg_color, uint32_t scale) {
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
             if (row & (1 << (7 - i))) {
                 for (uint32_t sy = 0; sy < scale; sy++) {
                     for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, fg_color) != VBE_SUCCESS) {
+                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy,
+                                         fg_color) != VBE_SUCCESS) {
                             return VBE_ERROR;
                         }
                     }
@@ -102,7 +94,8 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, ui
             } else {
                 for (uint32_t sy = 0; sy < scale; sy++) {
                     for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, bg_color) != VBE_SUCCESS) {
+                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy,
+                                         bg_color) != VBE_SUCCESS) {
                             return VBE_ERROR;
                         }
                     }
@@ -113,7 +106,11 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, ui
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t new_width, uint32_t new_height) {
+enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph,
+                                     uint32_t glyph_width,
+                                     uint32_t glyph_height, uint32_t fg_color,
+                                     uint32_t bg_color, uint32_t new_width,
+                                     uint32_t new_height) {
     for (uint32_t j = 0; j < new_height; j++) {
         uint32_t src_j = j * glyph_height / new_height;
         uint8_t row = glyph[src_j];
@@ -151,16 +148,11 @@ bool vbe_detect(multiboot_info_t *mbi) {
 }
 
 void vbe_init(multiboot_info_t *mbi) {
-<<<<<<< HEAD
-
-    vbe_info.framebuffer_addr = (uint32_t)mbi->framebuffer_addr;
-=======
-    if(vbe_info.framebuffer_addr != 0u) {
+    if (vbe_info.framebuffer_addr != 0u) {
         return;
     }
-    
-    vbe_info.framebuffer_addr = (uint64_t)mbi->framebuffer_addr;    
->>>>>>> KFS1/feat/drivers/vbe
+
+    vbe_info.framebuffer_addr = (uint64_t)mbi->framebuffer_addr;
     vbe_info.width = mbi->framebuffer_width;
     vbe_info.height = mbi->framebuffer_height;
     vbe_info.pitch = mbi->framebuffer_pitch;
