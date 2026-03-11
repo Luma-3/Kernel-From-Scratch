@@ -1,6 +1,6 @@
 # include "vbe.h"
 # include "multiboot.h"
-
+# include "mem.h"
 static struct s_vbe_info vbe_info = {0};
 
 inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
@@ -21,7 +21,7 @@ inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height) {
+enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
@@ -33,7 +33,7 @@ enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, ui
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale) {
+enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale) {
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
@@ -49,28 +49,40 @@ enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bit
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t color) {
+enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height,  uint32_t fg_color, uint32_t bg_color) {
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
             if (row & (1 << (7 - i))) {
-                if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
+                if (vbe_putpixel(x + i, y + j, fg_color) != VBE_SUCCESS) {
+                    return VBE_ERROR;
+                }
+            } else {
+                if (vbe_putpixel(x + i, y + j, bg_color) != VBE_SUCCESS) {
                     return VBE_ERROR;
                 }
             }
+        }
     }
     return VBE_SUCCESS;
-    }
 }
 
-enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t color, uint32_t scale) {
+enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height,  uint32_t fg_color, uint32_t bg_color, uint32_t scale) {
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
             if (row & (1 << (7 - i))) {
                 for (uint32_t sy = 0; sy < scale; sy++) {
                     for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, color) != VBE_SUCCESS) {
+                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, fg_color) != VBE_SUCCESS) {
+                            return VBE_ERROR;
+                        }
+                    }
+                }
+            } else {
+                for (uint32_t sy = 0; sy < scale; sy++) {
+                    for (uint32_t sx = 0; sx < scale; sx++) {
+                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, bg_color) != VBE_SUCCESS) {
                             return VBE_ERROR;
                         }
                     }
@@ -81,14 +93,18 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, ui
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_draw_glyph_with_size(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t color, uint32_t new_width, uint32_t new_height) {
+enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t new_width, uint32_t new_height) {
     for (uint32_t j = 0; j < new_height; j++) {
         uint32_t src_j = j * glyph_height / new_height;
         uint8_t row = glyph[src_j];
         for (uint32_t i = 0; i < new_width; i++) {
             uint32_t src_i = i * glyph_width / new_width;
             if (row & (1 << (7 - src_i))) {
-                if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
+                if (vbe_putpixel(x + i, y + j, fg_color) != VBE_SUCCESS) {
+                    return VBE_ERROR;
+                }
+            } else {
+                if (vbe_putpixel(x + i, y + j, bg_color) != VBE_SUCCESS) {
                     return VBE_ERROR;
                 }
             }
