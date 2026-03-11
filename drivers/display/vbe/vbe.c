@@ -96,6 +96,7 @@ enum vbe_result vbe_draw_glyph_with_size(uint32_t x, uint32_t y, uint8_t *glyph,
     }
     return VBE_SUCCESS;
 }
+
 enum vbe_result vbe_clear(uint32_t color) {
     for (uint32_t y = 0; y < vbe_info.height; y++) {
         for (uint32_t x = 0; x < vbe_info.width; x++) {
@@ -119,7 +120,7 @@ void vbe_init(multiboot_info_t *mbi) {
         return;
     }
     
-    vbe_info.framebuffer_addr = (uint32_t)mbi->framebuffer_addr;    
+    vbe_info.framebuffer_addr = (uint64_t)mbi->framebuffer_addr;    
     vbe_info.width = mbi->framebuffer_width;
     vbe_info.height = mbi->framebuffer_height;
     vbe_info.pitch = mbi->framebuffer_pitch;
