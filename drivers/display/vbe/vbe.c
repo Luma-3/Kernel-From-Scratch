@@ -3,6 +3,51 @@
 # include "mem.h"
 static struct s_vbe_info vbe_info = {0};
 
+
+uintptr_t vbe_get_framebuffer_addr() {
+    return (uintptr_t)vbe_info.framebuffer_addr;
+}
+
+inline uint32_t vbe_get_width() {
+    return vbe_info.width;
+}
+
+inline uint32_t vbe_get_height() {
+    return vbe_info.height;
+}
+
+inline uint32_t vbe_get_pitch() {
+    return vbe_info.pitch;
+}
+
+inline uint32_t vbe_get_bpp() {
+    return vbe_info.bpp;
+}
+
+inline vbe_color_info_t *vbe_get_color_info() {
+    return &vbe_info.color_info;
+}
+
+inline enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color) {
+    if(vbe_info.bpp != 24 && vbe_info.bpp != 32) return VBE_ERROR;
+
+    if (x >= vbe_info.width || y >= vbe_info.height) return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+
+    switch (vbe_info.bpp) {
+        case 32:
+            *color = *(uint32_t *)(fb + off);
+            return VBE_SUCCESS;
+        case 24:
+            *color = fb[off] | (fb[off + 1] << 8) | (fb[off + 2] << 16);
+            return VBE_SUCCESS;
+        default:
+            return VBE_ERROR;
+    }
+}
+
 static inline __attribute__((always_inline)) void vbe_write(uint8_t *addr, uint32_t bpp, uint32_t value) {
     switch (bpp) {
         case 32:
@@ -14,7 +59,7 @@ static inline __attribute__((always_inline)) void vbe_write(uint8_t *addr, uint3
             addr[2] = (uint8_t)((value >> 16) & 0xFF);
             break;
     }
-};
+}
 
 inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     if(vbe_info.bpp != 24 && vbe_info.bpp != 32) return VBE_ERROR;
@@ -186,7 +231,7 @@ void vbe_init(multiboot_info_t *mbi) {
         return;
     }
     
-    vbe_info.framebuffer_addr = (uint32_t)mbi->framebuffer_addr;    
+    vbe_info.framebuffer_addr = (uintptr_t)mbi->framebuffer_addr;    
     vbe_info.width = mbi->framebuffer_width;
     vbe_info.height = mbi->framebuffer_height;
     vbe_info.pitch = mbi->framebuffer_pitch;
