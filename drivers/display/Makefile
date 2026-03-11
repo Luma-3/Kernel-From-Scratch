@@ -1,7 +1,10 @@
 
-DIR = drivers/display
-# --- Objects to be compiled ---
+#--- Standard Variables ---
 
-obj-y += $(DIR)/display.o
-obj-y += $(DIR)/vga/vga.o
-obj-y += $(DIR)/vbe/vbe.o
+DIR := drivers/display
+
+#--- Sub directories ---
+
+SUBDIRS := $(DIR)/vbe
+
+include $(addsuffix /Makefile,$(SUBDIRS))

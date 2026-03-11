@@ -1,96 +1,90 @@
 # include "vbe.h"
+# include "multiboot.h"
 # include "font_default.c"
-# include "../display.h"
 
-static inline void vbe_putpixel(display_t *display, uint32_t x, uint32_t y, uint32_t color) {
-    if (x >= display->data.width || y >= display->data.height) return;
+struct s_vbe_info vbe_info = {0};
 
-    uint8_t *fb = display->data.framebuffer;
-    uint32_t off = y * display->data.pitch + x * (display->data.bpp / 8);
+inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
+    if (x >= vbe_info.width || y >= vbe_info.height) return VBE_ERROR;
 
-    if (display->data.bpp == 32) {
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+
+    if (vbe_info.bpp == 32) {
         *(uint32_t *)(fb + off) = color;
-    } else if (display->data.bpp == 24) {
+    } else if (vbe_info.bpp == 24) {
         fb[off + 0] = (uint8_t)(color & 0xFF);
         fb[off + 1] = (uint8_t)((color >> 8) & 0xFF);
         fb[off + 2] = (uint8_t)((color >> 16) & 0xFF);
+    }else {
+        return VBE_ERROR;
     }
+    return VBE_SUCCESS;
 }
-static inline void vbe_putentryat(display_t *display, uint32_t fg_color, uint32_t bg_color, char c, uint32_t x, uint32_t y) {
 
-    uint32_t px = x * VBE_FONT_WIDTH;   // cell -> pixel
-    uint32_t py = y * VBE_FONT_HEIGHT;   // cell -> pixel
-
-    const uint8_t *glyph = fontdata_8x8 + ((uint8_t)c * VBE_FONT_SOURCE_HEIGHT);
-
-
-
-    for (uint32_t cy = 0; cy < VBE_FONT_HEIGHT; cy++) {
-        uint8_t row = glyph[cy / VBE_FONT_SCALE_Y];
-        for (uint32_t cx = 0; cx < VBE_FONT_WIDTH; cx++) {
-            uint32_t col = (row & (1u << (7 - (cx / VBE_FONT_SCALE_X)))) ? fg_color : bg_color;
-            vbe_putpixel(display, px + cx, py + cy, col);
+enum vbe_result vbe_putbitmap(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height) {
+    for (uint32_t j = 0; j < height; j++) {
+        for (uint32_t i = 0; i < width; i++) {
+            uint32_t color = bitmap[j * width + i];
+            if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
+                return VBE_ERROR;
+            }
         }
     }
+    return VBE_SUCCESS;
 }
 
-static inline enum display_result vbe_execute_command(struct s_display*display, struct s_display_command *command) {
-    switch (command->cmd) {
-        case DISPLAY_CMD_CLEAR:
-             // Implement VBE-specific clear logic here
-            return DISPLAY_SUCCESS;
-        case DISPLAY_CMD_SET_COLOR:
-            // Implement VBE-specific color setting logic here
-            return DISPLAY_SUCCESS;
-        case DISPLAY_CMD_PUT_PIXEL:
-            vbe_putpixel(display, command->put_pixel.x, command->put_pixel.y, command->put_pixel.pixel_color);
-            return DISPLAY_SUCCESS;
-        case DISPLAY_CMD_PUT_CHAR:
-            vbe_putentryat(display, command->put_char.fg, command->put_char.bg, command->put_char.c, command->put_char.x, command->put_char.y);
-            return DISPLAY_SUCCESS;
-        case DISPLAY_CMD_PUT_STRING:
-            // Implement VBE-specific string drawing logic here
-            return DISPLAY_SUCCESS;
-        default:
-            return DISPLAY_ERROR; // Unknown command
+enum vbe_result vbe_putbitmap_scaled(uint32_t x, uint32_t y, const uint32_t *bitmap, uint32_t width, uint32_t height, uint32_t scale) {
+    for (uint32_t j = 0; j < height; j++) {
+        for (uint32_t i = 0; i < width; i++) {
+            uint32_t color = bitmap[j * width + i];
+            for (uint32_t sy = 0; sy < scale; sy++) {
+                for (uint32_t sx = 0; sx < scale; sx++) {
+                    if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy, color) != VBE_SUCCESS) {
+                        return VBE_ERROR;
+                    }
+                }
+            }
+        }
     }
+    return VBE_SUCCESS;
 }
 
-void init_vbe(struct s_display *display, const display_boot_config_t *boot_config) {
-	display->type = DRIVER_VBE;
-	display->execute_command = &vbe_execute_command;
-    display->data.e_color.fg = COLOR_WHITE;
-    display->data.e_color.bg = COLOR_BLACK;
-    if (boot_config != NULL) {
-        display->data.framebuffer = (void *)(uintptr_t)boot_config->framebuffer_addr;
-        display->data.width = boot_config->framebuffer_width;
-        display->data.height = boot_config->framebuffer_height;
-        display->data.pitch = boot_config->framebuffer_pitch;
-        display->data.bpp = boot_config->framebuffer_bpp;
-        display->data.char_width = boot_config->framebuffer_width / VBE_FONT_WIDTH;
-        display->data.char_height = boot_config->framebuffer_height / VBE_FONT_HEIGHT;
-        display->data.font.width = VBE_FONT_WIDTH;
-        display->data.font.height = VBE_FONT_HEIGHT;
-        display->data.color_info.rgb.framebuffer_blue_field_position = boot_config->color_info.rgb.framebuffer_blue_field_position;
-        display->data.color_info.rgb.framebuffer_blue_mask_size = boot_config->color_info.rgb.framebuffer_blue_mask_size;
-        display->data.color_info.rgb.framebuffer_green_field_position = boot_config->color_info.rgb.framebuffer_green_field_position;
-        display->data.color_info.rgb.framebuffer_green_mask_size = boot_config->color_info.rgb.framebuffer_green_mask_size;
-        display->data.color_info.rgb.framebuffer_red_field_position = boot_config->color_info.rgb.framebuffer_red_field_position;
-        display->data.color_info.rgb.framebuffer_red_mask_size = boot_config->color_info.rgb.framebuffer_red_mask_size;
-    } else {
-        // Set default values or handle error
-        display->data.framebuffer = NULL;
-        display->data.width = 0;
-        display->data.height = 0;
-        display->data.pitch = 0;
-        display->data.bpp = 0;
-        display->data.char_width = 0;
-        display->data.char_height = 0;
-        display->data.color_info.rgb.framebuffer_blue_field_position = 0;
-        display->data.color_info.rgb.framebuffer_blue_mask_size = 0;
-        display->data.color_info.rgb.framebuffer_green_field_position = 0;
-        display->data.color_info.rgb.framebuffer_green_mask_size = 0;
-        display->data.color_info.rgb.framebuffer_red_field_position = 0;
-        display->data.color_info.rgb.framebuffer_red_mask_size = 0;
+enum vbe_result vbe_clear(uint32_t color) {
+    for (uint32_t y = 0; y < vbe_info.height; y++) {
+        for (uint32_t x = 0; x < vbe_info.width; x++) {
+            if (vbe_putpixel(x, y, color) != VBE_SUCCESS) {
+                return VBE_ERROR;
+            }
+        }
+    }
+    return VBE_SUCCESS;
+}
+
+bool vbe_detect(multiboot_info_t *mbi) {
+    return (mbi->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) != 0u &&
+      mbi->framebuffer_addr != 0u &&
+      mbi->framebuffer_type == 1u &&
+      (mbi->framebuffer_bpp == 24u || mbi->framebuffer_bpp == 32u);
+}
+
+void vbe_init(multiboot_info_t *mbi) {
+    
+    vbe_info.framebuffer_addr = (uint32_t)mbi->framebuffer_addr;    
+    vbe_info.width = mbi->framebuffer_width;
+    vbe_info.height = mbi->framebuffer_height;
+    vbe_info.pitch = mbi->framebuffer_pitch;
+    vbe_info.bpp = mbi->framebuffer_bpp;
+
+    if (mbi->framebuffer_type == 1u) {
+        vbe_info.color_info.rgb.framebuffer_red_field_position = mbi->color_info.rgb.framebuffer_red_field_position;
+        vbe_info.color_info.rgb.framebuffer_red_mask_size = mbi->color_info.rgb.framebuffer_red_mask_size;
+        vbe_info.color_info.rgb.framebuffer_green_field_position = mbi->color_info.rgb.framebuffer_green_field_position;
+        vbe_info.color_info.rgb.framebuffer_green_mask_size = mbi->color_info.rgb.framebuffer_green_mask_size;
+        vbe_info.color_info.rgb.framebuffer_blue_field_position = mbi->color_info.rgb.framebuffer_blue_field_position;
+        vbe_info.color_info.rgb.framebuffer_blue_mask_size = mbi->color_info.rgb.framebuffer_blue_mask_size;
+    } else if (mbi->framebuffer_type == 0u) {
+        vbe_info.color_info.palette.framebuffer_palette_addr = mbi->color_info.palette.framebuffer_palette_addr;
+        vbe_info.color_info.palette.framebuffer_palette_num_colors = mbi->color_info.palette.framebuffer_palette_num_colors;
     }
 }
