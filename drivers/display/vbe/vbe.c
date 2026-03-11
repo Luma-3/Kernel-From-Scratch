@@ -1,7 +1,7 @@
 # include "vbe.h"
 # include "multiboot.h"
 
-struct s_vbe_info vbe_info = {0};
+static struct s_vbe_info vbe_info = {0};
 
 inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
     if (x >= vbe_info.width || y >= vbe_info.height) return VBE_ERROR;
@@ -115,6 +115,9 @@ bool vbe_detect(multiboot_info_t *mbi) {
 }
 
 void vbe_init(multiboot_info_t *mbi) {
+    if(vbe_info.framebuffer_addr != 0u) {
+        return;
+    }
     
     vbe_info.framebuffer_addr = (uint32_t)mbi->framebuffer_addr;    
     vbe_info.width = mbi->framebuffer_width;
