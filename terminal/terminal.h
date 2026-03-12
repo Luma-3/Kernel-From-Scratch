@@ -27,15 +27,11 @@ enum kterm_color {
     COLOR_YELLOW = 0xFFFF00,
     COLOR_CYAN = 0x00FFFF,
     COLOR_MAGENTA = 0xFF00FF,
+};
 
-    COLOR_LIGHT_BLACK = 0x404040,
-    COLOR_LIGHT_GREY = 0xC0C0C0,
-    COLOR_LIGHT_RED = 0xFF8080,
-    COLOR_LIGHT_GREEN = 0x80FF80,
-    COLOR_LIGHT_BLUE = 0x8080FF,
-    COLOR_LIGHT_YELLOW = 0xFFFF80,
-    COLOR_LIGHT_CYAN = 0x80FFFF,
-    COLOR_LIGHT_MAGENTA = 0xFF80FF,
+static const uint32_t ansii_color_codes[] = {
+    COLOR_BLACK, COLOR_RED,     COLOR_GREEN, COLOR_YELLOW,
+    COLOR_BLUE,  COLOR_MAGENTA, COLOR_CYAN,  COLOR_GREY,
 };
 
 struct cursor_pos {
@@ -52,8 +48,8 @@ struct terminal {
     uint32_t line_by_screen;
     uint32_t font_height;
     uint32_t font_width;
-    enum kterm_color bg_color;
-    enum kterm_color fg_color;
+    uint8_t bg_color;
+    uint8_t fg_color;
     // 4 bit for fg, 4 bit for bg, 8 bit for char
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
 };

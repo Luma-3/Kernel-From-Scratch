@@ -37,6 +37,7 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     }
 
     init_terminal("Main Terminal");
+    init_terminal("Secondary Terminal");
 
     ps2_init();
     while (1) {
