@@ -118,7 +118,7 @@ int32_t init_terminal(const char *name) {
     kmemset(term->buffer, ' ', term->char_by_line * term->line_by_screen);
     // TODO : draw Rect bg_color;
 
-    term_write(term->id, (const uint8_t *)"\033[34;45mTerminal\n Test\b", 28);
+    term_write(term->id, (const uint8_t *)"\033[34mTerminal\n Test\b\033[0m", 28);
 
     return KTERM_SUCCESS;
 }

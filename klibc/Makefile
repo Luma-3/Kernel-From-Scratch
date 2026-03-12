@@ -23,7 +23,10 @@ obj-y += $(DIR)/math/klmin.o
 obj-y += $(DIR)/math/klmax.o
 
 # Memory functions
-
 obj-y += $(DIR)/memory/kmemset.o
 obj-y += $(DIR)/memory/kmemmove.o
 obj-y += $(DIR)/memory/kmemcpy.o
+
+# Utility functions
+obj-y += $(DIR)/utility/print_utility.o
+obj-y += $(DIR)/utility/printf.o

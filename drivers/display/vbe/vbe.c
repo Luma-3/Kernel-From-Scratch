@@ -43,14 +43,14 @@ inline enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color) {
 static inline __attribute__((always_inline)) void
 vbe_write(uint8_t *addr, uint32_t bpp, uint32_t value) {
     switch (bpp) {
-    case 32:
-        *(uint32_t *)addr = value;
-        break;
-    case 24:
-        addr[0] = (uint8_t)(value & 0xFF);
-        addr[1] = (uint8_t)((value >> 8) & 0xFF);
-        addr[2] = (uint8_t)((value >> 16) & 0xFF);
-        break;
+        case 32:
+            *(uint32_t *)addr = value;
+            break;
+        case 24:
+            addr[0] = (uint8_t)(value & 0xFF);
+            addr[1] = (uint8_t)((value >> 8) & 0xFF);
+            addr[2] = (uint8_t)((value >> 16) & 0xFF);
+            break;
     }
 }
 
@@ -74,7 +74,15 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
         return VBE_ERROR;
 
     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t bytes_per_pixel = vbe_info.bpp / 8;
     uint32_t off;
+    if(vbe_info.bpp == 32) {
+        for (uint32_t j = 0; j < height; j++) {
+            uint32_t off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
+            kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+        }
+        return VBE_SUCCESS;
+    }
     uint32_t pixel_x;
     uint32_t pixel_y;
     for (uint32_t j = 0; j < height; j++) {
@@ -84,11 +92,14 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
             pixel_y = y + j;
             if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
                 return VBE_ERROR;
-            off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
+            off = pixel_y * vbe_info.pitch + pixel_x * bytes_per_pixel;
+            fb[off] = (uint8_t)(color & 0xFF);
+            fb[off + 1] = (uint8_t)((color >> 8) & 0xFF);
+            fb[off + 2] = (uint8_t)((color >> 16) & 0xFF);
         }
     }
     return VBE_SUCCESS;
+    
 }
 
 enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y,

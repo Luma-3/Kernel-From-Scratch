@@ -1,3 +1,7 @@
+#include "limits.h"
+#include "mem.h"
+#define INT_MIN_STR "-2147483648"
+#define INT_MAX_STR "2147483647"
 
 int kitoa(int value, char *str) {
     if(!str) {
@@ -7,6 +11,16 @@ int kitoa(int value, char *str) {
     char *ptr1 = str;
     char tmp_char;
     int tmp_value;
+
+    if(value == INT_MIN) {
+        kmemcpy(str, INT_MIN_STR, sizeof(INT_MIN_STR));
+        return 11;
+    }
+
+    if(value == INT_MAX) {
+        kmemcpy(str, INT_MAX_STR, sizeof(INT_MAX_STR));
+        return 10;
+    }
 
     if (value < 0) {
         value = -value;

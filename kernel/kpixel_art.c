@@ -64,7 +64,7 @@ void draw_apple_vbe(uint32_t start_x, uint32_t start_y) {
             }
         }
     }
-    vbe_draw_bitmap_scaled(start_x, start_y + 200, apple_bitmap, 16, 16, scale);
+    vbe_draw_bitmap(start_x, start_y + 200, apple_bitmap, 16, 16/* , scale */);
 }
 
 void draw_potato_vbe(uint32_t start_x, uint32_t start_y) {
