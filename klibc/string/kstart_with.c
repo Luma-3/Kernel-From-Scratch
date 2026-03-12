@@ -4,7 +4,7 @@
 
 #include "string.h"
 
-bool k_starts_with(const char *str, const char *prefix) {
+bool kstarts_with(const char *str, const char *prefix) {
     while (*prefix && *str) {
         if (*str++ != *prefix++) {
             return false;

@@ -115,7 +115,7 @@ int32_t init_terminal(const char *name) {
     term->bg_color = COLOR_BLACK;
     term->fg_color = COLOR_GREY;
 
-    k_memset(term->buffer, ' ', term->char_by_line * term->line_by_screen);
+    kmemset(term->buffer, ' ', term->char_by_line * term->line_by_screen);
     // TODO : draw Rect bg_color;
 
     term_write(term->id, (const uint8_t *)"\033[34;45mTerminal\n Test\b", 28);

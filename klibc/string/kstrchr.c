@@ -4,7 +4,7 @@
 
 #include "string.h"
 
-const char *k_strchr(const char *str, int c) {
+const char *kstrchr(const char *str, int c) {
     const char *move = str;
     c = (unsigned char)c;
 

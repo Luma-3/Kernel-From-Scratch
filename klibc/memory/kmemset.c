@@ -4,7 +4,7 @@
 
 #include "mem.h"
 
-void *k_memset(void *s, int c, uint32_t n) {
+void *kmemset(void *s, int c, size_t n) {
     unsigned char *p = (unsigned char*) s;
     c = (unsigned char)c;
 

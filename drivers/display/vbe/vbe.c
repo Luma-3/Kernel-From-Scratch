@@ -309,13 +309,13 @@ enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y,
     int32_t err = 0;
 
     while (x >= y) {
-        for (int32_t i = center_x - x; i <= center_x + x; i++) {
+        for (uint32_t i = center_x - x; i <= center_x + x; i++) {
             off = (center_y + y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
             vbe_write(fb + off, vbe_info.bpp, color);
             off = (center_y - y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
             vbe_write(fb + off, vbe_info.bpp, color);
         }
-        for (int32_t i = center_x - y; i <= center_x + y; i++) {
+        for (uint32_t i = center_x - y; i <= center_x + y; i++) {
             off = (center_y + x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
             vbe_write(fb + off, vbe_info.bpp, color);
             off = (center_y - x) * vbe_info.pitch + i * (vbe_info.bpp / 8);

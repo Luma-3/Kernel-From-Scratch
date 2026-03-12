@@ -22,7 +22,7 @@ uint32_t decode_ansii_color(const char *color_str, uint32_t default_color) {
 
 void handle_ansii_esc_seq(struct terminal *term, const char **seq,
                           uint32_t default_color) {
-    if (k_starts_with(*seq, "\033[") == false) {
+    if (kstarts_with(*seq, "\033[") == false) {
         return;
     }
 
@@ -41,8 +41,8 @@ void handle_ansii_esc_seq(struct terminal *term, const char **seq,
     uint32_t fg_color = term->fg_color;
     uint32_t bg_color = term->bg_color;
 
-    while(*p != '\0' && *p != 'm') {
-        if(*p == ';') {
+    while (*p != '\0' && *p != 'm') {
+        if (*p == ';') {
             ++p;
             continue;
         }
@@ -65,7 +65,7 @@ void handle_ansii_esc_seq(struct terminal *term, const char **seq,
             ++p; // Skip the color code and 'm'
         }
     }
-    if(*p == 'm') {
+    if (*p == 'm') {
         term->fg_color = fg_color;
         term->bg_color = bg_color;
         ++p;

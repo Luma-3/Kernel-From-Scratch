@@ -12,7 +12,7 @@
  * @param x The integer for which to compute the absolute value.
  * @return The absolute value of x.
  */
-int k_abs(int x);
+int kabs(int x);
 
 /**
  * Computes the maximum of two integers.
@@ -20,7 +20,7 @@ int k_abs(int x);
  * @param b The second integer.
  * @return The larger of the two integers.
  */
-int k_max(int a, int b);
+int kmax(int a, int b);
 
 /**
  * Computes the minimum of two integers.
@@ -28,7 +28,7 @@ int k_max(int a, int b);
  * @param b The second integer.
  * @return The smaller of the two integers.
  */
-int k_min(int a, int b);
+int kmin(int a, int b);
 
 /**
  * Computes the power of an integer.
@@ -36,14 +36,14 @@ int k_min(int a, int b);
  * @param exp The exponent value. If exp is negative, the function returns 0 for simplicity.
  * @return The result of base raised to the power of exp.
  */
-int k_pow(int base, int exp);
+int kpow(int base, int exp);
 
 /**
  * Computes the absolute value of a long integer.
  * @param x The long integer for which to compute the absolute value.
  * @return The absolute value of x.
  */
-long k_labs(long x);
+long klabs(long x);
 
 /**
 * Computes the maximum of two long integers.
@@ -51,7 +51,7 @@ long k_labs(long x);
 * @param b The second long integer.
 * @return The larger of the two long integers.
 */
-long k_lmax(long a, long b);
+long klmax(long a, long b);
 
 /**
  * Computes the minimum of two long integers.
@@ -59,7 +59,7 @@ long k_lmax(long a, long b);
  * @param b The second long integer.
  * @return The smaller of the two long integers.
  */
-long k_lmin(long a, long b);
+long klmin(long a, long b);
 
 /**
  * Computes the power of a long integer.
@@ -67,7 +67,7 @@ long k_lmin(long a, long b);
  * @param exp The exponent value. If exp is negative, the function returns 0 for simplicity.
  * @return
  */
-long k_lpow(long base, long exp);
+long klpow(long base, long exp);
 
 
 #endif //__KFS_MATH_H

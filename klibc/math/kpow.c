@@ -2,7 +2,7 @@
 // Created by gcaptari on 2/27/26.
 //
 
-long k_lpow(long base, long exp) {
+int kpow(int base, int exp) {
     if (exp < 0) {
         return 0; // For simplicity, we return 0 for negative exponents
     }
