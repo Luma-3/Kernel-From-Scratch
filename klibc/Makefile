@@ -8,6 +8,7 @@ obj-y += $(DIR)/string/k_strcmp.o
 obj-y += $(DIR)/string/k_strncmp.o
 obj-y += $(DIR)/string/k_strchr.o
 obj-y += $(DIR)/string/k_strrchr.o
+obj-y += $(DIR)/string/k_starts_with.o
 
 # Math functions
 obj-y += $(DIR)/math/k_abs.o

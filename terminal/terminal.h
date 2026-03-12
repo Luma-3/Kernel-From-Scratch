@@ -19,23 +19,23 @@ enum kterm_err {
 
 // 16 color palette
 enum kterm_color {
-    BLACK = 0x000000,
-    WHITE = 0xFFFFFF,
-    RED = 0xFF0000,
-    GREEN = 0x00FF00,
-    BLUE = 0x0000FF,
-    YELLOW = 0xFFFF00,
-    CYAN = 0x00FFFF,
-    MAGENTA = 0xFF00FF,
+    COLOR_BLACK = 0x000000,
+    COLOR_GREY = 0x808080,
+    COLOR_RED = 0xFF0000,
+    COLOR_GREEN = 0x00FF00,
+    COLOR_BLUE = 0x0000FF,
+    COLOR_YELLOW = 0xFFFF00,
+    COLOR_CYAN = 0x00FFFF,
+    COLOR_MAGENTA = 0xFF00FF,
 
-    LIGHT_BLACK = 0x404040,
-    LIGHT_WHITE = 0xC0C0C0,
-    LIGHT_RED = 0xFF8080,
-    LIGHT_GREEN = 0x80FF80,
-    LIGHT_BLUE = 0x8080FF,
-    LIGHT_YELLOW = 0xFFFF80,
-    LIGHT_CYAN = 0x80FFFF,
-    LIGHT_MAGENTA = 0xFF80FF,
+    COLOR_LIGHT_BLACK = 0x404040,
+    COLOR_LIGHT_GREY = 0xC0C0C0,
+    COLOR_LIGHT_RED = 0xFF8080,
+    COLOR_LIGHT_GREEN = 0x80FF80,
+    COLOR_LIGHT_BLUE = 0x8080FF,
+    COLOR_LIGHT_YELLOW = 0xFFFF80,
+    COLOR_LIGHT_CYAN = 0x80FFFF,
+    COLOR_LIGHT_MAGENTA = 0xFF80FF,
 };
 
 struct cursor_pos {
@@ -64,5 +64,8 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
                    const uint32_t size);
 
 void term_poll();
+
+void handle_ansii_esc_seq(struct terminal *term, const char **seq,
+                          uint32_t default_color);
 
 #endif

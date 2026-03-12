@@ -41,11 +41,11 @@ static void backspace(struct terminal *term) {
     }
 
     vbe_fill_rect(term->cursor.x * term->font_width,
-                  term->cursor.y * term->font_height,
-                  (term->cursor.x + 1) * term->font_width,
-                  term->cursor.y * term->font_height, term->bg_color);
-    // TODO: handle blank char
+                  term->cursor.y * term->font_height, term->font_width,
+                  term->font_height, term->bg_color);
 }
+
+static void scroll(struct terminal *term) {}
 
 static int32_t handle_special_char(struct terminal *term, const int8_t c) {
 
@@ -68,32 +68,23 @@ static int32_t handle_special_char(struct terminal *term, const int8_t c) {
     return 0;
 }
 
-// static int32_t draw_buffer(struct terminal *term, uint32_t tx, uint32_t ty) {
-//
-// for (uint32_t i = term->cursor.x; i < )
-//
-//     // TODO : ADD clear Rect form VBE here
-//     if (vbe_draw_glyph_sized(term->cursor.x * term->font_width,
-//                              term->cursor.y * term->font_height, font_buffer,
-//                              8, 8, term->fg_color, term->fg_color,
-//                              term->font_width, term->font_height))
-//         return KTERM_ERR_INVALID_CHAR;
-// }
-
-static int32_t put_char(struct terminal *term, const uint8_t c) {
+static int32_t putchar(struct terminal *term, const uint8_t c) {
 
     if (handle_special_char(term, c))
         return KTERM_SUCCESS;
 
-    term->buffer[term->cursor.x + term->cursor.y] = c;
+    term->buffer[term->cursor.x + term->cursor.y] =
+        (term->fg_color << 12) | (term->bg_color << 8) | c;
 
     uint8_t *font_buffer = char_to_font(c);
 
     if (vbe_draw_glyph_sized(term->cursor.x * term->font_width,
                              term->cursor.y * term->font_height, font_buffer, 8,
                              8, term->fg_color, term->bg_color,
-                             term->font_width, term->font_height))
+                             term->font_width, term->font_height)) {
         return KTERM_ERR_INVALID_CHAR;
+    }
+
     term->cursor.x++;
     if (term->cursor.x >= term->char_by_line) {
         term->cursor.x = 0;
@@ -121,13 +112,13 @@ int32_t init_terminal(const char *name) {
     term->line_by_screen = LINE_BY_SCREEN;
     term->font_height = FONT_HEIGHT;
     term->font_width = FONT_WIDTH;
-    term->bg_color = BLACK;
-    term->fg_color = WHITE;
+    term->bg_color = COLOR_BLACK;
+    term->fg_color = COLOR_GREY;
 
     k_memset(term->buffer, ' ', term->char_by_line * term->line_by_screen);
     // TODO : draw Rect bg_color;
 
-    term_write(term->id, (const uint8_t *)"Terminal\n Test\b", 14);
+    term_write(term->id, (const uint8_t *)"\033[34;45mTerminal\n Test\b", 28);
 
     return KTERM_SUCCESS;
 }
@@ -146,7 +137,8 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
     uint32_t err;
 
     while (it < end && *it != '\0') {
-        if ((err = put_char(term, *it)) != KTERM_SUCCESS)
+        handle_ansii_esc_seq(term, (const char **)&it, COLOR_GREY);
+        if ((err = putchar(term, *it)) != KTERM_SUCCESS)
             return err;
         ++it;
     }
