@@ -4,33 +4,88 @@
 #include "multiboot.h"
 static struct s_vbe_info vbe_info = {0};
 
-inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
+uintptr_t vbe_get_framebuffer_addr() {
+    return (uintptr_t)vbe_info.framebuffer_addr;
+}
+
+inline uint32_t vbe_get_width() { return vbe_info.width; }
+
+inline uint32_t vbe_get_height() { return vbe_info.height; }
+
+inline uint32_t vbe_get_pitch() { return vbe_info.pitch; }
+
+inline uint32_t vbe_get_bpp() { return vbe_info.bpp; }
+
+inline vbe_color_info_t *vbe_get_color_info() { return &vbe_info.color_info; }
+
+inline enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
     if (x >= vbe_info.width || y >= vbe_info.height)
         return VBE_ERROR;
 
     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
 
-    if (vbe_info.bpp == 32) {
-        *(uint32_t *)(fb + off) = color;
-    } else if (vbe_info.bpp == 24) {
-        fb[off + 0] = (uint8_t)(color & 0xFF);
-        fb[off + 1] = (uint8_t)((color >> 8) & 0xFF);
-        fb[off + 2] = (uint8_t)((color >> 16) & 0xFF);
-    } else {
+    switch (vbe_info.bpp) {
+    case 32:
+        *color = *(uint32_t *)(fb + off);
+        return VBE_SUCCESS;
+    case 24:
+        *color = fb[off] | (fb[off + 1] << 8) | (fb[off + 2] << 16);
+        return VBE_SUCCESS;
+    default:
         return VBE_ERROR;
     }
+}
+
+static inline __attribute__((always_inline)) void
+vbe_write(uint8_t *addr, uint32_t bpp, uint32_t value) {
+    switch (bpp) {
+    case 32:
+        *(uint32_t *)addr = value;
+        break;
+    case 24:
+        addr[0] = (uint8_t)(value & 0xFF);
+        addr[1] = (uint8_t)((value >> 8) & 0xFF);
+        addr[2] = (uint8_t)((value >> 16) & 0xFF);
+        break;
+    }
+}
+
+inline enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    if (x >= vbe_info.width || y >= vbe_info.height)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+
+    vbe_write(fb + off, vbe_info.bpp, color);
     return VBE_SUCCESS;
 }
 
 enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
                                 uint32_t width, uint32_t height) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    uint32_t pixel_x;
+    uint32_t pixel_y;
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
-            if (vbe_putpixel(x + i, y + j, color) != VBE_SUCCESS) {
+            pixel_x = x + i;
+            pixel_y = y + j;
+            if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
                 return VBE_ERROR;
-            }
+            off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
         }
     }
     return VBE_SUCCESS;
@@ -39,15 +94,27 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
 enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y,
                                        const uint32_t *bitmap, uint32_t width,
                                        uint32_t height, uint32_t scale) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    uint32_t pixel_x;
+    uint32_t pixel_y;
+
     for (uint32_t j = 0; j < height; j++) {
         for (uint32_t i = 0; i < width; i++) {
             uint32_t color = bitmap[j * width + i];
             for (uint32_t sy = 0; sy < scale; sy++) {
                 for (uint32_t sx = 0; sx < scale; sx++) {
-                    if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy,
-                                     color) != VBE_SUCCESS) {
+
+                    pixel_x = x + i * scale + sx;
+                    pixel_y = y + j * scale + sy;
+                    if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
                         return VBE_ERROR;
-                    }
+                    off =
+                        pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+                    vbe_write(fb + off, vbe_info.bpp, color);
                 }
             }
         }
@@ -58,17 +125,26 @@ enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y,
 enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph,
                                uint32_t glyph_width, uint32_t glyph_height,
                                uint32_t fg_color, uint32_t bg_color) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    uint32_t pixel_x;
+    uint32_t pixel_y;
+
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
+            pixel_x = x + i;
+            pixel_y = y + j;
+            if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+                return VBE_ERROR;
+            off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
             if (row & (1 << (7 - i))) {
-                if (vbe_putpixel(x + i, y + j, fg_color) != VBE_SUCCESS) {
-                    return VBE_ERROR;
-                }
+                vbe_write(fb + off, vbe_info.bpp, fg_color);
             } else {
-                if (vbe_putpixel(x + i, y + j, bg_color) != VBE_SUCCESS) {
-                    return VBE_ERROR;
-                }
+                vbe_write(fb + off, vbe_info.bpp, bg_color);
             }
         }
     }
@@ -79,25 +155,40 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph,
                                       uint32_t glyph_width,
                                       uint32_t glyph_height, uint32_t fg_color,
                                       uint32_t bg_color, uint32_t scale) {
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    uint32_t pixel_x;
+    uint32_t pixel_y;
+
     for (uint32_t j = 0; j < glyph_height; j++) {
         uint8_t row = glyph[j];
         for (uint32_t i = 0; i < glyph_width; i++) {
             if (row & (1 << (7 - i))) {
                 for (uint32_t sy = 0; sy < scale; sy++) {
                     for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy,
-                                         fg_color) != VBE_SUCCESS) {
+
+                        pixel_x = x + i * scale + sx;
+                        pixel_y = y + j * scale + sy;
+                        if (pixel_x >= vbe_info.width ||
+                            pixel_y >= vbe_info.height)
                             return VBE_ERROR;
-                        }
+                        off = pixel_y * vbe_info.pitch +
+                              pixel_x * (vbe_info.bpp / 8);
+                        vbe_write(fb + off, vbe_info.bpp, fg_color);
                     }
                 }
             } else {
                 for (uint32_t sy = 0; sy < scale; sy++) {
                     for (uint32_t sx = 0; sx < scale; sx++) {
-                        if (vbe_putpixel(x + i * scale + sx, y + j * scale + sy,
-                                         bg_color) != VBE_SUCCESS) {
+
+                        pixel_x = x + i * scale + sx;
+                        pixel_y = y + j * scale + sy;
+                        if (pixel_x >= vbe_info.width ||
+                            pixel_y >= vbe_info.height)
                             return VBE_ERROR;
-                        }
+                        off = pixel_y * vbe_info.pitch +
+                              pixel_x * (vbe_info.bpp / 8);
+                        vbe_write(fb + off, vbe_info.bpp, bg_color);
                     }
                 }
             }
@@ -111,34 +202,138 @@ enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph,
                                      uint32_t glyph_height, uint32_t fg_color,
                                      uint32_t bg_color, uint32_t new_width,
                                      uint32_t new_height) {
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    uint32_t pixel_x;
+    uint32_t pixel_y;
+
     for (uint32_t j = 0; j < new_height; j++) {
         uint32_t src_j = j * glyph_height / new_height;
         uint8_t row = glyph[src_j];
         for (uint32_t i = 0; i < new_width; i++) {
             uint32_t src_i = i * glyph_width / new_width;
             if (row & (1 << (7 - src_i))) {
-                if (vbe_putpixel(x + i, y + j, fg_color) != VBE_SUCCESS) {
+                pixel_x = x + i;
+                pixel_y = y + j;
+                if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
                     return VBE_ERROR;
-                }
+                off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+                vbe_write(fb + off, vbe_info.bpp, fg_color);
             } else {
-                if (vbe_putpixel(x + i, y + j, bg_color) != VBE_SUCCESS) {
+                pixel_x = x + i;
+                pixel_y = y + j;
+                if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
                     return VBE_ERROR;
-                }
+                off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+                vbe_write(fb + off, vbe_info.bpp, bg_color);
             }
         }
     }
     return VBE_SUCCESS;
 }
 
-enum vbe_result vbe_clear(uint32_t color) {
-    for (uint32_t y = 0; y < vbe_info.height; y++) {
-        for (uint32_t x = 0; x < vbe_info.width; x++) {
-            if (vbe_putpixel(x, y, color) != VBE_SUCCESS) {
-                return VBE_ERROR;
-            }
+enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width,
+                              uint32_t height, uint32_t color) {
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    if (x >= vbe_info.width || y >= vbe_info.height ||
+        x + width > vbe_info.width || y + height > vbe_info.height)
+        return VBE_ERROR;
+
+    for (uint32_t j = 0; j < height; j++) {
+        for (uint32_t i = 0; i < width; i++) {
+            off = (y + j) * vbe_info.pitch + (x + i) * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
         }
     }
     return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_draw_circle(uint32_t center_x, uint32_t center_y,
+                                uint32_t radius, uint32_t color) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    int32_t x = radius;
+    int32_t y = 0;
+    int32_t err = 0;
+
+    while (x >= y) {
+        off = (center_y + y) * vbe_info.pitch +
+              (center_x + x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y + y) * vbe_info.pitch +
+              (center_x - x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - y) * vbe_info.pitch +
+              (center_x + x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - y) * vbe_info.pitch +
+              (center_x - x) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+
+        off = (center_y + x) * vbe_info.pitch +
+              (center_x + y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y + x) * vbe_info.pitch +
+              (center_x - y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - x) * vbe_info.pitch +
+              (center_x + y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+        off = (center_y - x) * vbe_info.pitch +
+              (center_x - y) * (vbe_info.bpp / 8);
+        vbe_write(fb + off, vbe_info.bpp, color);
+
+        y++;
+        err += 1 + 2 * y;
+        if (2 * (err - x) + 1 > 0) {
+            x--;
+            err += 1 - 2 * x;
+        }
+    }
+    return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y,
+                                       uint32_t radius, uint32_t color) {
+    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+        return VBE_ERROR;
+
+    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+    uint32_t off;
+    int32_t x = radius;
+    int32_t y = 0;
+    int32_t err = 0;
+
+    while (x >= y) {
+        for (int32_t i = center_x - x; i <= center_x + x; i++) {
+            off = (center_y + y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+            off = (center_y - y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+        }
+        for (int32_t i = center_x - y; i <= center_x + y; i++) {
+            off = (center_y + x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+            off = (center_y - x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
+            vbe_write(fb + off, vbe_info.bpp, color);
+        }
+
+        y++;
+        err += 1 + 2 * y;
+        if (2 * (err - x) + 1 > 0) {
+            x--;
+            err += 1 - 2 * x;
+        }
+    }
+    return VBE_SUCCESS;
+}
+
+enum vbe_result vbe_clear(uint32_t color) {
+    return vbe_fill_rect(0, 0, vbe_info.width, vbe_info.height, color);
 }
 
 bool vbe_detect(multiboot_info_t *mbi) {
@@ -152,7 +347,7 @@ void vbe_init(multiboot_info_t *mbi) {
         return;
     }
 
-    vbe_info.framebuffer_addr = (uint64_t)mbi->framebuffer_addr;
+    vbe_info.framebuffer_addr = (uintptr_t)mbi->framebuffer_addr;
     vbe_info.width = mbi->framebuffer_width;
     vbe_info.height = mbi->framebuffer_height;
     vbe_info.pitch = mbi->framebuffer_pitch;

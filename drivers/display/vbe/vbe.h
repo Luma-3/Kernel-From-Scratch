@@ -12,13 +12,7 @@ enum vbe_result {
     VBE_ERROR = -1
 };
 
-typedef struct s_vbe_info {
-    uint64_t framebuffer_addr;
-    uint32_t width;
-    uint32_t height;
-    uint32_t pitch;
-    uint32_t bpp;
-    union {
+typedef union {
     struct {
         uint32_t framebuffer_palette_addr;
         uint16_t framebuffer_palette_num_colors;
@@ -31,12 +25,31 @@ typedef struct s_vbe_info {
         uint8_t framebuffer_blue_field_position;
         uint8_t framebuffer_blue_mask_size;
     } rgb;
-} color_info;
+} vbe_color_info_t;
+
+typedef struct s_vbe_info {
+    uintptr_t framebuffer_addr;
+    uint32_t width;
+    uint32_t height;
+    uint32_t pitch;
+    uint32_t bpp;
+    vbe_color_info_t color_info;
 } vbe_info_t;
 
 
-void vbe_init(multiboot_info_t *mbi);
-bool vbe_detect(multiboot_info_t *mbi);
+uintptr_t vbe_get_framebuffer_addr();
+
+uint32_t vbe_get_width();
+
+uint32_t vbe_get_height();
+
+uint32_t vbe_get_pitch();
+
+uint32_t vbe_get_bpp();
+
+vbe_color_info_t *vbe_get_color_info();
+
+enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
 
 enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
 
@@ -50,6 +63,16 @@ enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph, ui
 
 enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph, uint32_t glyph_width, uint32_t glyph_height, uint32_t fg_color, uint32_t bg_color, uint32_t new_width, uint32_t new_height);
 
+enum vbe_result vbe_draw_circle(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color);
+
+enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y, uint32_t radius, uint32_t color);
+
+enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color);
+
 enum vbe_result vbe_clear(uint32_t color);
+
+void vbe_init(multiboot_info_t *mbi);
+
+bool vbe_detect(multiboot_info_t *mbi);
 
 #endif

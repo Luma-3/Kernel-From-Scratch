@@ -17,6 +17,7 @@ static inline __attribute__((always_inline)) uint8_t *char_to_font(int8_t c) {
 }
 
 static void newline(struct terminal *term) {
+    term->buffer[term->cursor.x + term->cursor.y] = '\n';
     if (term->cursor.y >= term->line_by_screen - 1) {
         // TODO: Scroll
     }
@@ -39,7 +40,10 @@ static void backspace(struct terminal *term) {
         term->cursor.x = term->char_by_line - 1;
     }
 
-    // TODO: clear the char on the screen
+    vbe_fill_rect(term->cursor.x * term->font_width,
+                  term->cursor.y * term->font_height,
+                  (term->cursor.x + 1) * term->font_width,
+                  term->cursor.y * term->font_height, term->bg_color);
     // TODO: handle blank char
 }
 
@@ -77,11 +81,11 @@ static int32_t handle_special_char(struct terminal *term, const int8_t c) {
 // }
 
 static int32_t put_char(struct terminal *term, const uint8_t c) {
-    // TODO : handle le fait que '\b' n'ajoute pas un '\b' dans le buffer
-    term->buffer[term->cursor.x + term->cursor.y] = c;
 
     if (handle_special_char(term, c))
         return KTERM_SUCCESS;
+
+    term->buffer[term->cursor.x + term->cursor.y] = c;
 
     uint8_t *font_buffer = char_to_font(c);
 
@@ -90,10 +94,10 @@ static int32_t put_char(struct terminal *term, const uint8_t c) {
                              8, term->fg_color, term->bg_color,
                              term->font_width, term->font_height))
         return KTERM_ERR_INVALID_CHAR;
-
-    term->cursor.x = (term->cursor.x + 1) % term->char_by_line;
+    term->cursor.x++;
     if (term->cursor.x >= term->char_by_line) {
-        newline(term);
+        term->cursor.x = 0;
+        term->cursor.y++;
     }
 
     return KTERM_SUCCESS;
@@ -117,8 +121,8 @@ int32_t init_terminal(const char *name) {
     term->line_by_screen = LINE_BY_SCREEN;
     term->font_height = FONT_HEIGHT;
     term->font_width = FONT_WIDTH;
-    term->bg_color = 0xFF0000;
-    term->fg_color = 0xFFFFFF;
+    term->bg_color = BLACK;
+    term->fg_color = WHITE;
 
     k_memset(term->buffer, ' ', term->char_by_line * term->line_by_screen);
     // TODO : draw Rect bg_color;
