@@ -33,7 +33,7 @@ struct terminal {
     uint32_t font_width;
     uint32_t fg_color;
     uint32_t bg_color;
-    uint8_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
+    uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
 };
 
 int32_t init_terminal(const char *name);
