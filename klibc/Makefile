@@ -9,6 +9,7 @@ obj-y += $(DIR)/string/kstrncmp.o
 obj-y += $(DIR)/string/kstrchr.o
 obj-y += $(DIR)/string/kstrrchr.o
 obj-y += $(DIR)/string/kitoa.o
+obj-y += $(DIR)/string/kstart_with.o
 
 # Math functions
 obj-y += $(DIR)/math/kabs.o
