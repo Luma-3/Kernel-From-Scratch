@@ -29,7 +29,7 @@ static void update_kbd_state(struct key_event event) {
     if (event.keycode == KEY_LEFTALT || event.keycode == KEY_RIGHTALT) {
         current_kbd_state.alt = event.state.pressed;
     }
-    if (event.keycode == KEY_LEFTCTRL || event.keycode == KEY_RIGHTCTRL) {
+    if (event.keycode == KEY_LEFTCTRL) {
         current_kbd_state.ctrl = event.state.pressed;
     }
     if (event.keycode == KEY_CAPSLOCK && event.state.pressed) {
