@@ -3,49 +3,74 @@
 #include "font.h"
 #include "keyevent.h"
 #include "mem.h"
-#include "string.h"
+#include "printf.h"
 #include "vbe.h"
 
 #include <stdalign.h>
 #include <stdint.h>
 
+uint8_t active_terminal = 0;
+
 static struct terminal terminals[MAX_TERMINALS];
 
 static uint8_t terminal_count = 0;
-
-static uint8_t active_terminal = 0;
 
 static inline __attribute__((always_inline)) uint8_t *char_to_font(int8_t c) {
     return (uint8_t *)fontdata_8x8 + (c * 8);
 }
 
-static void scroll(struct terminal *term) {
-    kmemmove(term->buffer, term->buffer + term->char_by_line,
-             (term->line_by_screen - 1) * term->char_by_line *
-                 sizeof(uint16_t));
+static int32_t draw_term(struct terminal *term, uint8_t x, uint8_t y,
+                         uint8_t width, uint8_t height) {
+    uint32_t err = 0;
 
-    // re print screen
-    for (uint32_t y = 0; y < term->line_by_screen - 1; y++) {
-        for (uint32_t x = 0; x < term->char_by_line; x++) {
-            uint16_t cell = term->buffer[x + y * term->char_by_line];
+    for (uint32_t i = y; i < height; i++) {
+
+        for (uint32_t j = x; j < width; j++) {
+
+            uint16_t cell = term->buffer[j + i * term->char_by_line];
             uint8_t c = cell & 0xFF;
             uint32_t fg_color = ansii_color_codes[(cell >> 12) & 0xF];
             uint32_t bg_color = ansii_color_codes[(cell >> 8) & 0xF];
 
             uint8_t *font_buffer = char_to_font(c);
-            vbe_draw_glyph_sized(x * term->font_width, y * term->font_height,
-                                 font_buffer, 8, 8, fg_color, bg_color,
-                                 term->font_width, term->font_height);
+
+            err = vbe_draw_glyph_sized(
+                j * term->font_width, i * term->font_height, font_buffer, 8, 8,
+                fg_color, bg_color, term->font_width, term->font_height);
+            if (err != 0) {
+                return KTERM_ERR_VBE_FAILURE;
+            }
         }
+    }
+    return KTERM_SUCCESS;
+}
+
+static int32_t scroll(struct terminal *term) {
+    int32_t err = KTERM_SUCCESS;
+
+    kmemmove(term->buffer, term->buffer + term->char_by_line,
+             (term->line_by_screen - 1) * term->char_by_line *
+                 sizeof(uint16_t));
+
+    // re print screen
+
+    err = draw_term(term, 0, 0, term->char_by_line, term->line_by_screen - 1);
+    if (err != KTERM_SUCCESS) {
+        return err;
     }
 
     // Clear the last line
     kmemset(term->buffer + (term->line_by_screen - 1) * term->char_by_line,
             (term->fg_color << 12) | (term->bg_color << 8) | ' ',
             term->char_by_line * sizeof(uint16_t));
-    vbe_fill_rect(0, (term->line_by_screen - 1) * term->font_height,
-                  term->font_width * term->char_by_line, term->font_height,
-                  term->bg_color);
+
+    if (vbe_fill_rect(0, (term->line_by_screen - 1) * term->font_height,
+                      term->font_width * term->char_by_line, term->font_height,
+                      term->bg_color) != VBE_SUCCESS) {
+        return KTERM_ERR_VBE_FAILURE;
+    }
+
+    return err;
 }
 
 static void newline(struct terminal *term) {
@@ -118,7 +143,8 @@ static int32_t putchar(struct terminal *term, const uint8_t c) {
                              term->cursor.y * term->font_height, font_buffer, 8,
                              8, ansii_color_codes[term->fg_color],
                              ansii_color_codes[term->bg_color],
-                             term->font_width, term->font_height)) {
+                             term->font_width,
+                             term->font_height) != VBE_SUCCESS) {
         return KTERM_ERR_INVALID_CHAR;
     }
 
@@ -136,27 +162,14 @@ static int32_t putchar(struct terminal *term, const uint8_t c) {
     return KTERM_SUCCESS;
 }
 
-static void change_term(uint8_t new_term_id) {
+int32_t change_term(uint8_t new_term_id) {
     if (new_term_id >= terminal_count) {
-        return;
+        return KTERM_ERR_INVALID_TERM;
     }
     active_terminal = new_term_id;
     struct terminal *term = (struct terminal *)&terminals[active_terminal];
 
-    // re print screen
-    for (uint32_t y = 0; y < term->line_by_screen; y++) {
-        for (uint32_t x = 0; x < term->char_by_line; x++) {
-            uint16_t cell = term->buffer[x + y * term->char_by_line];
-            uint8_t c = cell & 0xFF;
-            uint32_t fg_color = ansii_color_codes[(cell >> 12) & 0xF];
-            uint32_t bg_color = ansii_color_codes[(cell >> 8) & 0xF];
-
-            uint8_t *font_buffer = char_to_font(c);
-            vbe_draw_glyph_sized(x * term->font_width, y * term->font_height,
-                                 font_buffer, 8, 8, fg_color, bg_color,
-                                 term->font_width, term->font_height);
-        }
-    }
+    return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
 }
 
 int32_t init_terminal(const char *name) {
@@ -184,7 +197,7 @@ int32_t init_terminal(const char *name) {
             term->char_by_line * term->line_by_screen);
 
     term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\n", 20);
-    term_write(term->id, (const uint8_t *)term->name, kstrlen(term->name));
+    printf("Terminal %s initialized\n", name);
 
     return KTERM_SUCCESS;
 }
@@ -211,6 +224,14 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
 
     return it - data;
 }
+
+int32_t term_refresh(const uint8_t term_id) {
+    struct terminal *term = &terminals[term_id];
+
+    return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
+}
+
+int32_t term_clear(const uint8_t term_id) {}
 
 uint8_t term_get_keyevent() {
     struct key_event event = kbd_pop_event();

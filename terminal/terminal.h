@@ -7,7 +7,7 @@
 #define MAX_TERMINALS 3
 #define CHAR_BY_LINE 160
 #define LINE_BY_SCREEN 45
-#define FONT_WIDTH 8u
+#define FONT_WIDTH 16u
 #define FONT_HEIGHT 16u
 
 enum kterm_err {
@@ -15,6 +15,7 @@ enum kterm_err {
     KTERM_ERR_TOO_MANY_TERM = -1,
     KTERM_ERR_INVALID_TERM = -2,
     KTERM_ERR_INVALID_CHAR = -3,
+    KTERM_ERR_VBE_FAILURE = -4,
 };
 
 // 16 color palette
@@ -54,6 +55,8 @@ struct terminal {
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
 };
 
+extern uint8_t active_terminal;
+
 int32_t init_terminal(const char *name);
 
 int32_t term_write(const uint8_t term_id, const uint8_t *data,
@@ -63,5 +66,9 @@ void term_poll();
 
 void handle_ansii_esc_seq(struct terminal *term, const char **seq,
                           uint32_t default_color);
+
+int32_t term_refresh(const uint8_t term_id);
+
+int32_t change_term(uint8_t new_term_id);
 
 #endif

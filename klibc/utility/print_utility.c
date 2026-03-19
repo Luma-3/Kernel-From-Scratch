@@ -1,18 +1,18 @@
-#include "terminal.h"
 #include "string.h"
+#include "terminal.h"
 
 int putchar(char c) {
-    return (term_write(0, (const uint8_t *)&c, 1));
+    return (term_write(active_terminal, (const uint8_t *)&c, 1));
 }
 
 int putstr(const char *str) {
-    if(!str)
-        return (term_write(0, (const uint8_t *)"(null)", 6));
-    return (term_write(0, (const uint8_t *)str, kstrlen(str)));
+    if (!str)
+        return (term_write(active_terminal, (const uint8_t *)"(null)", 6));
+    return (term_write(active_terminal, (const uint8_t *)str, kstrlen(str)));
 }
 
 int utoa(unsigned int value, char *str) {
-    if(!str)
+    if (!str)
         return (0);
     char *ptr = str;
     char *ptr1 = str;
@@ -93,9 +93,9 @@ int puthex(unsigned long value, int uppercase) {
 }
 
 int putpointer(void *ptr) {
-    if(!ptr)
+    if (!ptr)
         return putstr("(nil)");
     char buffer[19] = "0x";
     lutohex((unsigned long)ptr, buffer + 2, 0);
-    return putstr(buffer);    
+    return putstr(buffer);
 }
