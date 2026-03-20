@@ -1,6 +1,7 @@
 
+#include <stdint.h>
 
-unsigned char fontdata_8x8[] = {
+uint8_t fontdata_8x8[] = {
     /* 0 0x00 '^@' */
     0x00, /* 00000000 */
     0x00, /* 00000000 */

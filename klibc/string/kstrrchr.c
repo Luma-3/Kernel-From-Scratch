@@ -4,7 +4,7 @@
 
 #include "string.h"
 
-const char *k_strrchr(const char *str, int c) {
+const char *kstrrchr(const char *str, int c) {
     const char *move = str;
     const char *last_occurrence = NULL;
     c = (unsigned char)c;

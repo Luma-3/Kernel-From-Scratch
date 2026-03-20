@@ -1,47 +1,90 @@
 #ifndef __KFS_TERMINAL_H
 #define __KFS_TERMINAL_H
 
-#include "../drivers/display/display.h"
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef struct s_terminal terminal_t;
-typedef struct s_cursor_position cursor_position_t;
+#define MAX_TERMINALS 3
+#define CHAR_BY_LINE 80
+#define LINE_BY_SCREEN 45
+#define FONT_WIDTH 16u
+#define FONT_HEIGHT 16u
 
-struct s_cursor_position {
+enum kterm_err {
+    KTERM_SUCCESS = 0,
+    KTERM_ERR_TOO_MANY_TERM = -1,
+    KTERM_ERR_INVALID_TERM = -2,
+    KTERM_ERR_INVALID_CHAR = -3,
+    KTERM_ERR_VBE_FAILURE = -4,
+    KTERM_ERR_INVALID_CURSOR_POS = -5,
+};
+
+// 16 color palette
+enum kterm_color {
+    COLOR_BLACK = 0x000000,
+    COLOR_GREY = 0x808080,
+    COLOR_RED = 0xFF0000,
+    COLOR_GREEN = 0x00FF00,
+    COLOR_BLUE = 0x0000FF,
+    COLOR_YELLOW = 0xFFFF00,
+    COLOR_CYAN = 0x00FFFF,
+    COLOR_MAGENTA = 0xFF00FF,
+};
+
+static const uint32_t ansii_color_codes[] = {
+    COLOR_BLACK, COLOR_RED,     COLOR_GREEN, COLOR_YELLOW,
+    COLOR_BLUE,  COLOR_MAGENTA, COLOR_CYAN,  COLOR_GREY,
+};
+
+struct cursor_pos {
     uint32_t x;
     uint32_t y;
 };
 
+struct terminal {
+    uint32_t id;
+    const char *name;
+    struct cursor_pos cursor;
 
-
-struct s_terminal {
-    const char* name;
-    cursor_position_t cursor;
-    cursor_position_t default_cursor;
-    enum display_color fg_color;
-    enum display_color bg_color;
+    uint32_t char_by_line;
+    uint32_t line_by_screen;
+    uint32_t font_height;
+    uint32_t font_width;
+    uint8_t bg_color;
+    uint8_t fg_color;
+    // 4 bit for fg, 4 bit for bg, 8 bit for char
+    uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
 };
 
-void init_terminal(const char* name);
+extern uint8_t active_terminal;
 
-void terminal_put_char_with_color(const char c, const enum display_color fg, const enum display_color bg);
-void terminal_put_char(const char c);
+int32_t init_terminal(const char *name);
 
-void terminal_write(const char *data, uint32_t size);
+int32_t term_write(const uint8_t term_id, const uint8_t *data,
+                   const uint32_t size);
 
-void terminal_write_with_color(const char *data, uint32_t size, const enum display_color fg, const enum display_color bg);
+void term_poll();
 
-void terminal_writestring(const char *data);
+void handle_ansii_esc_seq(struct terminal *term, const char **seq,
+                          uint32_t default_color);
 
-void terminal_writestring_with_color(const char *data, const enum display_color fg, const enum display_color bg);
+int32_t term_refresh(const uint8_t term_id);
 
-void terminal_write_int(int value);
+int32_t change_term(uint8_t new_term_id);
 
-void terminal_cursor_move(uint32_t x, uint32_t y);
+int32_t scroll(struct terminal *term);
 
-void terminal_put_pixel(uint32_t x, uint32_t y, uint32_t pixel_color);
+/// --- Cursor related ---
+///
 
-bool terminal_clear(void);
+int32_t print_cursor(const struct terminal *term, bool visible);
 
+int32_t move_cursor(struct terminal *term, uint32_t x, uint32_t y);
+
+void advance_cursor(struct terminal *term);
+
+void newline(struct terminal *term);
+
+void tab(struct terminal *term);
 
 #endif
