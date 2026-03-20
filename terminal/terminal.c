@@ -7,6 +7,7 @@
 #include "vbe.h"
 
 #include <stdalign.h>
+#include <stddef.h>
 #include <stdint.h>
 
 uint8_t active_terminal = 0;
@@ -19,77 +20,51 @@ static inline __attribute__((always_inline)) uint8_t *char_to_font(int8_t c) {
     return (uint8_t *)fontdata_8x8 + (c * 8);
 }
 
+static int32_t refresh_cell(struct terminal *term, uint32_t x, uint32_t y) {
+    uint16_t cell = term->buffer[x + y * term->char_by_line];
+
+    uint8_t c = cell & 0xFF;
+    uint32_t fg_color = ansii_color_codes[(cell >> 12) & 0xF];
+    uint32_t bg_color = ansii_color_codes[(cell >> 8) & 0xF];
+
+    uint8_t *font_buffer = char_to_font(c);
+
+    return vbe_draw_glyph_sized(x * term->font_width, y * term->font_height,
+                                font_buffer, 8, 8, fg_color, bg_color,
+                                term->font_width, term->font_height);
+}
+
 static int32_t draw_term(struct terminal *term, uint8_t x, uint8_t y,
-                         uint8_t width, uint8_t height) {
+                         uint32_t width, uint32_t height) {
     uint32_t err = 0;
 
-    for (uint32_t i = y; i < height; i++) {
-
-        for (uint32_t j = x; j < width; j++) {
-
-            uint16_t cell = term->buffer[j + i * term->char_by_line];
-            uint8_t c = cell & 0xFF;
-            uint32_t fg_color = ansii_color_codes[(cell >> 12) & 0xF];
-            uint32_t bg_color = ansii_color_codes[(cell >> 8) & 0xF];
-
-            uint8_t *font_buffer = char_to_font(c);
-
-            err = vbe_draw_glyph_sized(
-                j * term->font_width, i * term->font_height, font_buffer, 8, 8,
-                fg_color, bg_color, term->font_width, term->font_height);
-            if (err != 0) {
-                return KTERM_ERR_VBE_FAILURE;
+    for (uint32_t j = y; j < y + height; j++) {
+        for (uint32_t i = x; i < x + width; i++) {
+            if ((err = refresh_cell(term, i, j)) != VBE_SUCCESS) {
+                return err;
             }
         }
     }
+
     return KTERM_SUCCESS;
 }
 
-static int32_t scroll(struct terminal *term) {
-    int32_t err = KTERM_SUCCESS;
+int32_t scroll(struct terminal *term) {
+
+    size_t line_size = term->char_by_line * sizeof(uint16_t);
+    size_t all_but_last = (term->line_by_screen - 1) * line_size;
 
     kmemmove(term->buffer, term->buffer + term->char_by_line,
              (term->line_by_screen - 1) * term->char_by_line *
                  sizeof(uint16_t));
 
-    // re print screen
-
-    err = draw_term(term, 0, 0, term->char_by_line, term->line_by_screen - 1);
-    if (err != KTERM_SUCCESS) {
-        return err;
+    uint16_t empty_cell = (term->fg_color << 12) | (term->bg_color << 8) | ' ';
+    for (uint32_t i = 0; i < term->char_by_line; i++) {
+        term->buffer[(term->line_by_screen - 1) * term->char_by_line + i] =
+            empty_cell;
     }
 
-    // Clear the last line
-    kmemset(term->buffer + (term->line_by_screen - 1) * term->char_by_line,
-            (term->fg_color << 12) | (term->bg_color << 8) | ' ',
-            term->char_by_line * sizeof(uint16_t));
-
-    if (vbe_fill_rect(0, (term->line_by_screen - 1) * term->font_height,
-                      term->font_width * term->char_by_line, term->font_height,
-                      term->bg_color) != VBE_SUCCESS) {
-        return KTERM_ERR_VBE_FAILURE;
-    }
-
-    return err;
-}
-
-static void newline(struct terminal *term) {
-    term->buffer[term->cursor.x + term->cursor.y] = '\n';
-    if (term->cursor.y >= term->line_by_screen - 1) {
-        scroll(term);
-        term->cursor.y = term->line_by_screen - 1;
-        term->cursor.x = 0;
-        return;
-    }
-    term->cursor.x = 0;
-    term->cursor.y++;
-}
-
-static void tab(struct terminal *term) {
-    term->cursor.x = (term->cursor.x + 8) & ~(7);
-    if (term->cursor.x >= term->char_by_line) {
-        newline(term);
-    }
+    return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
 }
 
 static void backspace(struct terminal *term) {
@@ -131,33 +106,21 @@ static int32_t handle_special_char(struct terminal *term, const int8_t c) {
 
 static int32_t putchar(struct terminal *term, const uint8_t c) {
 
+    // Dellete the cursor before drawing the character
+    refresh_cell(term, term->cursor.x, term->cursor.y);
+
     if (handle_special_char(term, c))
         return KTERM_SUCCESS;
 
+    // Store the character in the buffer with color attributes
     term->buffer[term->cursor.x + term->cursor.y * term->char_by_line] =
         (term->fg_color << 12) | (term->bg_color << 8) | c;
 
-    uint8_t *font_buffer = char_to_font(c);
-
-    if (vbe_draw_glyph_sized(term->cursor.x * term->font_width,
-                             term->cursor.y * term->font_height, font_buffer, 8,
-                             8, ansii_color_codes[term->fg_color],
-                             ansii_color_codes[term->bg_color],
-                             term->font_width,
-                             term->font_height) != VBE_SUCCESS) {
-        return KTERM_ERR_INVALID_CHAR;
+    if (refresh_cell(term, term->cursor.x, term->cursor.y) != VBE_SUCCESS) {
+        return KTERM_ERR_VBE_FAILURE;
     }
 
-    term->cursor.x++;
-    if (term->cursor.x >= term->char_by_line) {
-        term->cursor.x = 0;
-        if (term->cursor.y >= term->line_by_screen - 1) {
-            scroll(term);
-            term->cursor.y = term->line_by_screen - 1;
-        } else {
-            term->cursor.y++;
-        }
-    }
+    advance_cursor(term);
 
     return KTERM_SUCCESS;
 }
@@ -231,8 +194,6 @@ int32_t term_refresh(const uint8_t term_id) {
     return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
 }
 
-int32_t term_clear(const uint8_t term_id) {}
-
 uint8_t term_get_keyevent() {
     struct key_event event = kbd_pop_event();
 
@@ -256,9 +217,18 @@ uint8_t term_get_keyevent() {
     return to_print;
 }
 
+struct terminal *get_active_terminal() {
+    if (active_terminal >= terminal_count) {
+        return NULL;
+    }
+    return &terminals[active_terminal];
+}
+
 void term_poll() {
     uint8_t c = term_get_keyevent();
     if (c) {
+        struct terminal *term = get_active_terminal();
         term_write(active_terminal, &c, 1);
+        print_cursor(term, true);
     }
 }

@@ -6,6 +6,7 @@ DIR := terminal
 
 obj-y += $(DIR)/terminal.o
 obj-y += $(DIR)/ansii.o
+obj-y += $(DIR)/cursor.o
 
 #--- Sub directories ---
 

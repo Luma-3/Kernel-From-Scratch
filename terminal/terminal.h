@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define MAX_TERMINALS 3
-#define CHAR_BY_LINE 160
+#define CHAR_BY_LINE 80
 #define LINE_BY_SCREEN 45
 #define FONT_WIDTH 16u
 #define FONT_HEIGHT 16u
@@ -16,6 +16,7 @@ enum kterm_err {
     KTERM_ERR_INVALID_TERM = -2,
     KTERM_ERR_INVALID_CHAR = -3,
     KTERM_ERR_VBE_FAILURE = -4,
+    KTERM_ERR_INVALID_CURSOR_POS = -5,
 };
 
 // 16 color palette
@@ -70,5 +71,20 @@ void handle_ansii_esc_seq(struct terminal *term, const char **seq,
 int32_t term_refresh(const uint8_t term_id);
 
 int32_t change_term(uint8_t new_term_id);
+
+int32_t scroll(struct terminal *term);
+
+/// --- Cursor related ---
+///
+
+int32_t print_cursor(const struct terminal *term, bool visible);
+
+int32_t move_cursor(struct terminal *term, uint32_t x, uint32_t y);
+
+void advance_cursor(struct terminal *term);
+
+void newline(struct terminal *term);
+
+void tab(struct terminal *term);
 
 #endif
