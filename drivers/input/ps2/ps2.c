@@ -35,8 +35,8 @@ void ps2_init() {
     outb(0x20, PS2_STATUS_PORT); // read config byte
     uint8_t config = ps2_read();
 
-    config &= ~0x01;
-    config &= ~0x10;
+    config &= ~0x01; // disable interrupt
+    config &= ~0x10; // enable clock
 
     // Write config
     ps2_wait_input_empty();
