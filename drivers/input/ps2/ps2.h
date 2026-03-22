@@ -193,6 +193,12 @@ void ps2_init();
 uint8_t ps2_read();
 
 /**
+ * Wrtie a byte of data on the PS/2 data port.
+ * this function block until port isn't ready to get write.
+ */
+void ps2_write(uint8_t data);
+
+/**
  * Converts a PS/2 Set 1 scancode to a keycode defined in keyevent.h.
  *
  * @param scancode The PS/2 Set 1 scancode to convert.
