@@ -43,14 +43,14 @@ inline enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color) {
 static inline __attribute__((always_inline)) void
 vbe_write(uint8_t *addr, uint32_t bpp, uint32_t value) {
     switch (bpp) {
-        case 32:
-            *(uint32_t *)addr = value;
-            break;
-        case 24:
-            addr[0] = (uint8_t)(value & 0xFF);
-            addr[1] = (uint8_t)((value >> 8) & 0xFF);
-            addr[2] = (uint8_t)((value >> 16) & 0xFF);
-            break;
+    case 32:
+        *(uint32_t *)addr = value;
+        break;
+    case 24:
+        addr[0] = (uint8_t)(value & 0xFF);
+        addr[1] = (uint8_t)((value >> 8) & 0xFF);
+        addr[2] = (uint8_t)((value >> 16) & 0xFF);
+        break;
     }
 }
 
@@ -76,7 +76,7 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
     uint32_t bytes_per_pixel = vbe_info.bpp / 8;
     uint32_t off;
-    if(vbe_info.bpp == 32) {
+    if (vbe_info.bpp == 32) {
         for (uint32_t j = 0; j < height; j++) {
             uint32_t off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
@@ -99,7 +99,6 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
         }
     }
     return VBE_SUCCESS;
-    
 }
 
 enum vbe_result vbe_draw_bitmap_scaled(uint32_t x, uint32_t y,
@@ -255,89 +254,6 @@ enum vbe_result vbe_fill_rect(uint32_t x, uint32_t y, uint32_t width,
         for (uint32_t i = 0; i < width; i++) {
             off = (y + j) * vbe_info.pitch + (x + i) * (vbe_info.bpp / 8);
             vbe_write(fb + off, vbe_info.bpp, color);
-        }
-    }
-    return VBE_SUCCESS;
-}
-
-enum vbe_result vbe_draw_circle(uint32_t center_x, uint32_t center_y,
-                                uint32_t radius, uint32_t color) {
-    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
-        return VBE_ERROR;
-
-    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
-    uint32_t off;
-    int32_t x = radius;
-    int32_t y = 0;
-    int32_t err = 0;
-
-    while (x >= y) {
-        off = (center_y + y) * vbe_info.pitch +
-              (center_x + x) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y + y) * vbe_info.pitch +
-              (center_x - x) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y - y) * vbe_info.pitch +
-              (center_x + x) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y - y) * vbe_info.pitch +
-              (center_x - x) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-
-        off = (center_y + x) * vbe_info.pitch +
-              (center_x + y) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y + x) * vbe_info.pitch +
-              (center_x - y) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y - x) * vbe_info.pitch +
-              (center_x + y) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-        off = (center_y - x) * vbe_info.pitch +
-              (center_x - y) * (vbe_info.bpp / 8);
-        vbe_write(fb + off, vbe_info.bpp, color);
-
-        y++;
-        err += 1 + 2 * y;
-        if (2 * (err - x) + 1 > 0) {
-            x--;
-            err += 1 - 2 * x;
-        }
-    }
-    return VBE_SUCCESS;
-}
-
-enum vbe_result vbe_draw_circle_filled(uint32_t center_x, uint32_t center_y,
-                                       uint32_t radius, uint32_t color) {
-    if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
-        return VBE_ERROR;
-
-    uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
-    uint32_t off;
-    int32_t x = radius;
-    int32_t y = 0;
-    int32_t err = 0;
-
-    while (x >= y) {
-        for (uint32_t i = center_x - x; i <= center_x + x; i++) {
-            off = (center_y + y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
-            off = (center_y - y) * vbe_info.pitch + i * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
-        }
-        for (uint32_t i = center_x - y; i <= center_x + y; i++) {
-            off = (center_y + x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
-            off = (center_y - x) * vbe_info.pitch + i * (vbe_info.bpp / 8);
-            vbe_write(fb + off, vbe_info.bpp, color);
-        }
-
-        y++;
-        err += 1 + 2 * y;
-        if (2 * (err - x) + 1 > 0) {
-            x--;
-            err += 1 - 2 * x;
         }
     }
     return VBE_SUCCESS;
