@@ -74,5 +74,8 @@ compile_commands.json
 .idea/
 .cache/
 
+# Documentation
+doc/
+
 
 
