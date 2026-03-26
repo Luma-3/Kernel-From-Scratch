@@ -3,10 +3,17 @@
 
 #include <stdint.h>
 
+static struct kbd_state current_kbd_state = {0, 0, 0, 0};
+
+static struct key_event key_event_buffer[KEY_EVENT_BUFFER_SIZE];
+static uint32_t key_event_buffer_head = 0;
+static uint32_t key_event_buffer_tail = 0;
+
 void kdb_push_event(struct key_event event) {
     uint32_t next = (key_event_buffer_head + 1) % KEY_EVENT_BUFFER_SIZE;
+
     if (next != key_event_buffer_tail) {
-        key_event_buffer[next] = event;
+        key_event_buffer[key_event_buffer_head] = event;
         key_event_buffer_head = next;
     }
 }
@@ -14,6 +21,7 @@ void kdb_push_event(struct key_event event) {
 struct key_event kbd_pop_event() {
     // Return an empty event if the buffer is empty
     struct key_event event = {0};
+
     if (key_event_buffer_head != key_event_buffer_tail) {
         event = key_event_buffer[key_event_buffer_tail];
         key_event_buffer_tail =

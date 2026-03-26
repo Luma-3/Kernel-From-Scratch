@@ -112,13 +112,7 @@ struct kbd_state {
     uint8_t caps_lock : 1;
 };
 
-static struct kbd_state current_kbd_state = {0, 0, 0, 0};
-
 #define KEY_EVENT_BUFFER_SIZE 128
-
-static struct key_event key_event_buffer[KEY_EVENT_BUFFER_SIZE];
-static uint32_t key_event_buffer_head = 0;
-static uint32_t key_event_buffer_tail = 0;
 
 /**
  * Handle a new simple key event, to manage shift, caps lock, alt, etc..
