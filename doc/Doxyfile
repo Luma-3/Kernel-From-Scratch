@@ -6,7 +6,7 @@ GENERATE_LATEX			= NO
 
 # --- Input ---
 INPUT					= .
-FILE_PATTERNS			= *.c *.h *.md *.puml *.dox
+FILE_PATTERNS			= *.c *.h *.md
 RECURSIVE				= YES
 
 # --- Extraction ---
@@ -40,4 +40,4 @@ PLANTUMLFILE_DIRS		= ./doc/diagrams
 
 # --- Customization ---
 
-HTML_EXTRA_STYLESHEET	 = ./third_party/doxygen/doxygen-awesome.css
+HTML_EXTRA_STYLESHEET	= ./third_party/doxygen/doxygen-awesome.css
