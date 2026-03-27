@@ -75,7 +75,7 @@ compile_commands.json
 .cache/
 
 # Documentation
-doc/
+doc/generated/
 
 
 

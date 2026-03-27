@@ -46,8 +46,6 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     printf("Hex: 0x%X, Dec: %d, Unsigned: %u, Char: %c, String: %s\n", 255, -42,
            42, 'A', "Test string");
 
-    printk(KERNEL_LOG_LEVEL_INFO, "Kernel initialized successfully.\n");
-
     ps2_init();
     while (1) {
         ps2_keyboard_poll(); // Poll the keyboard for key events and push them
