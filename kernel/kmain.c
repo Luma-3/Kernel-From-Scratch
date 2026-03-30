@@ -41,7 +41,7 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     init_terminal("Main Terminal");
     term_refresh(0);
 
-    // init_terminal("Secondary Terminal");
+    init_terminal("Secondary Terminal");
 
     printf("Hex: 0x%X, Dec: %d, Unsigned: %u, Char: %c, String: %s\n", 255, -42,
            42, 'A', "Test string");

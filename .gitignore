@@ -59,7 +59,7 @@ bin/
 build/
 obj/
 isodir/
-cross/
+tools/cross/
 .toolchain_build/
 
 # Generated files

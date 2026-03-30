@@ -1,5 +1,5 @@
 
-CROSS_PATH := $(HOME)/opt
+CROSS_PATH := ./tools/cross
 
 TARGET := i386-elf
 

@@ -109,5 +109,4 @@ void ps2_keyboard_poll() {
     //        scancode, event.keycode,
     //        event.state.pressed ? "Pressed" : "Released");
 
-    printk(KERNEL_LOG_LEVEL_DEBUG, "Scancode set: %x\n", ps2_get_scanset());
 }
