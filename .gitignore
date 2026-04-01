@@ -53,3 +53,28 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# compilation temporary directories
+bin/
+build/
+obj/
+isodir/
+tools/cross/
+.toolchain_build/
+
+# Generated files
+*.iso
+*.iso
+*.bin
+
+# IDE files
+
+compile_commands.json
+.vscode/
+.idea/
+.cache/
+
+# Documentation
+doc/generated/
+
+

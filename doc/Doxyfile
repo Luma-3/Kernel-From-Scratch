@@ -1,0 +1,43 @@
+# --- Project ---
+PROJECT_NAME			= "TrucOS"
+OUTPUT_DIRECTORY		= doc/generated
+GENERATE_HTML			= YES
+GENERATE_LATEX			= NO
+
+# --- Input ---
+INPUT					= .
+FILE_PATTERNS			= *.c *.h *.md
+RECURSIVE				= YES
+
+# --- Extraction ---
+EXTRACT_ALL				= YES
+EXTRACT_PRIVATE			= NO
+EXTRACT_STATIC			= NO
+
+# --- Parsing ---
+OPTIMIZE_OUTPUT_FOR_C	= YES
+ENABLE_PREPROCESSING	= YES
+
+# --- Warnings ---
+WARN_IF_UNDOCUMENTED	= YES
+WARN_IF_DOC_ERROR		= YES
+
+# --- Output ---
+QUIET					= NO
+GENERATE_TREEVIEW		= YES
+
+# --- Misc ---
+GENERATE_TESTLIST		= NO
+GENERATE_TODOLIST		= YES
+
+# --- Diagrams ---
+HAVE_DOT				= YES
+DOT_IMAGE_FORMAT		= svg
+PLANTUML_JAR_PATH		= /usr/share/plantuml/plantuml.jar
+DOT_PATH                = /usr/bin/dot
+
+PLANTUMLFILE_DIRS		= ./doc/diagrams
+
+# --- Customization ---
+
+HTML_EXTRA_STYLESHEET	= ./third_party/doxygen/doxygen-awesome.css
