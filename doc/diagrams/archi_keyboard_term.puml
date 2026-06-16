@@ -1,0 +1,31 @@
+@startuml
+
+interface "KeyEvent" as KeyEvent
+interface "VBE" as VBEInterface
+
+
+component "Keyboard Event" as KeyboardEvent
+component "Terminal" as Term
+
+component "Font" as Font
+
+component "PS/2 Driver" as PS2Driver
+component "VBE Driver" as VBEDriver
+
+
+
+KeyboardEvent - KeyEvent
+VBEDriver - VBEInterface
+
+
+PS2Driver ..> KeyEvent : push
+Term -left..> KeyEvent : Pop
+
+Term -up--> Font
+Font -down--> Term
+
+
+Term --> VBEInterface : Affichage
+
+
+@enduml
