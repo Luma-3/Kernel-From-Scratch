@@ -51,8 +51,8 @@ static int32_t draw_term(struct terminal *term, uint8_t x, uint8_t y,
 
 int32_t scroll(struct terminal *term) {
 
-    size_t line_size = term->char_by_line * sizeof(uint16_t);
-    size_t all_but_last = (term->line_by_screen - 1) * line_size;
+    // size_t line_size = term->char_by_line * sizeof(uint16_t);
+    // size_t all_but_last = (term->line_by_screen - 1) * line_size;
 
     kmemmove(term->buffer, term->buffer + term->char_by_line,
              (term->line_by_screen - 1) * term->char_by_line *
@@ -159,7 +159,8 @@ int32_t init_terminal(const char *name) {
     kmemset(term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
             term->char_by_line * term->line_by_screen);
 
-    term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\033[0m\n", 20);
+    term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\033[0m\n",
+               20);
     printf("Terminal %s initialized\n", name);
 
     return KTERM_SUCCESS;

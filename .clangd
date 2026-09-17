@@ -1,0 +1,6 @@
+CompileFlags:
+  Add: [
+    "-I.",
+    "-I/home/Luma/Documents/Projet/Kernel-From-Scratch",
+    "-Wno-strict-prototypes"
+  ]

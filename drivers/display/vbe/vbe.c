@@ -78,7 +78,7 @@ enum vbe_result vbe_draw_bitmap(uint32_t x, uint32_t y, const uint32_t *bitmap,
     uint32_t off;
     if (vbe_info.bpp == 32) {
         for (uint32_t j = 0; j < height; j++) {
-            uint32_t off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
+            off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
         }
         return VBE_SUCCESS;

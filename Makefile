@@ -1,108 +1,108 @@
+# ============================================
+# 1. INITIALISATION & CONFIGURATION
+# ============================================
 
-CROSS_PATH := ./tools/cross
+include config.mk
 
-TARGET := i386-elf
+.PHONY:	all clean mrproper re debug_mk
 
-CC	:= $(CROSS_PATH)/bin/$(TARGET)-gcc
-AS	:= $(CROSS_PATH)/bin/$(TARGET)-as
-LD	:= $(CROSS_PATH)/bin/$(TARGET)-gcc
+all:	$(BIN_DIR)/$(TARGET)
 
-ifeq ($(wildcard $(CC)),)
-$(error "Cross-compiler not found at $(CC). Please check CROSS_PATH.")
-endif
+# ============================================
+# 2. Modules Inclution
+# ============================================
 
-CFLAGS	:= -std=gnu99 -ffreestanding -O2 -Wall -Wextra -MMD -MP
-LDFLAGS	:= -ffreestanding -O2 -nostdlib
+SRCS		:=
+INCLUDES	:= -I.
 
-OBJDIR := obj
-BINDIR := bin
+include boot/module.mk
+include arch/i386/module.mk
+include drivers/module.mk
+include kernel/module.mk
+include klibc/module.mk
+include terminal/module.mk
 
-MODULES := arch/i386 drivers kernel klibc boot terminal
+# ============================================
+# 3. Objects & Dependencies
+# ============================================
 
-obj-y := # List of object files to be built
+OBJS	:= $(SRCS:%=$(BUILD_DIR)/%.o)
+DEPS	:= $(OBJS:.o=.d)
 
-# --- Aggregate subdirectories --- #
+-include $(DEPS)
 
-include $(addsuffix /Makefile,$(MODULES))
+# ============================================
+# 5. Generic Rules
+# ============================================
 
-OBJS := $(addprefix $(OBJDIR)/,$(obj-y))
-# --- Rules --- #
 
-all: $(BINDIR)/kernel.bin
+$(BIN_DIR)/$(TARGET): $(OBJS) $(LDSCRIPT)
+	@$(MKDIR) $(BIN_DIR)
+	@$(ECHO) " $(COLOR_LD)[LD]$(COLOR_RESET) %s\n" $@
+	@$(LD) $(LDFLAGS) -T $(LDSCRIPT) $(OBJS) -o $@
 
-$(BINDIR)/kernel.bin: $(OBJS)
-	@mkdir -p $(dir $@)
-	$(LD) -T $(LDSCRIPT) $(LDFLAGS) -o $@ $^
+$(BUILD_DIR)/%.c.o: %.c
+	@$(MKDIR) $(dir $@)
+	@$(ECHO) " $(COLOR_CC)[CC]$(COLOR_RESET) %s\n" $<
+	@$(CC) $(CFLAGS) $(COMFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJDIR)/%.o: %.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.s.o: %.s
+	@$(MKDIR) $(dir $@)
+	@$(ECHO) " $(COLOR_AS)[AS]$(COLOR_RESET) %s\n" $<
+	@$(AS) $(ASFLAGS) $< -o $@
 
-$(OBJDIR)/%.o: %.s
-	@mkdir -p $(dir $@) 
-	$(AS) $< -o $@
+# ============================================
+# 6. Special Rules
+# ============================================
+
+GRUB_CFG	:= grub.cfg
+
+ISO			:= $(BIN_DIR)/$(TARGET:.bin=.iso)
+ISO_DIR		:= $(BIN_DIR)/iso
+
+iso : $(ISO)
+
+$(ISO): $(BIN_DIR)/$(TARGET) $(GRUB_CFG)
+	@$(ECHO) " $(COLOR_LD)[ISO]$(COLOR_RESET) %s\n" $@
+	@$(MKDIR) $(ISO_DIR)/boot/grub
+	@cp $< $(ISO_DIR)/boot/$(TARGET)
+	@cp $(GRUB_CFG) $(ISO_DIR)/boot/grub
+	@$(GRUB_MKRESCUE) -o $@ $(ISO_DIR)
+
+run: $(ISO)
+	@qemu-system-i386 -cdrom $(ISO)
+
+# ============================================
+# 7. Clean Rules
+# ============================================
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	$(RM) $(BUILD_DIR)
 
-mrproper: clean
-	rm -f $(ISO)
-
-debug_mk:
-	@echo "SRCDIR: $(SRCDIR)"
-	@echo "OBJDIR: $(OBJDIR)"
-	@echo "BINDIR: $(BINDIR)"
-	@echo "SUBDIRS: $(SUBDIRS)"
-	@echo "obj-y: $(obj-y)"
-	@echo "OBJS: $(OBJS)"
+mrproper:
+	$(RM) $(BUILD_DIR) $(BIN_DIR)
 
 re: mrproper all
 
-.PHONY: all clean debug_mk mrproper re
+# ============================================
+# 8. Debug Rules
+# ============================================
 
+debug_mk:
+	@echo "SRCS: $(SRCS)"
+	@echo "OBJS: $(OBJS)"
+	@echo "TARGET: $(TARGET)"
+	@echo "AS Compiler: $(AS)"
+	@echo "CC Compiler: $(CC)"
+	@echo "INCLUDES:" $(INCLUDES)
+	@echo "GRUB_MKRESCUE: $(GRUB_MKRESCUE)"
+	@echo "LDSCRIPT: $(LDSCRIPT)"
 
-
-# --- Include Header Files --- #
-
-INCLUDES_DIRS := $(sort $(dir $(obj-y)))
-
-INCLUDES := $(addprefix -I,$(INCLUDES_DIRS))
-
-CFLAGS += $(INCLUDES)
-
--include $(OBJS:.o=.d)
-
-# --- Special Rules --- #
+# ============================================
+# 9. LSP Rules
+# ============================================
 
 lsp: clean
-	@echo "create compile commands database for lsp"
-	bear -- $(MAKE) all
-
-
-# --- ISO Creation --- #
-
-GRUB_CFG := grub.cfg
-
-GRUB_MKRESCUE := $(CROSS_PATH)/bin/grub-mkrescue
-
-ifeq ($(shell which $(GRUB_MKRESCUE)),)
-$(error "grub-mkrescue not found. Please install GRUB tools.")
-endif
-
-
-ISO := kfs.iso
-ISODIR := isodir
-
-iso: $(ISO)
-
-$(ISO): $(BINDIR)/kernel.bin $(GRUB_CFG)
-	echo "Creating ISO image $@..."
-	@mkdir -p $(ISODIR)/boot/grub
-	cp $< $(ISODIR)/boot/kernel.bin
-	cp $(GRUB_CFG) $(ISODIR)/boot/grub/
-	$(GRUB_MKRESCUE) -o $@ $(ISODIR)
-	rm -rf $(ISODIR)
-
-run: iso
-	qemu-system-i386 -cdrom $(ISO)
+	@echo "Creating LSP file..."
+	@bear -- $(MAKE) all
 
