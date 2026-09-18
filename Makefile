@@ -4,7 +4,7 @@
 
 include config.mk
 
-.PHONY:	all clean mrproper re debug_mk
+.PHONY:	all clean mrproper re debug_mk iso run tidy tidy-fix lsp
 
 all:	$(BIN_DIR)/$(TARGET)
 
@@ -27,6 +27,7 @@ include terminal/module.mk
 # ============================================
 
 OBJS	:= $(SRCS:%=$(BUILD_DIR)/%.o)
+
 DEPS	:= $(OBJS:.o=.d)
 
 -include $(DEPS)
@@ -35,18 +36,17 @@ DEPS	:= $(OBJS:.o=.d)
 # 5. Generic Rules
 # ============================================
 
-
 $(BIN_DIR)/$(TARGET): $(OBJS) $(LDSCRIPT)
 	@$(MKDIR) $(BIN_DIR)
 	@$(ECHO) " $(COLOR_LD)[LD]$(COLOR_RESET) %s\n" $@
 	@$(LD) $(LDFLAGS) -T $(LDSCRIPT) $(OBJS) -o $@
 
-$(BUILD_DIR)/%.c.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	@$(MKDIR) $(dir $@)
 	@$(ECHO) " $(COLOR_CC)[CC]$(COLOR_RESET) %s\n" $<
 	@$(CC) $(CFLAGS) $(COMFLAGS) $(INCLUDES) -c $< -o $@
 
-$(BUILD_DIR)/%.s.o: %.s
+$(BUILD_DIR)/%.o: %.s
 	@$(MKDIR) $(dir $@)
 	@$(ECHO) " $(COLOR_AS)[AS]$(COLOR_RESET) %s\n" $<
 	@$(AS) $(ASFLAGS) $< -o $@
@@ -97,6 +97,7 @@ debug_mk:
 	@echo "INCLUDES:" $(INCLUDES)
 	@echo "GRUB_MKRESCUE: $(GRUB_MKRESCUE)"
 	@echo "LDSCRIPT: $(LDSCRIPT)"
+	@echo "TIDY_SRCS: $(TIDY_SRCS)"
 
 # ============================================
 # 9. LSP Rules
@@ -105,4 +106,19 @@ debug_mk:
 lsp: clean
 	@echo "Creating LSP file..."
 	@bear -- $(MAKE) all
+
+# ============================================
+# 10. Analysis Rules
+# ============================================
+
+TIDY_SRCS := $(filter %.c,$(SRCS))
+
+# all source without .s files
+tidy: $(TIDY_SRCS)
+	@echo "Running clang-tidy..."
+	@clang-tidy $^ -- $(CFLAGS) $(INCLUDES)
+
+tidy-fix: $(TIDY_SRCS)
+	@echo "Running clang-tidy with fix..."
+	@clang-tidy $^ --fix -- $(CFLAGS) $(INCLUDES)
 

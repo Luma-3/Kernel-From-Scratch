@@ -1,0 +1,1032 @@
+error: too many errors emitted, stopping now [clang-diagnostic-error]
+/home/Luma/Documents/Projet/Kernel-From-Scratch/arch/i386/io.h:2:9: warning: declaration uses identifier '__KFS_IO_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_IO_H
+      |         ^~~~~~~~~~
+      |         KFS_IO_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:8:12: warning: redundant explicit casting to the same type 'uintptr_t' (aka 'unsigned long') as the sub-expression, remove this casting [readability-redundant-casting]
+    8 |     return (uintptr_t)vbe_info.framebuffer_addr;
+      |            ^~~~~~~~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:28:15: note: source type originates from referencing this member
+   28 |     uintptr_t framebuffer_addr;
+      |     ~~~~~~~~~ ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:11:42: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   11 | inline uint32_t vbe_get_width() { return vbe_info.width; }
+      |                                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:38:1: note: use 'static' to give inline function 'vbe_get_width' internal linkage
+   38 | uint32_t vbe_get_width();
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:13:43: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   13 | inline uint32_t vbe_get_height() { return vbe_info.height; }
+      |                                           ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:40:1: note: use 'static' to give inline function 'vbe_get_height' internal linkage
+   40 | uint32_t vbe_get_height();
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:15:42: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   15 | inline uint32_t vbe_get_pitch() { return vbe_info.pitch; }
+      |                                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:42:1: note: use 'static' to give inline function 'vbe_get_pitch' internal linkage
+   42 | uint32_t vbe_get_pitch();
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:17:40: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   17 | inline uint32_t vbe_get_bpp() { return vbe_info.bpp; }
+      |                                        ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:44:1: note: use 'static' to give inline function 'vbe_get_bpp' internal linkage
+   44 | uint32_t vbe_get_bpp();
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:19:57: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   19 | inline vbe_color_info_t *vbe_get_color_info() { return &vbe_info.color_info; }
+      |                                                         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:46:1: note: use 'static' to give inline function 'vbe_get_color_info' internal linkage
+   46 | vbe_color_info_t *vbe_get_color_info();
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:22:9: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   22 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:22:31: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   22 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                               ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:22:50: warning: statement should be inside braces [readability-braces-around-statements]
+   22 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                                                  ^
+      |                                                   {
+   23 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:25:14: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   25 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:25:37: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   25 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |                                     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:25:53: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |                                                     ^
+      |                                                      {
+   26 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:28:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+   28 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:28:30: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   28 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:29:20: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   29 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                    ^~~~~~~~~~~~~~~~~~
+      |                    (                 )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:29:24: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   29 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                        ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:29:41: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   29 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                         (                     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:29:46: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   29 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                                              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:31:13: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   31 |     switch (vbe_info.bpp) {
+      |             ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:48:1: note: use 'static' to give inline function 'vbe_get_pixel' internal linkage
+   48 | enum vbe_result vbe_get_pixel(uint32_t x, uint32_t y, uint32_t *color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:45:5: warning: switching on non-enum value without default case may not cover all cases [bugprone-switch-missing-default-case]
+   45 |     switch (bpp) {
+      |     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:58:9: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   58 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:58:31: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   58 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                               ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:58:50: warning: statement should be inside braces [readability-braces-around-statements]
+   58 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                                                  ^
+      |                                                   {
+   59 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:61:14: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   61 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:61:37: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   61 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |                                     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:61:53: warning: statement should be inside braces [readability-braces-around-statements]
+   61 |     if (x >= vbe_info.width || y >= vbe_info.height)
+      |                                                     ^
+      |                                                      {
+   62 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:64:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+   64 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:64:30: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   64 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:65:20: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   65 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                    ^~~~~~~~~~~~~~~~~~
+      |                    (                 )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:65:24: error: using static variable 'vbe_info' in an inline function with external linkage is a C2y extension [clang-diagnostic-static-in-inline]
+   65 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                        ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:50:1: note: use 'static' to give inline function 'vbe_putpixel' internal linkage
+   50 | enum vbe_result vbe_putpixel(uint32_t x, uint32_t y, uint32_t color);
+      | ^
+      | static 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:5:26: note: 'vbe_info' declared here
+    5 | static struct s_vbe_info vbe_info = {0};
+      |                          ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:65:41: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   65 |     uint32_t off = y * vbe_info.pitch + x * (vbe_info.bpp / 8);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                         (                     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:73:50: warning: statement should be inside braces [readability-braces-around-statements]
+   73 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                                                  ^
+      |                                                   {
+   74 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:76:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+   76 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:81:19: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   81 |             off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                   (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:81:46: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   81 |             off = (y + j) * vbe_info.pitch + x * bytes_per_pixel;
+      |                                              ^~~~~~~~~~~~~~~~~~~~
+      |                                              (                  )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:32: warning: result of multiplication in type 'uint32_t' (aka 'unsigned int') is used as a pointer offset after an implicit widening conversion to type 'size_t' [bugprone-implicit-widening-of-multiplication-result]
+   82 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:39: note: make conversion explicit to silence this warning
+   82 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                       ^~~~~~~~~
+      |                                       (size_t)()
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:39: note: perform multiplication in a wider type
+   82 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                       ^
+      |                                       (size_t)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:51: warning: performing an implicit widening conversion to type 'size_t' (aka 'unsigned long') of a multiplication performed in type 'uint32_t' (aka 'unsigned int') [bugprone-implicit-widening-of-multiplication-result]
+   82 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:51: note: make conversion explicit to silence this warning
+    3 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                                   ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                                   (size_t)(              )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:82:51: note: perform multiplication in a wider type
+   82 |             kmemcpy(fb + off, &bitmap[j * width], width * bytes_per_pixel);
+      |                                                   ^~~~~
+      |                                                   (size_t)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:90:37: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   90 |             uint32_t color = bitmap[j * width + i];
+      |                                     ^~~~~~~~~
+      |                                     (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:93:73: warning: statement should be inside braces [readability-braces-around-statements]
+   93 |             if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+      |                                                                         ^
+      |                                                                          {
+   94 |                 return VBE_ERROR;
+      |                                  
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:95:19: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   95 |             off = pixel_y * vbe_info.pitch + pixel_x * bytes_per_pixel;
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                   (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:95:46: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   95 |             off = pixel_y * vbe_info.pitch + pixel_x * bytes_per_pixel;
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                              (                        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:107:50: warning: statement should be inside braces [readability-braces-around-statements]
+  107 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                                                  ^
+      |                                                   {
+  108 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:110:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+  110 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:117:37: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  117 |             uint32_t color = bitmap[j * width + i];
+      |                                     ^~~~~~~~~
+      |                                     (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:121:35: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  121 |                     pixel_x = x + i * scale + sx;
+      |                                   ^~~~~~~~~
+      |                                   (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:122:35: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  122 |                     pixel_y = y + j * scale + sy;
+      |                                   ^~~~~~~~~
+      |                                   (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:123:81: warning: statement should be inside braces [readability-braces-around-statements]
+  123 |                     if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+      |                                                                                 ^
+      |                                                                                  {
+  124 |                         return VBE_ERROR;
+      |                                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:126:25: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  126 |                         pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                         (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:126:52: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  126 |                         pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                    (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:135:65: warning: pointer parameter 'glyph' can be pointer to const [readability-non-const-parameter]
+  135 | enum vbe_result vbe_draw_glyph(uint32_t x, uint32_t y, uint8_t *glyph,
+      |                                                                 ^
+      |                                                        const 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:138:50: warning: statement should be inside braces [readability-braces-around-statements]
+  138 |     if (vbe_info.bpp != 24 && vbe_info.bpp != 32)
+      |                                                  ^
+      |                                                   {
+  139 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:141:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+  141 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:151:73: warning: statement should be inside braces [readability-braces-around-statements]
+  151 |             if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+      |                                                                         ^
+      |                                                                          {
+  152 |                 return VBE_ERROR;
+      |                                  
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:153:19: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  153 |             off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                   (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:153:46: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  153 |             off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                              (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:164:17: warning: function 'vbe_draw_glyph_scaled' has cognitive complexity of 39 (threshold 25) [readability-function-cognitive-complexity]
+  164 | enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph,
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:173:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  173 |     for (uint32_t j = 0; j < glyph_height; j++) {
+      |     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:175:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  175 |         for (uint32_t i = 0; i < glyph_width; i++) {
+      |         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:176:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  176 |             if (row & (1 << (7 - i))) {
+      |             ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:177:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+  177 |                 for (uint32_t sy = 0; sy < scale; sy++) {
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:178:21: note: +5, including nesting penalty of 4, nesting level increased to 5
+  178 |                     for (uint32_t sx = 0; sx < scale; sx++) {
+      |                     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:182:25: note: +6, including nesting penalty of 5, nesting level increased to 6
+  182 |                         if (pixel_x >= vbe_info.width ||
+      |                         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:182:55: note: +1
+  182 |                         if (pixel_x >= vbe_info.width ||
+      |                                                       ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:190:15: note: +1, nesting level increased to 3
+  190 |             } else {
+      |               ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:191:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+  191 |                 for (uint32_t sy = 0; sy < scale; sy++) {
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:192:21: note: +5, including nesting penalty of 4, nesting level increased to 5
+  192 |                     for (uint32_t sx = 0; sx < scale; sx++) {
+      |                     ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:196:25: note: +6, including nesting penalty of 5, nesting level increased to 6
+  196 |                         if (pixel_x >= vbe_info.width ||
+      |                         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:196:55: note: +1
+  196 |                         if (pixel_x >= vbe_info.width ||
+      |                                                       ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:164:72: warning: pointer parameter 'glyph' can be pointer to const [readability-non-const-parameter]
+  164 | enum vbe_result vbe_draw_glyph_scaled(uint32_t x, uint32_t y, uint8_t *glyph,
+      |                                                                        ^
+      |                                                               const 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:168:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+  168 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:180:39: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  180 |                         pixel_x = x + i * scale + sx;
+      |                                       ^~~~~~~~~
+      |                                       (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:181:39: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  181 |                         pixel_y = y + j * scale + sy;
+      |                                       ^~~~~~~~~
+      |                                       (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:183:56: warning: statement should be inside braces [readability-braces-around-statements]
+  183 |                             pixel_y >= vbe_info.height)
+      |                                                        ^
+      |                                                         {
+  184 |                             return VBE_ERROR;
+      |                                              
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:185:31: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  185 |                         off = pixel_y * vbe_info.pitch +
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                               (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:186:31: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  186 |                               pixel_x * (vbe_info.bpp / 8);
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                               (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:194:39: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  194 |                         pixel_x = x + i * scale + sx;
+      |                                       ^~~~~~~~~
+      |                                       (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:195:39: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  195 |                         pixel_y = y + j * scale + sy;
+      |                                       ^~~~~~~~~
+      |                                       (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:197:56: warning: statement should be inside braces [readability-braces-around-statements]
+  197 |                             pixel_y >= vbe_info.height)
+      |                                                        ^
+      |                                                         {
+  198 |                             return VBE_ERROR;
+      |                                              
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:199:31: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  199 |                         off = pixel_y * vbe_info.pitch +
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                               (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:200:31: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  200 |                               pixel_x * (vbe_info.bpp / 8);
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                               (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:210:71: warning: pointer parameter 'glyph' can be pointer to const [readability-non-const-parameter]
+  210 | enum vbe_result vbe_draw_glyph_sized(uint32_t x, uint32_t y, uint8_t *glyph,
+      |                                                                       ^
+      |                                                              const 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:215:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+  215 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:228:77: warning: statement should be inside braces [readability-braces-around-statements]
+  228 |                 if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+      |                                                                             ^
+      |                                                                              {
+  229 |                     return VBE_ERROR;
+      |                                      
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:230:23: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  230 |                 off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                       (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:230:50: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  230 |                 off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                  (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:235:77: warning: statement should be inside braces [readability-braces-around-statements]
+  235 |                 if (pixel_x >= vbe_info.width || pixel_y >= vbe_info.height)
+      |                                                                             ^
+      |                                                                              {
+  236 |                     return VBE_ERROR;
+      |                                      
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:237:23: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  237 |                 off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                       (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:237:50: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  237 |                 off = pixel_y * vbe_info.pitch + pixel_x * (vbe_info.bpp / 8);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                  (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:247:19: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+  247 |     uint8_t *fb = (uint8_t *)vbe_info.framebuffer_addr;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:250:68: warning: statement should be inside braces [readability-braces-around-statements]
+  250 |         x + width > vbe_info.width || y + height > vbe_info.height)
+      |                                                                    ^
+      |                                                                     {
+  251 |         return VBE_ERROR;
+      |                          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:255:19: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  255 |             off = (y + j) * vbe_info.pitch + (x + i) * (vbe_info.bpp / 8);
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                   (                       )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:255:46: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  255 |             off = (y + j) * vbe_info.pitch + (x + i) * (vbe_info.bpp / 8);
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                              (                           )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:267:12: warning: implicit conversion 'int' -> 'bool' [readability-implicit-bool-conversion]
+  267 |     return (mbi->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) != 0u &&
+      |            ^
+      |            (
+  268 |            mbi->framebuffer_addr != 0u && mbi->framebuffer_type == 1u &&
+  269 |            (mbi->framebuffer_bpp == 24u || mbi->framebuffer_bpp == 32u);
+      |                                                                        
+      |                                                                        ) != 0
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:267:62: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  267 |     return (mbi->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) != 0u &&
+      |                                                              ^~
+      |                                                               U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:268:37: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  268 |            mbi->framebuffer_addr != 0u && mbi->framebuffer_type == 1u &&
+      |                                     ^~
+      |                                      U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:268:68: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  268 |            mbi->framebuffer_addr != 0u && mbi->framebuffer_type == 1u &&
+      |                                                                    ^~
+      |                                                                     U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:269:37: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  269 |            (mbi->framebuffer_bpp == 24u || mbi->framebuffer_bpp == 32u);
+      |                                     ^ ~
+      |                                       U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:269:68: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  269 |            (mbi->framebuffer_bpp == 24u || mbi->framebuffer_bpp == 32u);
+      |                                                                    ^ ~
+      |                                                                      U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:273:38: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  273 |     if (vbe_info.framebuffer_addr != 0u) {
+      |                                      ^~
+      |                                       U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:283:34: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  283 |     if (mbi->framebuffer_type == 1u) {
+      |                                  ^~
+      |                                   U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.c:296:41: warning: integer literal has suffix 'u', which is not uppercase [readability-uppercase-literal-suffix]
+  296 |     } else if (mbi->framebuffer_type == 0u) {
+      |                                         ^~
+      |                                          U
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:2:9: warning: declaration uses identifier '__KFS_VBE_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_VBE_H
+      |         ^~~~~~~~~~~
+      |         KFS_VBE_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/keyevent.h:2:9: warning: declaration uses identifier '__KFS_KEYEVENT_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_KEYEVENT_H
+      |         ^~~~~~~~~~~~~~~~
+      |         KFS_KEYEVENT_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:11:40: warning: statement should be inside braces [readability-braces-around-statements]
+   11 |     while (inb(PS2_STATUS_PORT) & 0x02)
+      |                                        ^
+      |                                         {
+   12 |         ;
+      |          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:16:43: warning: statement should be inside braces [readability-braces-around-statements]
+   16 |     while (!(inb(PS2_STATUS_PORT) & 0x01))
+      |                                           ^
+      |                                            {
+   17 |         ;
+      |          
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:54:28: warning: statement should be inside braces [readability-braces-around-statements]
+   54 |     if (ps2_read() != 0xFA)
+      |                            ^
+      |                             {
+   55 |         return; // ACK
+      |                       
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:56:28: warning: statement should be inside braces [readability-braces-around-statements]
+   56 |     if (ps2_read() != 0xAA)
+      |                            ^
+      |                             {
+   57 |         return; // Slef-test OK
+      |                                
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:75:36: warning: statement should be inside braces [readability-braces-around-statements]
+   75 |     if (inb(PS2_DATA_PORT) != 0xFA)
+      |                                    ^
+      |                                     {
+   76 |         return 0xFF;
+      |                     
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.c:82:36: warning: statement should be inside braces [readability-braces-around-statements]
+   82 |     if (inb(PS2_DATA_PORT) != 0xFA)
+      |                                    ^
+      |                                     {
+   83 |         return 0xFF;
+      |                     
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.h:2:9: warning: declaration uses identifier '__KFS_PS2_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PS2_H
+      |         ^~~~~~~~~~~
+      |         KFS_PS2_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kmain.c:1:2: warning: preprocessor condition can be written more concisely using '#ifdef' [readability-use-concise-preprocessor-directives]
+    1 | #if defined(__linux__)
+      |  ^~~~~~~~~~~~~~~~~~~~~
+      |  ifdef __linux__
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kmain.c:2:2: error: "This code is not meant to be compiled on Linux." [clang-diagnostic-error]
+    2 | #error "This code is not meant to be compiled on Linux."
+      |  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kmain.c:5:2: warning: preprocessor condition can be written more concisely using '#ifndef' [readability-use-concise-preprocessor-directives]
+    5 | #if !defined(__i386__)
+      |  ^~~~~~~~~~~~~~~~~~~~~
+      |  ifndef __i386__
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kmain.c:6:2: error: "This code must be compiled with a 32-bit target." [clang-diagnostic-error]
+    6 | #error "This code must be compiled with a 32-bit target."
+      |  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kmain.c:23:29: warning: integer to pointer cast pessimizes optimization opportunities [performance-no-int-to-ptr]
+   23 |     multiboot_info_t *mbi = (multiboot_info_t *)(uintptr_t)mb_info_addr;
+      |                             ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:54:17: warning: switch has 2 consecutive identical branches [bugprone-branch-clone]
+   54 |                 case ' ': continue; // Ne rien dessiner pour les espaces
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:55:34: note: last of these clones ends here
+   55 |                 default: continue;
+      |                                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:57:26: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   57 |             apple_bitmap[y * 16 + x] = color;
+      |                          ^~~~~~
+      |                          (     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:62:44: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   62 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                            ^~~~~~~~~
+      |                                            (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:62:70: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   62 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                                                      ^~~~~~~~~
+      |                                                                      (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:104:17: warning: switch has 2 consecutive identical branches [bugprone-branch-clone]
+  104 |                 case ' ': continue; // Ne rien dessiner pour les espaces
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:105:34: note: last of these clones ends here
+  105 |                 default: continue;
+      |                                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:107:27: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  107 |             potato_bitmap[y * 16 + x] = color;
+      |                           ^~~~~~
+      |                           (     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:112:44: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  112 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                            ^~~~~~~~~
+      |                                            (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:112:70: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  112 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                                                      ^~~~~~~~~
+      |                                                                      (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:167:17: warning: switch has 2 consecutive identical branches [bugprone-branch-clone]
+  167 |                 case ' ': continue;
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:168:34: note: last of these clones ends here
+  168 |                 default: continue;
+      |                                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:171:27: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  171 |             saturn_bitmap[y * 16 + x] = color;
+      |                           ^~~~~~
+      |                           (     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:174:44: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  174 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                            ^~~~~~~~~
+      |                                            (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:174:70: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  174 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                                                      ^~~~~~~~~
+      |                                                                      (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:237:17: warning: switch has 2 consecutive identical branches [bugprone-branch-clone]
+  237 |                 case ' ': continue; // Ne rien dessiner pour les espaces
+      |                 ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:238:34: note: last of these clones ends here
+  238 |                 default: continue;
+      |                                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:240:28: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  240 |             axolote_bitmap[y * 16 + x] = color;
+      |                            ^~~~~~
+      |                            (     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:244:44: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  244 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                            ^~~~~~~~~
+      |                                            (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.c:244:70: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  244 |                     vbe_putpixel(start_x + x * scale + sx, start_y + y * scale + sy, color);
+      |                                                                      ^~~~~~~~~
+      |                                                                      (        )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/kpixel_art.h:2:10: warning: declaration uses identifier '__KFS_KPIXEL_ART_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | # define __KFS_KPIXEL_ART_H
+      |          ^~~~~~~~~~~~~~~~~~
+      |          KFS_KPIXEL_ART_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/printk.c:31:16: warning: redundant parentheses around expression [readability-redundant-parentheses]
+   31 |         return (0);
+      |                ^ ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/printk.h:2:9: warning: declaration uses identifier '__KFS_PRINTK_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PRINTK_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_PRINTK_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/math/klpow.c:11:19: warning: narrowing conversion from 'long' to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+   11 |         result *= base;
+      |                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/memory/kmemmove.c:11:18: warning: statement should be inside braces [readability-braces-around-statements]
+   11 |                 while (count--)
+      |                                ^
+      |                                 {
+   12 |                         *tmp++ = *s++;
+      |                                       
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/memory/kmemmove.c:18:18: warning: statement should be inside braces [readability-braces-around-statements]
+   18 |                 while (count--)
+      |                                ^
+      |                                 {
+   19 |                         *--tmp = *--s;
+      |                                       
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/memory/mem.h:6:9: warning: declaration uses identifier '__KFS_MEM_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    6 | #define __KFS_MEM_H
+      |         ^~~~~~~~~~~
+      |         KFS_MEM_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/string/kitoa.c:34:18: warning: narrowing conversion from 'int' to signed type 'char' is implementation-defined [bugprone-narrowing-conversions]
+   34 |         *ptr++ = '0' + (tmp_value - value * 10);
+      |                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/string/kitoa.c:34:37: warning: '*' has higher precedence than '-'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   34 |         *ptr++ = '0' + (tmp_value - value * 10);
+      |                                     ^~~~~~~~~~~
+      |                                     (         )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/string/kitoa.c:45:12: warning: narrowing conversion from '__ptrdiff_t' (aka 'long') to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+   45 |     return ptr - str + 1;
+      |            ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/string/string.h:6:9: warning: declaration uses identifier '__KFS_STRING_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    6 | #define __KFS_STRING_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_STRING_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:9:14: warning: statement should be inside braces [readability-braces-around-statements]
+    9 |     if (!str)
+      |              ^
+      |               {
+   10 |         return (term_write(active_terminal, (const uint8_t *)"(null)", 6));
+      |                                                                            
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:15:14: warning: statement should be inside braces [readability-braces-around-statements]
+   15 |     if (!str)
+      |              ^
+      |               {
+   16 |         return (0);
+      |                    
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:16:16: warning: redundant parentheses around expression [readability-redundant-parentheses]
+   16 |         return (0);
+      |                ^ ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:31:18: warning: narrowing conversion from 'unsigned int' to signed type 'char' is implementation-defined [bugprone-narrowing-conversions]
+   31 |         *ptr++ = '0' + tmp_value;
+      |                  ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:41:12: warning: narrowing conversion from '__ptrdiff_t' (aka 'long') to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+   41 |     return (ptr - str + 1);
+      |            ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:57:14: warning: statement should be inside braces [readability-braces-around-statements]
+   57 |     if (!str)
+      |              ^
+      |               {
+   58 |         return (0);
+      |                    
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:58:16: warning: redundant parentheses around expression [readability-redundant-parentheses]
+   58 |         return (0);
+      |                ^ ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:73:28: warning: statement should be inside braces [readability-braces-around-statements]
+   73 |         if (tmp_value < 10)
+      |                            ^
+      |                             {
+   74 |             *ptr++ = '0' + tmp_value;
+   75 |         else
+      |         } 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:74:22: warning: narrowing conversion from 'unsigned long' to signed type 'char' is implementation-defined [bugprone-narrowing-conversions]
+   74 |             *ptr++ = '0' + tmp_value;
+      |                      ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:75:13: warning: statement should be inside braces [readability-braces-around-statements]
+   75 |         else
+      |             ^
+      |              {
+   76 |             *ptr++ = (uppercase ? 'A' : 'a') + (tmp_value - 10);
+      |                                                                 
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:76:22: warning: narrowing conversion from 'unsigned long' to signed type 'char' is implementation-defined [bugprone-narrowing-conversions]
+   76 |             *ptr++ = (uppercase ? 'A' : 'a') + (tmp_value - 10);
+      |                      ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:86:12: warning: narrowing conversion from '__ptrdiff_t' (aka 'long') to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+   86 |     return (ptr - str + 1);
+      |            ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.c:96:14: warning: statement should be inside braces [readability-braces-around-statements]
+   96 |     if (!ptr)
+      |              ^
+      |               {
+   97 |         return putstr("(nil)");
+      |                                
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.h:2:9: warning: declaration uses identifier '__KFS_PRINT_UTILITY_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PRINT_UTILITY_H
+      |         ^~~~~~~~~~~~~~~~~~~~~
+      |         KFS_PRINT_UTILITY_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:32:20: warning: redundant parentheses around expression [readability-redundant-parentheses]
+   32 |             return (0);
+      |                    ^ ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:41:17: warning: statement should be inside braces [readability-braces-around-statements]
+   41 |     if (!format)
+      |                 ^
+      |                  {
+   42 |         return (-1);
+      |                     
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:47:27: warning: statement should be inside braces [readability-braces-around-statements]
+   47 |             if (tmp == -1)
+      |                           ^
+      |                            {
+   48 |                 return (-1);
+      |                             
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:49:13: error: variable 'len' is uninitialized when used here [clang-diagnostic-uninitialized]
+   49 |             len += tmp;
+      |             ^~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:38:12: note: initialize the variable 'len' to silence this warning
+   38 |     int len;
+      |            ^
+      |             = 0
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:50:15: warning: statement should be inside braces [readability-braces-around-statements]
+   50 |         } else
+      |               ^
+      |                {
+   51 |             len += putchar(*format);
+      |                                     
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/printf.c:50:15: warning: statement should have braces [readability-inconsistent-ifelse-braces]
+   50 |         } else
+      |               ^
+      |                {
+   51 |             len += putchar(*format);
+      |                                     
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/ansii.c:12:7: warning: do not use 'else' after 'return' [readability-else-after-return]
+   12 |     } else {
+      |       ^~~~~~
+   13 |         return default_color;
+      |         ~~~~~~~~~~~~~~~~~~~~~
+   14 |     }
+      |     ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/ansii.c:21:40: warning: redundant boolean literal supplied to boolean operator [readability-simplify-boolean-expr]
+   21 |     if (kstarts_with(*seq, "\033[") == false) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+      |         !kstarts_with(*seq, "\033[")
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/cursor.c:12:22: warning: implicit conversion 'bool' -> 'int' [readability-implicit-bool-conversion]
+   12 |     uint32_t color = visible ? ansii_color_codes[term->fg_color]
+      |                      ^
+      |                      (int)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/cursor.c:39:46: warning: redundant parentheses around expression [readability-redundant-parentheses]
+   39 |     term->cursor.x = (term->cursor.x + 8) & ~(7);
+      |                                              ^ ~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:20:12: warning: result of multiplication in type 'int' is used as a pointer offset after an implicit widening conversion to type 'ptrdiff_t' [bugprone-implicit-widening-of-multiplication-result]
+   20 |     return (uint8_t *)fontdata_8x8 + (c * 8);
+      |            ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:20:39: note: make conversion explicit to silence this warning
+   20 |     return (uint8_t *)fontdata_8x8 + (c * 8);
+      |                                       ^~~~~
+      |                                       (ptrdiff_t)( )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:20:39: note: perform multiplication in a wider type
+   20 |     return (uint8_t *)fontdata_8x8 + (c * 8);
+      |                                       ^
+      |                                       (ptrdiff_t)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:24:38: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   24 |     uint16_t cell = term->buffer[x + y * term->char_by_line];
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~
+      |                                      (                     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:30:41: warning: narrowing conversion from 'uint8_t' (aka 'unsigned char') to signed type 'int8_t' (aka 'signed char') is implementation-defined [bugprone-narrowing-conversions]
+   30 |     uint8_t *font_buffer = char_to_font(c);
+      |                                         ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:43:22: warning: an assignment within an 'if' condition is bug-prone [bugprone-assignment-in-if-condition]
+   43 |             if ((err = refresh_cell(term, i, j)) != VBE_SUCCESS) {
+      |                  ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:43:22: note: if it should be an assignment, move it out of the 'if' condition
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:43:22: note: if it is meant to be an equality check, change '=' to '=='
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:44:24: warning: narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int32_t' (aka 'int') is implementation-defined [bugprone-narrowing-conversions]
+   44 |                 return err;
+      |                        ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:58:14: warning: performing an implicit widening conversion to type '__size_t' (aka 'unsigned long') of a multiplication performed in type 'uint32_t' (aka 'unsigned int') [bugprone-implicit-widening-of-multiplication-result]
+   58 |              (term->line_by_screen - 1) * term->char_by_line *
+      |              ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:58:14: note: make conversion explicit to silence this warning
+   58 |              (term->line_by_screen - 1) * term->char_by_line *
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |              (__size_t)(                                    )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:58:14: note: perform multiplication in a wider type
+   58 |              (term->line_by_screen - 1) * term->char_by_line *
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |               (__size_t)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:63:22: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   63 |         term->buffer[(term->line_by_screen - 1) * term->char_by_line + i] =
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                      (                                              )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:78:35: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+   78 |     term->buffer[term->cursor.x + term->cursor.y * term->char_by_line] =
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                   (                                  )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:112:35: warning: narrowing conversion from 'uint8_t' (aka 'unsigned char') to signed type 'int8_t' (aka 'signed char') is implementation-defined [bugprone-narrowing-conversions]
+  112 |     if (handle_special_char(term, c))
+      |                                   ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:112:38: warning: statement should be inside braces [readability-braces-around-statements]
+  112 |     if (handle_special_char(term, c))
+      |                                      ^
+      |                                       {
+  113 |         return KTERM_SUCCESS;
+      |                              
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:116:35: warning: '*' has higher precedence than '+'; add parentheses to explicitly specify the order of operations [readability-math-missing-parentheses]
+  116 |     term->buffer[term->cursor.x + term->cursor.y * term->char_by_line] =
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                   (                                  )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:133:29: warning: redundant explicit casting to the same type 'struct terminal *' as the sub-expression, remove this casting [readability-redundant-casting]
+  133 |     struct terminal *term = (struct terminal *)&terminals[active_terminal];
+      |                             ^~~~~~~~~~~~~~~~~~~                           
+      |                             (                                             )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:144:29: warning: redundant explicit casting to the same type 'struct terminal *' as the sub-expression, remove this casting [readability-redundant-casting]
+  144 |     struct terminal *term = (struct terminal *)&terminals[terminal_count];
+      |                             ^~~~~~~~~~~~~~~~~~~                          
+      |                             (                                            )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:160:13: warning: performing an implicit widening conversion to type 'size_t' (aka 'unsigned long') of a multiplication performed in type 'uint32_t' (aka 'unsigned int') [bugprone-implicit-widening-of-multiplication-result]
+  160 |             term->char_by_line * term->line_by_screen);
+      |             ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:160:13: note: make conversion explicit to silence this warning
+  160 |             term->char_by_line * term->line_by_screen);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |             (size_t)(                                )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:160:13: note: perform multiplication in a wider type
+  160 |             term->char_by_line * term->line_by_screen);
+      |             ^~~~~~~~~~~~~~~~~~
+      |             (size_t)
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:175:29: warning: redundant explicit casting to the same type 'struct terminal *' as the sub-expression, remove this casting [readability-redundant-casting]
+  175 |     struct terminal *term = (struct terminal *)&terminals[term_id];
+      |                             ^~~~~~~~~~~~~~~~~~~                   
+      |                             (                                     )
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:184:18: warning: an assignment within an 'if' condition is bug-prone [bugprone-assignment-in-if-condition]
+  184 |         if ((err = putchar(term, *it)) != KTERM_SUCCESS)
+      |              ~~~~^~~~~~~~~~~~~~~~~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:184:18: note: if it should be an assignment, move it out of the 'if' condition
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:184:18: note: if it is meant to be an equality check, change '=' to '=='
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:184:57: warning: statement should be inside braces [readability-braces-around-statements]
+  184 |         if ((err = putchar(term, *it)) != KTERM_SUCCESS)
+      |                                                         ^
+      |                                                          {
+  185 |             return err;
+      |                        
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:185:20: warning: narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int32_t' (aka 'int') is implementation-defined [bugprone-narrowing-conversions]
+  185 |             return err;
+      |                    ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:189:12: warning: narrowing conversion from '__ptrdiff_t' (aka 'long') to signed type 'int32_t' (aka 'int') is implementation-defined [bugprone-narrowing-conversions]
+  189 |     return it - data;
+      |            ^
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.c:201:52: warning: statement should be inside braces [readability-braces-around-statements]
+  201 |     if (event.keycode == 0 || !event.state.pressed)
+      |                                                    ^
+      |                                                     {
+  202 |         return 0;
+      |                  
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:2:9: warning: declaration uses identifier '__KFS_TERMINAL_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_TERMINAL_H
+      |         ^~~~~~~~~~~~~~~~
+      |         KFS_TERMINAL_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:63:20: warning: parameter 'term_id' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   63 | int32_t term_write(const uint8_t term_id, const uint8_t *data,
+      |                    ^~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:64:20: warning: parameter 'size' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   64 |                    const uint32_t size);
+      |                    ^~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:71:22: warning: parameter 'term_id' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   71 | int32_t term_refresh(const uint8_t term_id);
+      |                      ^~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/arch/i386/io.h:2:9: warning: declaration uses identifier '__KFS_IO_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_IO_H
+      |         ^~~~~~~~~~
+      |         KFS_IO_H
+boot/multiboot.h:2:9: warning: declaration uses identifier '__KFS_MULTIBOOT_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_MULTIBOOT_H
+      |         ^~~~~~~~~~~~~~~~~
+      |         KFS_MULTIBOOT_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/display/vbe/vbe.h:2:9: warning: declaration uses identifier '__KFS_VBE_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_VBE_H
+      |         ^~~~~~~~~~~
+      |         KFS_VBE_H
+drivers/input/ascii.h:2:9: warning: declaration uses identifier '__KFS_ASCII_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_ASCII_H
+      |         ^~~~~~~~~~~~~
+      |         KFS_ASCII_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/keyevent.h:2:9: warning: declaration uses identifier '__KFS_KEYEVENT_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_KEYEVENT_H
+      |         ^~~~~~~~~~~~~~~~
+      |         KFS_KEYEVENT_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/drivers/input/ps2/ps2.h:2:9: warning: declaration uses identifier '__KFS_PS2_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PS2_H
+      |         ^~~~~~~~~~~
+      |         KFS_PS2_H
+kernel/kernel.h:2:9: warning: declaration uses identifier '__KFS_KERNEL_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_KERNEL_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_KERNEL_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/kernel/printk.h:2:9: warning: declaration uses identifier '__KFS_PRINTK_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PRINTK_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_PRINTK_H
+klibc/math/math.h:6:9: warning: declaration uses identifier '__KFS_MATH_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    6 | #define __KFS_MATH_H
+      |         ^~~~~~~~~~~~
+      |         KFS_MATH_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/memory/mem.h:6:9: warning: declaration uses identifier '__KFS_MEM_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    6 | #define __KFS_MEM_H
+      |         ^~~~~~~~~~~
+      |         KFS_MEM_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/string/string.h:6:9: warning: declaration uses identifier '__KFS_STRING_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    6 | #define __KFS_STRING_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_STRING_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/klibc/utility/print_utility.h:2:9: warning: declaration uses identifier '__KFS_PRINT_UTILITY_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PRINT_UTILITY_H
+      |         ^~~~~~~~~~~~~~~~~~~~~
+      |         KFS_PRINT_UTILITY_H
+klibc/utility/printf.h:2:9: warning: declaration uses identifier '__KFS_PRINTF_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_PRINTF_H
+      |         ^~~~~~~~~~~~~~
+      |         KFS_PRINTF_H
+terminal/font/font.h:2:9: warning: declaration uses identifier '__KFS_FONT_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_FONT_H
+      |         ^~~~~~~~~~~~
+      |         KFS_FONT_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:2:9: warning: declaration uses identifier '__KFS_TERMINAL_H', which is a reserved identifier [bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp]
+    2 | #define __KFS_TERMINAL_H
+      |         ^~~~~~~~~~~~~~~~
+      |         KFS_TERMINAL_H
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:63:20: warning: parameter 'term_id' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   63 | int32_t term_write(const uint8_t term_id, const uint8_t *data,
+      |                    ^~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:64:20: warning: parameter 'size' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   64 |                    const uint32_t size);
+      |                    ^~~~~
+/home/Luma/Documents/Projet/Kernel-From-Scratch/terminal/terminal.h:71:22: warning: parameter 'term_id' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+   71 | int32_t term_refresh(const uint8_t term_id);
+      |                      ^~~~~
