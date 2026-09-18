@@ -1,5 +1,5 @@
-#ifndef __KFS_TERMINAL_H
-#define __KFS_TERMINAL_H
+#ifndef KFS_TERMINAL_H
+#define KFS_TERMINAL_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -60,15 +60,14 @@ extern uint8_t active_terminal;
 
 int32_t init_terminal(const char *name);
 
-int32_t term_write(const uint8_t term_id, const uint8_t *data,
-                   const uint32_t size);
+int32_t term_write(uint8_t term_id, const uint8_t *data, uint32_t size);
 
 void term_poll();
 
 void handle_ansii_esc_seq(struct terminal *term, const char **seq,
                           uint32_t default_color);
 
-int32_t term_refresh(const uint8_t term_id);
+int32_t term_refresh(uint8_t term_id);
 
 int32_t change_term(uint8_t new_term_id);
 
@@ -87,4 +86,4 @@ void newline(struct terminal *term);
 
 void tab(struct terminal *term);
 
-#endif
+#endif // KFS_TERMINAL_H

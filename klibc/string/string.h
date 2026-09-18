@@ -2,8 +2,8 @@
 // Created by gcaptari on 2/27/26.
 //
 
-#ifndef __KFS_STRING_H
-#define __KFS_STRING_H
+#ifndef KFS_STRING_H
+#define KFS_STRING_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -103,4 +103,4 @@ bool kends_with(const char *str, const char *suffix);
  */
 int kitoa(int value, char *str);
 
-#endif //__KFS_STRING_H
+#endif // KFS_STRING_H

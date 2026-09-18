@@ -1,5 +1,5 @@
-#ifndef __KFS_ASCII_H
-#define __KFS_ASCII_H
+#ifndef KFS_ASCII_H
+#define KFS_ASCII_H
 
 #include "keyevent.h"
 #include <stdint.h>
@@ -126,4 +126,4 @@ static const uint8_t keycode_ascii_shift[128] = {
     [KEY_ENTER] = '\n',
 };
 
-#endif // !__KFS_ASCII_H
+#endif // KFS_ASCII_H

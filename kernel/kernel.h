@@ -1,9 +1,8 @@
-#ifndef __KFS_KERNEL_H
-#define __KFS_KERNEL_H
+#ifndef KFS_KERNEL_H
+#define KFS_KERNEL_H
 
-#include "string.h"
-#include "mem.h"
 #include "math.h"
+#include "mem.h"
+#include "string.h"
 
-
-#endif //__KFS_KERNEL_H
+#endif // KFS_KERNEL_H

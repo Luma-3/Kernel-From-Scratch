@@ -1,11 +1,9 @@
-#ifndef __KFS_VBE_H
-#define __KFS_VBE_H
+#ifndef KFS_VBE_H
+#define KFS_VBE_H
 
 #include "multiboot.h"
 #include <stdbool.h>
 #include <stdint.h>
-
-// typedef struct multiboot_info multiboot_info_t;
 
 enum vbe_result { VBE_SUCCESS = 0, VBE_ERROR = -1 };
 
@@ -80,4 +78,4 @@ void vbe_init(multiboot_info_t *mbi);
 
 bool vbe_detect(multiboot_info_t *mbi);
 
-#endif
+#endif // KFS_VBE_H

@@ -1,5 +1,5 @@
-#ifndef __KFS_PRINT_UTILITY_H
-#define __KFS_PRINT_UTILITY_H
+#ifndef KFS_PRINT_UTILITY_H
+#define KFS_PRINT_UTILITY_H
 
 int putchar(char c);
 int putstr(const char *str);
@@ -10,4 +10,4 @@ int lutohex(unsigned long value, char *str, int uppercase);
 int puthex(unsigned long value, int uppercase);
 int putpointer(void *ptr);
 
-#endif //__KFS_PRINT_UTILITY_H
+#endif // KFS_PRINT_UTILITY_H

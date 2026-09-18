@@ -1,5 +1,5 @@
-#ifndef __KFS_IO_H
-#define __KFS_IO_H
+#ifndef KFS_IO_H
+#define KFS_IO_H
 
 #include <stdint.h>
 
@@ -26,4 +26,4 @@ void outb(uint8_t value, uint16_t port);
  */
 uint8_t inb(uint16_t port);
 
-#endif // !__KFS_IO_H
+#endif // KFS_IO_H

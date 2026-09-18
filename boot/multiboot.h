@@ -1,5 +1,5 @@
-#ifndef __KFS_MULTIBOOT_H
-#define __KFS_MULTIBOOT_H
+#ifndef KFS_MULTIBOOT_H
+#define KFS_MULTIBOOT_H
 
 #include <stdint.h>
 
@@ -87,4 +87,4 @@ typedef struct multiboot_mmap_entry {
     uint32_t type;
 } __attribute__((packed)) multiboot_mmap_entry_t;
 
-#endif
+#endif // KFS_MULTIBOOT_H
