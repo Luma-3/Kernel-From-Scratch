@@ -41,12 +41,12 @@ $(BIN_DIR)/$(TARGET): $(OBJS) $(LDSCRIPT)
 	@$(ECHO) " $(COLOR_LD)[LD]$(COLOR_RESET) %s\n" $@
 	@$(LD) $(LDFLAGS) -T $(LDSCRIPT) $(OBJS) -o $@
 
-$(BUILD_DIR)/%.o: %.c
+$(BUILD_DIR)/%.c.o: %.c
 	@$(MKDIR) $(dir $@)
 	@$(ECHO) " $(COLOR_CC)[CC]$(COLOR_RESET) %s\n" $<
 	@$(CC) $(CFLAGS) $(COMFLAGS) $(INCLUDES) -c $< -o $@
 
-$(BUILD_DIR)/%.o: %.s
+$(BUILD_DIR)/%.s.o: %.s
 	@$(MKDIR) $(dir $@)
 	@$(ECHO) " $(COLOR_AS)[AS]$(COLOR_RESET) %s\n" $<
 	@$(AS) $(ASFLAGS) $< -o $@
