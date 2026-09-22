@@ -70,7 +70,7 @@ $(ISO): $(BIN_DIR)/$(TARGET) $(GRUB_CFG)
 	@$(GRUB_MKRESCUE) -o $@ $(ISO_DIR)
 
 run: $(ISO)
-	@qemu-system-i386 -cdrom $(ISO)
+	@qemu-system-i386 -cdrom $(ISO) -monitor stdio
 
 # ============================================
 # 7. Clean Rules

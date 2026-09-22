@@ -1,4 +1,5 @@
 CompileFlags:
   Add: [
     "-Wno-static-in-inline",
+    "-Wpointer-to-int-cast",
   ]

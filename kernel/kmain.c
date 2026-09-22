@@ -16,11 +16,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "boot/gdt/gdt.h"
+
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     if (mb_magic != MULTIBOOT1_BOOTLOADER_MAGIC) {
         return;
     }
     multiboot_info_t *mbi = (multiboot_info_t *)(uintptr_t)mb_info_addr;
+
+    init_gdt();
 
     //   terminal_writestring("Multiboot flags: ");
     //   terminal_put_char('\n');
