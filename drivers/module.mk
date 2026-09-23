@@ -1,3 +1,5 @@
+INCLUDES += -Idrivers
+
 #--- Sub directories ---
 
 include drivers/input/module.mk

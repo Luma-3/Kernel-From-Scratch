@@ -1,5 +1,5 @@
 #include "ps2.h"
-#include "io.h"
+#include "i386/io.h"
 #include "keyevent.h"
 #include "printk.h"
 
@@ -108,5 +108,4 @@ void ps2_keyboard_poll() {
     // %s\n",
     //        scancode, event.keycode,
     //        event.state.pressed ? "Pressed" : "Released");
-
 }

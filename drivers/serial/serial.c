@@ -1,6 +1,6 @@
 
-#include "drivers/serial/serial.h"
-#include "io.h"
+#include "serial/serial.h"
+#include "i386/io.h"
 
 int init_serial() {
     outb(0x00, PORT + 1); // Disable all interrupts

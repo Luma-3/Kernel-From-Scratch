@@ -16,7 +16,7 @@ SRCS		:=
 INCLUDES	:= -I.
 
 include boot/module.mk
-include arch/i386/module.mk
+include arch/module.mk
 include drivers/module.mk
 include kernel/module.mk
 include klibc/module.mk

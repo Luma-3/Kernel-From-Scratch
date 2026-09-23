@@ -1,4 +1,3 @@
-#include "serial.h"
 #if defined(__linux__)
 #error "This code is not meant to be compiled on Linux."
 #endif
@@ -11,6 +10,8 @@
 #include "multiboot.h"
 #include "printf.h"
 #include "ps2.h"
+#include "serial.h"
+#include "stdserial.h"
 #include "terminal.h"
 #include "vbe.h"
 #include <stddef.h>
@@ -19,16 +20,17 @@
 #include "boot/gdt/gdt.h"
 
 void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
+    if (init_serial()) {
+        return; // Silent fail but no other way to report this error yet
+    }
+
     if (mb_magic != MULTIBOOT1_BOOTLOADER_MAGIC) {
+        panic_serial("Invalid multiboot magic number");
         return;
     }
     multiboot_info_t *mbi = (multiboot_info_t *)(uintptr_t)mb_info_addr;
 
     init_gdt();
-
-    if (init_serial()) {
-        return; // Silent fail but no other way to report this error yet
-    }
 
     write_serial('H');
 
