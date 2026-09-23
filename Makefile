@@ -70,6 +70,12 @@ $(ISO): $(BIN_DIR)/$(TARGET) $(GRUB_CFG)
 	@$(GRUB_MKRESCUE) -o $@ $(ISO_DIR)
 
 run: $(ISO)
+	@qemu-system-i386 -cdrom $(ISO)
+
+run_serial: $(ISO)
+	@qemu-system-i386 -cdrom $(ISO) -serial stdio
+
+run_monitor: $(ISO)
 	@qemu-system-i386 -cdrom $(ISO) -monitor stdio
 
 # ============================================
@@ -121,4 +127,3 @@ tidy: $(TIDY_SRCS)
 tidy-fix: $(TIDY_SRCS)
 	@echo "Running clang-tidy with fix..."
 	@clang-tidy $^ --fix -- $(CFLAGS) $(INCLUDES)
-
