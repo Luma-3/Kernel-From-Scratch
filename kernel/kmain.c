@@ -1,3 +1,4 @@
+#include "serial.h"
 #if defined(__linux__)
 #error "This code is not meant to be compiled on Linux."
 #endif
@@ -9,7 +10,6 @@
 #include "kpixel_art.h"
 #include "multiboot.h"
 #include "printf.h"
-#include "printk.h"
 #include "ps2.h"
 #include "terminal.h"
 #include "vbe.h"
@@ -25,6 +25,12 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr) {
     multiboot_info_t *mbi = (multiboot_info_t *)(uintptr_t)mb_info_addr;
 
     init_gdt();
+
+    if (init_serial()) {
+        return; // Silent fail but no other way to report this error yet
+    }
+
+    write_serial('H');
 
     //   terminal_writestring("Multiboot flags: ");
     //   terminal_put_char('\n');
