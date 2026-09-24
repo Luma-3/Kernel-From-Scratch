@@ -37,7 +37,7 @@ endif
 #=======================================================================
 # 4. FLAGS OF COMPILATION & LINKING
 #=======================================================================
-CSTD		:= -std=gnu23 -ffreestanding 
+CSTD		:= -std=gnu23 -ffreestanding -fno-omit-frame-pointer
 WARNS		:= -Wall -Wextra -Wpedantic -Wshadow -Werror
 FPICFLAGS	?= -fPIC
 

@@ -28,7 +28,7 @@ static int parse_print(const char *format, va_list *args) {
     case '%':
         return putchar('%');
     default:
-        return (0);
+        return 0;
     }
 }
 int printk(enum kernel_log_level log_level, const char *format, ...) {

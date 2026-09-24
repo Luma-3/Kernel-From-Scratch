@@ -22,6 +22,9 @@ include kernel/module.mk
 include klibc/module.mk
 include terminal/module.mk
 
+## DEMO MODULES
+include demo/module.mk
+
 # ============================================
 # 3. Objects & Dependencies
 # ============================================

@@ -1,5 +1,7 @@
-#ifndef STDSERIAL_H
-#define STDSERIAL_H
+#ifndef KDEBUG_H
+#define KDEBUG_H
+
+#include "printk.h"
 
 /**
  * Prints a character to the serial port.
@@ -13,4 +15,10 @@ void print_serial(const char *str);
  */
 void panic_serial(const char *str);
 
-#endif // !STDSERIAL_H
+/**
+ * Prints a backtrace of the current stack frames.
+ * @param max_frames the maximum number of frames to print
+ */
+void backtrace(int max_frames);
+
+#endif // !KDEBUG_H
