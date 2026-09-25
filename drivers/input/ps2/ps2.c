@@ -31,7 +31,6 @@ static void ps2_flush()
 
 void ps2_init()
 {
-	backtrace(16);
 	// Disable first PS/2 port
 	ps2_wait_input_empty();
 	outb(0xAD, PS2_STATUS_PORT);
