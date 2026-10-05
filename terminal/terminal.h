@@ -88,6 +88,6 @@ void newline(struct terminal *term);
 
 void tab(struct terminal *term);
 
-uint8_t *term_read_line();
+uint8_t *term_read_line(const char *prompt);
 
 #endif // KFS_TERMINAL_H

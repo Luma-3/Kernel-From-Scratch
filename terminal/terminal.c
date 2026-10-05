@@ -2,8 +2,9 @@
 #include "ascii.h"
 #include "font.h"
 #include "keyevent.h"
-#include "mem.h"
+#include "string.h"
 #include "printf.h"
+#include "mem.h"
 #include "vbe.h"
 
 #include <stdalign.h>
@@ -239,25 +240,54 @@ void term_poll() {
         struct terminal *term = get_active_terminal();
         term_write(active_terminal, &c, 1);
         print_cursor(term, true);
-        term->read_buffer[term->read_buffer_index++ % CHAR_BY_LINE] = c;
     }
 }
 
-uint8_t *term_read_line() {
+uint8_t prompt_displayed = 0;
+
+static void display_prompt(struct terminal *term, const char *prompt) {
+    if(prompt_displayed) {
+        return;
+    }
+    if (prompt != NULL) {
+        term_write(term->id, (const uint8_t *)prompt, kstrlen(prompt));
+    }
+    prompt_displayed = 1;
+}
+
+uint8_t *term_read_line(const char *prompt) {
     static uint8_t line_buffer[CHAR_BY_LINE];
+
     struct terminal *term = get_active_terminal();
     if (term == NULL) {
         return NULL;
     }
-    uint32_t index = term->read_buffer_index % CHAR_BY_LINE;
-    if(index == 0 || term->read_buffer[index - 1] != '\n') {
+    display_prompt(term, prompt);
+
+    uint8_t c = term_get_keyevent();
+    if(!c){
+        return NULL;
+    }
+    if(c == 8 || c == 127) {
+        if(term->read_buffer_index > 0) { // securite pour eviter de supprimer le prompt
+            term_write(term->id, &c, 1);
+            term->read_buffer_index--;
+        }
+        print_cursor(term, true);
+        return NULL;
+    }
+    term_write(term->id, &c, 1);
+    print_cursor(term, true);
+    term->read_buffer[term->read_buffer_index++ % CHAR_BY_LINE] = c;
+    if(term->read_buffer_index % CHAR_BY_LINE == 0 || c != '\n') {
         kmemset(line_buffer, 0, CHAR_BY_LINE);
         return NULL;
     }
-    kmemmove(line_buffer, term->read_buffer, index);
-    line_buffer[index - 1] = '\0';
+    kmemmove(line_buffer, term->read_buffer, term->read_buffer_index % CHAR_BY_LINE);
+    line_buffer[term->read_buffer_index - 1] = '\0';
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
+    prompt_displayed = 0;
     return line_buffer;
 }
 

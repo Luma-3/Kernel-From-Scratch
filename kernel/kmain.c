@@ -84,13 +84,12 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr)
 	term_refresh(0);
 
 	backtrace(16);
-
+	(void)term_read_line("trucOs>");
 	while (1) {
 		ps2_keyboard_poll(); // Poll the keyboard for key events and push them
-		term_poll();
-		uint8_t *line = term_read_line();
+		uint8_t *line = term_read_line("trucOs>");
 		if(line) {
-			execute_command(line);	
+			execute_command(line);
 		}
 	}
 }
