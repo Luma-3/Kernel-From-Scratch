@@ -4,8 +4,7 @@
 #include "math.h"
 #include "mem.h"
 #include "string.h"
-#define SUCCESS 0
-#define FAILLURE -1
+#include "klibc/kunistd.h"
 
 struct s_kchecker {
     uint8_t serial : 1;

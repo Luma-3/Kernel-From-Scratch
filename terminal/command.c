@@ -7,6 +7,7 @@
 #include "printk.h"
 #include "printf.h"
 #include "kdebug.h"
+#include "klibc/kunistd.h"
 #include <stddef.h>
 
 struct command commands[256];
@@ -68,6 +69,51 @@ static uint32_t len_name(const uint8_t *str) {
     return len;
 }
 
+int8_t extract_arguments(const uint8_t **argv, void *data, void (*method_copy)(void *dest, const uint8_t *src, size_t n)) {
+    if (argv == NULL || data == NULL || method_copy == NULL) {
+        print_serial("Invalid arguments for extract_arguments: argv, data, and copy_data must not be NULL");
+        return FAILLURE;
+    }
+    const uint8_t *arg_start = *argv;
+    while (*arg_start != '\0') {
+        while (*arg_start == ' ' || *arg_start == '\t') {
+            arg_start++;
+        }
+        if (*arg_start == '\0') {
+            break; // No more arguments
+        }
+        const uint8_t *arg_end = arg_start;
+        while (*arg_end != '\0' && *arg_end != ' ' && *arg_end != '\t') {
+            arg_end++;
+        }
+        size_t arg_len = arg_end - arg_start;
+        method_copy(data, arg_start, arg_len);
+        *argv = arg_end;
+        break;
+    }
+    return SUCCESS;
+}
+
+static int32_t count_argc(const uint8_t *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    int32_t argc = 0;
+    const uint8_t *ptr = str;
+    while (*ptr != '\0') {
+        while (*ptr == ' ' || *ptr == '\t') {
+            ptr++;
+        }
+        if (*ptr != '\0') {
+            argc++;
+            while (*ptr != '\0' && *ptr != ' ' && *ptr != '\t') {
+                ptr++;
+            }
+        }
+    }
+    return argc;
+}
+
 command_t *find_command(const uint8_t *name) {
     if (name == NULL) {
         return NULL;
@@ -96,6 +142,7 @@ void execute_command(const uint8_t *command_line) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Command not found: %s\n", command_line);
         return;
     }
-    uint32_t argc = 0;
-    cmd->handler(argc, jump_name(command_line));
+    const uint8_t *args = jump_name(command_line);
+    int32_t argc = count_argc(args);
+    cmd->handler(argc, args);
 }

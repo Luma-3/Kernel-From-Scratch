@@ -2,6 +2,8 @@
 # define KFS_COMMAND_H
 
 #include <stdint.h>
+#include <stddef.h>
+
 
 struct command {
     const uint8_t *name;
@@ -26,5 +28,7 @@ void init_command_system();
 void execute_command(const uint8_t *command_line);
 
 command_t *list_commands(uint32_t *count);
+
+int8_t extract_arguments(const uint8_t **argv, void *data, void (*method_copy)(void *dest, const uint8_t *src, size_t n));
 
 #endif // KFS_COMMAND_H
