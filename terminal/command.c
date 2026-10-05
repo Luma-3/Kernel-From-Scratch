@@ -5,6 +5,8 @@
 #include "command/halt.h"
 #include "command/help.h"
 #include "printk.h"
+#include "printf.h"
+#include "kdebug.h"
 #include <stddef.h>
 
 struct command commands[256];
@@ -14,6 +16,11 @@ uint32_t command_count;
 void register_command(const uint8_t *name, const uint8_t *description,
                       int32_t (*handler)(int32_t argc, const uint8_t *argv)) {
     if (command_count >= 256) {
+        print_serial("Command registration failed: maximum command limit reached");
+        return;
+    }
+    if(name == NULL || description == NULL || handler == NULL) {
+        print_serial("Invalid command registration: name, description, and handler must not be NULL");
         return;
     }
     commands[command_count].name = name;
@@ -37,15 +44,42 @@ void init_command_system() {
     register_command((const uint8_t *)"help", (const uint8_t *)"Display help information", &help_command);
 }
 
+static uint8_t *jump_name(const uint8_t *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    while (*str != '\0' && *str != ' ' && *str != '\t') {
+        str++;
+    }
+    while (*str == ' ' || *str == '\t') {
+        str++;
+    }
+    if (*str == '\0') {
+        return NULL;
+    }
+    return (uint8_t *)str;
+}
+
+static uint32_t len_name(const uint8_t *str) {
+    uint32_t len = 0;
+    while (str[len] != '\0' && str[len] != ' ' && str[len] != '\t') {
+        len++;
+    }
+    return len;
+}
+
 command_t *find_command(const uint8_t *name) {
-    char *cmd_name = (char *)name;
-    uint32_t cmd_len = kstrlen(cmd_name);
+    if (name == NULL) {
+        return NULL;
+    }
+    const char *cmd_name = (const char *)name;
+    const uint32_t cmd_len = len_name(name);
     for (uint32_t i = 0; i < command_count; i++) {
         char *registered_name = (char *)commands[i].name;
         if (kstrlen(registered_name) != cmd_len) {
             continue;
         }
-        if (kstrncmp((char *)commands[i].name, cmd_name, cmd_len) == 0) {
+        if (kstrncmp(registered_name, cmd_name, cmd_len) == 0) {
             return &commands[i];
         }
     }
@@ -53,11 +87,15 @@ command_t *find_command(const uint8_t *name) {
 }
 
 void execute_command(const uint8_t *command_line) {
+    if(command_line == NULL) {
+        printk(KERNEL_LOG_LEVEL_ERROR, "Command line is NULL\n");
+        return;
+    }
     command_t *cmd = find_command(command_line);
     if (cmd == NULL) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Command not found: %s\n", command_line);
         return;
     }
-    printk(KERNEL_LOG_LEVEL_INFO, "Executing command: %s\n", command_line);
-    cmd->handler(1, command_line);
+    uint32_t argc = 0;
+    cmd->handler(argc, jump_name(command_line));
 }

@@ -103,4 +103,11 @@ bool kends_with(const char *str, const char *suffix);
  */
 int kitoa(int value, char *str);
 
+/**
+ * Converts a string to an integer.
+ * @param str The string to convert.
+ * @return The integer value, or 0 if conversion fails.
+ */
+int katoi(const char *str);
+
 #endif // KFS_STRING_H

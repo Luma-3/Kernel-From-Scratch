@@ -1,21 +1,21 @@
 #include "reboot.h"
 #include "i386/io.h"
 #include "printk.h"
+#include "printf.h"
+#include "klibc/string/string.h"
+#include "pit.h"
 
 int32_t reboot_command(int32_t argc, const uint8_t *argv) {
     (void)argc;
-    (void)argv;
-    struct {
-        unsigned short limit;
-        unsigned int base;
-    } __attribute__((packed)) invalid_idt = {0, 0};
-
-    __asm__ __volatile__ (
-        "lidt %0\n\t" 
-        "int $3"
-        :
-        : "m"(invalid_idt)
-    ); // method tripple fault pour forcer le redémarrage du système
-    printk(KERNEL_LOG_LEVEL_INFO, "Reboot command issued.\n");
+    int32_t count = katoi((const char *)argv);
+    printk(KERNEL_LOG_LEVEL_INFO, "Reboot command received with count: %d\n", count);
+    for(int32_t i = 0; i < count; i++) {
+        printf("\rAttempting to reboot... (%d/%d)", i + 1, count);
+        pit_sleep_ms(1000);
+    }
+    printf("\r");
+    printk(KERNEL_LOG_LEVEL_INFO, "Rebooting the system... \n");
+    pit_sleep_ms(1500);
+    outb(0x06, 0xCF9); // method modern pour forcer le redémarrage du système par ACPI Reset Control Register
     return 0;
 }
