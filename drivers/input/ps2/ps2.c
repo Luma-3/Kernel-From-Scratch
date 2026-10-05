@@ -118,3 +118,9 @@ void ps2_keyboard_poll()
 	//        scancode, event.keycode,
 	//        event.state.pressed ? "Pressed" : "Released");
 }
+
+uint8_t ps2_has_data()
+{
+	return (inb(PS2_STATUS_PORT) & 0x01) != 0;
+}
+

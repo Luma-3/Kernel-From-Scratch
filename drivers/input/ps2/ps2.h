@@ -215,4 +215,10 @@ uint8_t ps2_set1_to_keycode(uint8_t scancode);
  */
 void ps2_keyboard_poll();
 
+/**
+ * Checks whether data is available to read from the PS/2 controller.
+ */
+uint8_t ps2_has_data();
+
 #endif // KFS_PS2_H
+
