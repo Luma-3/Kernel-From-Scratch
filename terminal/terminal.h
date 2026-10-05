@@ -54,6 +54,8 @@ struct terminal {
     uint8_t fg_color;
     // 4 bit for fg, 4 bit for bg, 8 bit for char
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
+    uint8_t  read_buffer[CHAR_BY_LINE];
+    uint32_t read_buffer_index;
 };
 
 extern uint8_t active_terminal;
@@ -85,5 +87,7 @@ void advance_cursor(struct terminal *term);
 void newline(struct terminal *term);
 
 void tab(struct terminal *term);
+
+uint8_t *term_read_line();
 
 #endif // KFS_TERMINAL_H

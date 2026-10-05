@@ -86,5 +86,9 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr)
 	while (1) {
 		ps2_keyboard_poll(); // Poll the keyboard for key events and push them
 		term_poll();
+		uint8_t *line = term_read_line();
+		if(line) {
+			printk(KERNEL_LOG_LEVEL_DEBUG, "Read line: %s\n", line);		
+		}
 	}
 }

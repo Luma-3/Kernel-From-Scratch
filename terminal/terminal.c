@@ -237,5 +237,24 @@ void term_poll() {
         struct terminal *term = get_active_terminal();
         term_write(active_terminal, &c, 1);
         print_cursor(term, true);
+        term->read_buffer[term->read_buffer_index++ % CHAR_BY_LINE] = c;
     }
 }
+
+uint8_t *term_read_line() {
+    static uint8_t line_buffer[CHAR_BY_LINE];
+    struct terminal *term = get_active_terminal();
+    if (term == NULL) {
+        return NULL;
+    }
+    uint32_t index = term->read_buffer_index % CHAR_BY_LINE;
+    if(index == 0 || term->read_buffer[index - 1] != '\n') {
+        kmemset(line_buffer, 0, CHAR_BY_LINE);
+        return NULL;
+    }
+    kmemmove(line_buffer, term->read_buffer, index);
+    kmemset(term->read_buffer, 0, term->read_buffer_index);
+    term->read_buffer_index = 0;
+    return line_buffer;
+}
+
