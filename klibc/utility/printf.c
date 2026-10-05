@@ -1,4 +1,3 @@
-#include "kernel.h"
 #include "terminal.h"
 #include <stdarg.h>
 #include "print_utility.h"
