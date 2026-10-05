@@ -2,6 +2,7 @@
 #include "klibc/string/string.h"
 #include "klibc/memory/mem.h"
 #include "command/reboot.h"
+#include "command/shutdown.h"
 #include "command/halt.h"
 #include "command/help.h"
 #include "command/kpixel.h"
@@ -42,6 +43,7 @@ void init_command_system() {
     command_count = 0;
 
     register_command((const uint8_t *)"reboot", (const uint8_t *)"Reboot the system", &reboot_command);
+    register_command((const uint8_t *)"shutdown", (const uint8_t *)"Shutdown the system", &shutdown_command);
     register_command((const uint8_t *)"halt", (const uint8_t *)"Halt the system", &halt_command);
     register_command((const uint8_t *)"help", (const uint8_t *)"Display help information", &help_command);
     register_command((const uint8_t *)"kpixel", (const uint8_t *)"Display pixel art (parrot, apple, potato, saturn, axolote)", &kpixel_command);
