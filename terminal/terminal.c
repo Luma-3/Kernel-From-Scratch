@@ -160,6 +160,8 @@ int32_t init_terminal(const char *name) {
 
     kmemset(term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
             term->char_by_line * term->line_by_screen);
+    term->read_buffer_index = 0;
+    kmemset(term->read_buffer, 0, CHAR_BY_LINE);
 
     term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\033[0m\n",
                20);
@@ -253,6 +255,7 @@ uint8_t *term_read_line() {
         return NULL;
     }
     kmemmove(line_buffer, term->read_buffer, index);
+    line_buffer[index - 1] = '\0';
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
     return line_buffer;

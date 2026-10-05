@@ -20,6 +20,7 @@
 #include "terminal.h"
 #include "vbe.h"
 #include "klibc/debug/trace/ksyms.h"
+#include "command.h"
 
 void kinit(multiboot_info_t *mbi)
 {
@@ -27,6 +28,7 @@ void kinit(multiboot_info_t *mbi)
 	init_gdt();
 	vbe_init(mbi);
 	ps2_init();
+	init_command_system();
 }
 
 static struct s_kchecker check_integrity(uint32_t mb_magic, uint32_t mb_info_addr) {
@@ -88,7 +90,7 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr)
 		term_poll();
 		uint8_t *line = term_read_line();
 		if(line) {
-			printk(KERNEL_LOG_LEVEL_DEBUG, "Read line: %s\n", line);		
+			execute_command(line);	
 		}
 	}
 }
