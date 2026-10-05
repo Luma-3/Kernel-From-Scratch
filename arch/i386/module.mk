@@ -8,3 +8,4 @@ SRCS += arch/i386/io.c
 
 include arch/i386/gdt/module.mk
 include arch/i386/stack/module.mk
+include arch/i386/timer/module.mk
