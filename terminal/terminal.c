@@ -232,9 +232,10 @@ static void handle_history_read_line(const uint8_t shift)
 		return ;
 	}
 	if (term->read_buffer_index > 0) {
+		print_cursor(term, false);
 		for (uint32_t i = 0; i < term->read_buffer_index; i++) {
 			backspace(term);
-			term->read_buffer[i] = 0;
+			term->read_buffer[i % CHAR_BY_LINE] = 0;
 		}
 		term->read_buffer_index = 0;
 	}
@@ -242,6 +243,7 @@ static void handle_history_read_line(const uint8_t shift)
 	term_write(term->id, history_data, history_size);
 	kmemmove(term->read_buffer, history_data, history_size);
 	term->read_buffer_index = history_size;
+	print_cursor(term, true);
 }
 
 uint8_t term_get_keyevent() {
@@ -262,8 +264,6 @@ uint8_t term_get_keyevent() {
 		handle_history_read_line(event.state.shift);
 		return 0;
 	}
-
-
 
     uint8_t to_print = 0;
 
@@ -293,6 +293,7 @@ static void display_prompt(struct terminal *term, const char *prompt) {
     if (prompt != nullptr) {
         term_write(term->id, (const uint8_t *)prompt, kstrlen(prompt));
     }
+	print_cursor(term, true);
     prompt_displayed = 1;
 }
 
@@ -310,6 +311,7 @@ uint8_t *term_read_line(const char *prompt) {
         return nullptr;
     }
     if(c == 8 || c == 127) {
+    	print_cursor(term, false);
         if(term->read_buffer_index > 0) { // securite pour eviter de supprimer le prompt
             term_write(term->id, &c, 1);
             term->read_buffer_index--;
