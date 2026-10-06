@@ -162,7 +162,10 @@ int32_t init_terminal(const char *name) {
     kmemset(term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
             term->char_by_line * term->line_by_screen);
     term->read_buffer_index = 0;
-    kmemset(term->read_buffer, 0, CHAR_BY_LINE);
+    kmemset(term->read_buffer, 0, sizeof(uint8_t) * CHAR_BY_LINE);
+	term->read_buffer_history_cursor = 0;
+	term->read_buffer_history_index = 0;
+	kmemset(term->read_buffer_history, 0, sizeof(uint8_t) * 4 * CHAR_BY_LINE);
 
     term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\033[0m\n",
                20);
@@ -203,6 +206,15 @@ int32_t term_refresh(const uint8_t term_id) {
     return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
 }
 
+
+
+struct terminal *get_active_terminal() {
+    if (active_terminal >= terminal_count) {
+        return nullptr;
+    }
+    return &terminals[active_terminal];
+}
+
 uint8_t term_get_keyevent() {
     struct key_event event = kbd_pop_event();
 
@@ -217,6 +229,37 @@ uint8_t term_get_keyevent() {
         return 0;
     }
 
+	if (event.keycode == KEY_TAB) {
+		struct terminal *term = get_active_terminal();
+		if (term == nullptr) {
+			return 0;
+		}
+		uint8_t *cursor = &term->read_buffer_history_cursor;
+		if (event.state.shift) {
+			(*cursor)--;
+		}else {
+			(*cursor)++;
+		}
+		uint8_t *history_data = term->read_buffer_history[*cursor % 4];
+		if (*history_data == 0) {
+			return 0;
+		}
+		if (term->read_buffer_index > 0) {
+			for (uint32_t i = 0; i < term->read_buffer_index; i++) {
+				backspace(term);
+				term->read_buffer[i] = 0;
+			}
+			term->read_buffer_index = 0;
+		}
+		const size_t history_size = kstrlen((char *)history_data);
+		term_write(term->id, history_data, history_size);
+		kmemmove(term->read_buffer, history_data, history_size);
+		term->read_buffer_index = history_size;
+		return 0;
+	}
+
+
+
     uint8_t to_print = 0;
 
     if (event.state.shift == 1) {
@@ -225,13 +268,6 @@ uint8_t term_get_keyevent() {
         to_print = keycode_ascii[event.keycode];
     }
     return to_print;
-}
-
-struct terminal *get_active_terminal() {
-    if (active_terminal >= terminal_count) {
-        return NULL;
-    }
-    return &terminals[active_terminal];
 }
 
 void term_poll() {
@@ -249,7 +285,7 @@ static void display_prompt(struct terminal *term, const char *prompt) {
     if(prompt_displayed) {
         return;
     }
-    if (prompt != NULL) {
+    if (prompt != nullptr) {
         term_write(term->id, (const uint8_t *)prompt, kstrlen(prompt));
     }
     prompt_displayed = 1;
@@ -259,32 +295,34 @@ uint8_t *term_read_line(const char *prompt) {
     static uint8_t line_buffer[CHAR_BY_LINE];
 
     struct terminal *term = get_active_terminal();
-    if (term == NULL) {
-        return NULL;
+    if (term == nullptr) {
+        return nullptr;
     }
     display_prompt(term, prompt);
 
     uint8_t c = term_get_keyevent();
     if(!c){
-        return NULL;
+        return nullptr;
     }
     if(c == 8 || c == 127) {
         if(term->read_buffer_index > 0) { // securite pour eviter de supprimer le prompt
             term_write(term->id, &c, 1);
             term->read_buffer_index--;
+        	term->read_buffer[term->read_buffer_index] = 0;
         }
         print_cursor(term, true);
-        return NULL;
+        return nullptr;
     }
     term_write(term->id, &c, 1);
     print_cursor(term, true);
     term->read_buffer[term->read_buffer_index++ % CHAR_BY_LINE] = c;
     if(term->read_buffer_index % CHAR_BY_LINE == 0 || c != '\n') {
         kmemset(line_buffer, 0, CHAR_BY_LINE);
-        return NULL;
+        return nullptr;
     }
     kmemmove(line_buffer, term->read_buffer, term->read_buffer_index % CHAR_BY_LINE);
     line_buffer[term->read_buffer_index - 1] = '\0';
+    kmemmove(term->read_buffer_history[term->read_buffer_history_index++ % 4], line_buffer, term->read_buffer_index % CHAR_BY_LINE);
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
     prompt_displayed = 0;

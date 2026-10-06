@@ -54,6 +54,9 @@ struct terminal {
     uint8_t fg_color;
     // 4 bit for fg, 4 bit for bg, 8 bit for char
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
+	uint8_t  read_buffer_history[4][CHAR_BY_LINE];
+	uint8_t read_buffer_history_cursor;
+	uint8_t read_buffer_history_index;
     uint8_t  read_buffer[CHAR_BY_LINE];
     uint32_t read_buffer_index;
 };
