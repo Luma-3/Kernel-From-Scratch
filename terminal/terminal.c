@@ -215,6 +215,35 @@ struct terminal *get_active_terminal() {
     return &terminals[active_terminal];
 }
 
+static void handle_history_read_line(const uint8_t shift)
+{
+	struct terminal *term = get_active_terminal();
+	if (term == nullptr) {
+		return;
+	}
+	uint8_t *cursor = &term->read_buffer_history_cursor;
+	if (shift) {
+		(*cursor)--;
+	}else {
+		(*cursor)++;
+	}
+	uint8_t *history_data = term->read_buffer_history[*cursor % 4];
+	if (*history_data == 0) {
+		return ;
+	}
+	if (term->read_buffer_index > 0) {
+		for (uint32_t i = 0; i < term->read_buffer_index; i++) {
+			backspace(term);
+			term->read_buffer[i] = 0;
+		}
+		term->read_buffer_index = 0;
+	}
+	const size_t history_size = kstrlen((char *)history_data);
+	term_write(term->id, history_data, history_size);
+	kmemmove(term->read_buffer, history_data, history_size);
+	term->read_buffer_index = history_size;
+}
+
 uint8_t term_get_keyevent() {
     struct key_event event = kbd_pop_event();
 
@@ -230,31 +259,7 @@ uint8_t term_get_keyevent() {
     }
 
 	if (event.keycode == KEY_TAB) {
-		struct terminal *term = get_active_terminal();
-		if (term == nullptr) {
-			return 0;
-		}
-		uint8_t *cursor = &term->read_buffer_history_cursor;
-		if (event.state.shift) {
-			(*cursor)--;
-		}else {
-			(*cursor)++;
-		}
-		uint8_t *history_data = term->read_buffer_history[*cursor % 4];
-		if (*history_data == 0) {
-			return 0;
-		}
-		if (term->read_buffer_index > 0) {
-			for (uint32_t i = 0; i < term->read_buffer_index; i++) {
-				backspace(term);
-				term->read_buffer[i] = 0;
-			}
-			term->read_buffer_index = 0;
-		}
-		const size_t history_size = kstrlen((char *)history_data);
-		term_write(term->id, history_data, history_size);
-		kmemmove(term->read_buffer, history_data, history_size);
-		term->read_buffer_index = history_size;
+		handle_history_read_line(event.state.shift);
 		return 0;
 	}
 
