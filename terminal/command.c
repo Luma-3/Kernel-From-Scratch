@@ -144,7 +144,11 @@ void execute_command(const uint8_t *command_line) {
     }
     command_t *cmd = find_command(command_line);
     if (cmd == nullptr) {
-        printk(KERNEL_LOG_LEVEL_ERROR, "Command not found: %s\n", command_line);
+        const uint32_t cmd_len = len_name(command_line);
+        char temp[cmd_len + 1];
+        kmemmove(temp, command_line, cmd_len);
+        temp[cmd_len] = '\0';
+        printk(KERNEL_LOG_LEVEL_ERROR, "Command not found: %s\n", temp);
         return;
     }
     const uint8_t *args = jump_name(command_line);
