@@ -313,7 +313,7 @@ uint8_t *term_read_line(const char *prompt) {
         if(term->read_buffer_index > 0) { // securite pour eviter de supprimer le prompt
             term_write(term->id, &c, 1);
             term->read_buffer_index--;
-        	term->read_buffer[term->read_buffer_index] = 0;
+        	term->read_buffer[term->read_buffer_index % CHAR_BY_LINE] = 0;
         }
         print_cursor(term, true);
         return nullptr;
