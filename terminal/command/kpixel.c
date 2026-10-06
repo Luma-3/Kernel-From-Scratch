@@ -15,7 +15,7 @@
 #include <stddef.h>
 
 static void extract_str(void *data, const uint8_t *src, size_t n) {
-    if (src == NULL || data == NULL) {
+    if (src == nullptr || data == nullptr) {
         return;
     }
     char *dest = (char *)data;
@@ -28,7 +28,7 @@ static void extract_str(void *data, const uint8_t *src, size_t n) {
 }
 
 static void extract_param(void *data, const uint8_t *src, size_t n) {
-    if (src == NULL || data == NULL) {
+    if (src == nullptr || data == nullptr) {
         return;
     }
     (void)n;
@@ -36,7 +36,7 @@ static void extract_param(void *data, const uint8_t *src, size_t n) {
 }
 
 static void str_tolower(char *str) {
-    if (str == NULL) {
+    if (str == nullptr) {
         return;
     }
     for (size_t i = 0; str[i] != '\0'; i++) {
@@ -73,7 +73,7 @@ int32_t kpixel_command(int32_t argc, const uint8_t *argv) {
     int32_t loops = 5;
     int32_t scale = 6;
 
-    if (argc >= 1 && argv != NULL) {
+    if (argc >= 1 && argv != nullptr) {
         if (extract_arguments(&argv, (void *)art_name, &extract_str) != SUCCESS) {
             art_name[0] = '\0';
         }
@@ -88,7 +88,7 @@ int32_t kpixel_command(int32_t argc, const uint8_t *argv) {
             loops = 5;
         }
         kmemcpy(art_name, "parrot", 7);
-        if (argc >= 2 && argv != NULL) {
+        if (argc >= 2 && argv != nullptr) {
             int32_t parsed_scale = 0;
             if (extract_arguments(&argv, (void *)&parsed_scale, &extract_param) == SUCCESS && parsed_scale > 0) {
                 scale = parsed_scale;
@@ -96,13 +96,13 @@ int32_t kpixel_command(int32_t argc, const uint8_t *argv) {
         }
     } else if (kstrcmp(art_name, "parrot") == 0 || kstrcmp(art_name, "party") == 0 ||
                kstrcmp(art_name, "party_parrot") == 0) {
-        if (argc >= 2 && argv != NULL) {
+        if (argc >= 2 && argv != nullptr) {
             int32_t parsed_loops = 0;
             if (extract_arguments(&argv, (void *)&parsed_loops, &extract_param) == SUCCESS && parsed_loops > 0) {
                 loops = parsed_loops;
             }
         }
-        if (argc >= 3 && argv != NULL) {
+        if (argc >= 3 && argv != nullptr) {
             int32_t parsed_scale = 0;
             if (extract_arguments(&argv, (void *)&parsed_scale, &extract_param) == SUCCESS && parsed_scale > 0) {
                 scale = parsed_scale;

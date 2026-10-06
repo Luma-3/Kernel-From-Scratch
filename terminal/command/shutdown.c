@@ -7,7 +7,7 @@
 #include "klibc/string/string.h"
 
 static void extract_shutdown_counter(void *data, const uint8_t *src, size_t n) {
-    if (src == NULL || data == NULL) {
+    if (src == nullptr || data == nullptr) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Invalid arguments for extract_shutdown_counter\n");
         return;
     }

@@ -22,7 +22,7 @@ void register_command(const uint8_t *name, const uint8_t *description,
         print_serial("Command registration failed: maximum command limit reached");
         return;
     }
-    if(name == NULL || description == NULL || handler == NULL) {
+    if(name == nullptr || description == nullptr || handler == nullptr) {
         print_serial("Invalid command registration: name, description, and handler must not be NULL");
         return;
     }
@@ -51,8 +51,8 @@ void init_command_system() {
 
 
 static uint8_t *jump_name(const uint8_t *str) {
-    if (str == NULL) {
-        return NULL;
+    if (str == nullptr) {
+        return nullptr;
     }
     while (*str != '\0' && *str != ' ' && *str != '\t') {
         str++;
@@ -61,7 +61,7 @@ static uint8_t *jump_name(const uint8_t *str) {
         str++;
     }
     if (*str == '\0') {
-        return NULL;
+        return nullptr;
     }
     return (uint8_t *)str;
 }
@@ -75,7 +75,7 @@ static uint32_t len_name(const uint8_t *str) {
 }
 
 int8_t extract_arguments(const uint8_t **argv, void *data, void (*method_copy)(void *dest, const uint8_t *src, size_t n)) {
-    if (argv == NULL || data == NULL || method_copy == NULL) {
+    if (argv == nullptr || data == nullptr || method_copy == nullptr) {
         print_serial("Invalid arguments for extract_arguments: argv, data, and copy_data must not be NULL");
         return FAILLURE;
     }
@@ -100,7 +100,7 @@ int8_t extract_arguments(const uint8_t **argv, void *data, void (*method_copy)(v
 }
 
 static int32_t count_argc(const uint8_t *str) {
-    if (str == NULL) {
+    if (str == nullptr) {
         return 0;
     }
     int32_t argc = 0;
@@ -120,8 +120,8 @@ static int32_t count_argc(const uint8_t *str) {
 }
 
 command_t *find_command(const uint8_t *name) {
-    if (name == NULL) {
-        return NULL;
+    if (name == nullptr) {
+        return nullptr;
     }
     const char *cmd_name = (const char *)name;
     const uint32_t cmd_len = len_name(name);
@@ -134,16 +134,16 @@ command_t *find_command(const uint8_t *name) {
             return &commands[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void execute_command(const uint8_t *command_line) {
-    if(command_line == NULL) {
+    if(command_line == nullptr) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Command line is NULL\n");
         return;
     }
     command_t *cmd = find_command(command_line);
-    if (cmd == NULL) {
+    if (cmd == nullptr) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Command not found: %s\n", command_line);
         return;
     }

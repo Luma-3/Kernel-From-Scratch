@@ -15,5 +15,5 @@ const char *kstrchr(const char *str, int c) {
         ++move;
     }
 
-    return NULL;
+    return nullptr;
 }

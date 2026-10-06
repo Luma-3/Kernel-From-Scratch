@@ -9,7 +9,7 @@
 #include "power/shutdown.h"
 
 static void extract_counter(void *data, const uint8_t *src, size_t n) {
-    if (src == NULL || data == NULL) {
+    if (src == nullptr || data == nullptr) {
         printk(KERNEL_LOG_LEVEL_ERROR, "Invalid arguments for extract_counter: src and data must not be NULL\n");
         return;
     }
