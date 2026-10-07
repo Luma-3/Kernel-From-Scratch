@@ -17,12 +17,22 @@ static struct terminal terminals[MAX_TERMINALS];
 
 static uint8_t terminal_count = 0;
 
+struct terminal *get_active_terminal() {
+    if (active_terminal >= terminal_count) {
+        return nullptr;
+    }
+    return &terminals[active_terminal];
+}
+
 static int32_t refresh_cell(struct terminal *term, uint32_t x, uint32_t y) {
+    if(term == nullptr || x >= term->char_by_line || y >= term->line_by_screen) {
+        return KTERM_ERR_INVALID_TERM;
+    }
     uint16_t cell = term->buffer[x + (y * term->char_by_line)];
 
-    uint8_t c = cell & 0xFF;
-    uint32_t fg = (cell >> 12) & 0xF;
-    uint32_t bg = (cell >> 8) & 0xF;
+    uint8_t c = CELL_TO_CHAR(cell);
+    uint32_t fg = CELL_TO_FG_COLOR(cell);
+    uint32_t bg = CELL_TO_BG_COLOR(cell);
 
     if(term->color_universal){
         display_draw_cell_universal_color(x, y, c, fg, bg);
@@ -57,7 +67,7 @@ int32_t scroll(struct terminal *term) {
              (term->line_by_screen - 1) * term->char_by_line *
                  sizeof(uint16_t));
 
-    uint16_t empty_cell = (term->fg_color << 12) | (term->bg_color << 8) | ' ';
+    uint16_t empty_cell = EMPTY_CELL(term->fg_color, term->bg_color);
     for (uint32_t i = 0; i < term->char_by_line; i++) {
         term->buffer[((term->line_by_screen - 1) * term->char_by_line) + i] =
             empty_cell;
@@ -75,26 +85,26 @@ static void backspace(struct terminal *term) {
     }
 
     term->buffer[term->cursor.x + (term->cursor.y * term->char_by_line)] =
-        (term->fg_color << 12) | (term->bg_color << 8) | ' ';
+        EMPTY_CELL(term->fg_color, term->bg_color);
 
     refresh_cell(term, term->cursor.x, term->cursor.y);
 }
 
 static int32_t handle_special_char(struct terminal *term, const uint8_t c) {
 
-    if (c == '\n') {
+    if (c == NEWLINE) {
         newline(term);
         return 1;
     }
-    if (c == '\r') {
+    if (c == CARRIAGE_RETURN) {
         term->cursor.x = 0;
         return 1;
     }
-    if (c == '\t') {
+    if (c == TAB) {
         tab(term);
         return 1;
     }
-    if (c == '\b') {
+    if (c == BACKSPACE) {
         backspace(term);
         return 1;
     }
@@ -102,6 +112,9 @@ static int32_t handle_special_char(struct terminal *term, const uint8_t c) {
 }
 
 static int32_t putchar(struct terminal *term, const uint8_t c) {
+    if (term == nullptr) {
+        return KTERM_ERR_INVALID_TERM;
+    }
 
     // Dellete the cursor before drawing the character
     refresh_cell(term, term->cursor.x, term->cursor.y);
@@ -112,7 +125,7 @@ static int32_t putchar(struct terminal *term, const uint8_t c) {
 
     // Store the character in the buffer with color attributes
     term->buffer[term->cursor.x + (term->cursor.y * term->char_by_line)] =
-        (term->fg_color << 12) | (term->bg_color << 8) | c;
+        CELL(c, term->fg_color, term->bg_color);
 
     if (refresh_cell(term, term->cursor.x, term->cursor.y) != KTERM_SUCCESS) {
         return KTERM_ERR_VBE_FAILURE;
@@ -156,8 +169,7 @@ int32_t init_terminal(const char *name) {
     term->font_width = FONT_WIDTH;
     term->bg_color = DISPLAY_UNIVERSAL_COLOR_BLACK;
     term->fg_color = DISPLAY_UNIVERSAL_COLOR_GREY;
-
-    kmemsetw(        term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
+    kmemsetw(        term->buffer, EMPTY_CELL(term->fg_color, term->bg_color),
             term->char_by_line * term->line_by_screen);
     term->read_buffer_index = 0;
     kmemset(term->read_buffer, 0, sizeof(uint8_t) * CHAR_BY_LINE);
@@ -179,9 +191,9 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
         return KTERM_ERR_INVALID_TERM;
     }
 
-    struct terminal *term = &terminals[term_id];
+    struct terminal *term = get_active_terminal();
     const uint8_t cursor_visible = term->cursor_visible;
-    if(cursor_visible){
+    if(cursor_visible && term){
         print_cursor(term, false);
     }
 
@@ -199,7 +211,7 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
         }
         ++it;
     }
-    if(cursor_visible){
+    if(cursor_visible && term){
         print_cursor(term, true);
     }
 
@@ -211,15 +223,6 @@ int32_t term_refresh(const uint8_t term_id) {
     struct terminal *term = &terminals[term_id];
 
     return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
-}
-
-
-
-struct terminal *get_active_terminal() {
-    if (active_terminal >= terminal_count) {
-        return nullptr;
-    }
-    return &terminals[active_terminal];
 }
 
 static void handle_history_read_line(const uint8_t shift)
@@ -240,7 +243,7 @@ static void handle_history_read_line(const uint8_t shift)
 	}
 	if (term->read_buffer_index > 0) {
 		for (uint32_t i = 0; i < term->read_buffer_index; i++) {
-            term_write(term->id, (const uint8_t *)"\b", 1);
+            term_write(term->id, (const uint8_t *)BACKSPACE_STR, 1);
 			term->read_buffer[i % CHAR_BY_LINE] = 0;
 		}
 		term->read_buffer_index = 0;
@@ -249,6 +252,14 @@ static void handle_history_read_line(const uint8_t shift)
 	term_write(term->id, history_data, history_size);
 	kmemmove(term->read_buffer, history_data, history_size);
 	term->read_buffer_index = history_size;
+}
+
+static void handle_ctrl_shift_space() {
+    struct terminal *term = get_active_terminal();
+    if (term == nullptr) {
+        return;
+    }
+    print_cursor(term, !term->cursor_visible);
 }
 
 uint8_t term_get_keyevent() {
@@ -270,9 +281,8 @@ uint8_t term_get_keyevent() {
 		return 0;
 	}
 
-    if(event.state.ctrl && event.keycode == KEY_SPACE) {
-        uint8_t cursor_visible = get_active_terminal()->cursor_visible;
-        print_cursor(get_active_terminal(), !cursor_visible);
+    if(event.keycode == KEY_SPACE && event.state.ctrl && event.state.shift) {
+        handle_ctrl_shift_space();
         return 0;
     }
 
@@ -290,7 +300,10 @@ void term_poll() {
     uint8_t c = term_get_keyevent();
     if (c) {
         struct terminal *term = get_active_terminal();
-        term_write(active_terminal, &c, 1);
+        if (term == nullptr) {
+            return;
+        }
+        term_write(term->id, &c, 1);
         print_cursor(term, true);
     }
 }
@@ -298,13 +311,15 @@ void term_poll() {
 uint8_t prompt_displayed = 0;
 
 static void display_prompt(struct terminal *term, const char *prompt) {
+    if (term == nullptr) {
+        return;
+    }
     if(prompt_displayed) {
         return;
     }
     if (prompt != nullptr) {
         term_write(term->id, (const uint8_t *)prompt, kstrlen(prompt));
     }
-	print_cursor(term, true);
     prompt_displayed = 1;
 }
 

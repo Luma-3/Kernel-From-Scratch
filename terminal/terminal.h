@@ -10,6 +10,19 @@
 #define FONT_WIDTH 16u
 #define FONT_HEIGHT 16u
 
+#define CELL(c, fg, bg) (((fg) << 12) | ((bg) << 8) | (c))
+#define EMPTY_CELL(fg, bg) CELL(' ', fg, bg)
+#define CELL_TO_CHAR(cell) ((char)((cell) & 0xFF))
+#define CELL_TO_FG_COLOR(cell) (((cell) >> 12) & 0xF)
+#define CELL_TO_BG_COLOR(cell) (((cell) >> 8) & 0xF)
+#define BACKSPACE '\b'
+#define BACKSPACE_STR "\b"
+#define TAB '\t'
+#define NEWLINE '\n'
+#define CARRIAGE_RETURN '\r'
+#define ESCAPE '\033'
+#define ESCAPE_SEQ "\033["
+
 enum kterm_err {
     KTERM_SUCCESS = 0,
     KTERM_ERR_TOO_MANY_TERM = -1,
