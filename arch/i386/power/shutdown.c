@@ -1,5 +1,6 @@
 #include "shutdown.h"
 #include "i386/io.h"
+#include "i386/cpu.h"
 #include "pit.h"
 #include "klibc/string/string.h"
 
@@ -172,7 +173,7 @@ static void acpi_shutdown(void) {
         }
     }
 
-    __asm__ __volatile__("cli");
+    cli();
 
     uint16_t shutdown_a = (uint16_t)((slp_typa << 10) | 0x2000);
     outw(shutdown_a, (uint16_t)fadt->pm1a_cnt_blk);
@@ -190,7 +191,7 @@ void arch_shutdown(void) {
     acpi_shutdown();
 
     // 2. Emulator-specific power-off fallbacks (QEMU, Bochs, VirtualBox)
-    __asm__ __volatile__("cli");
+    cli();
     outw(0x2000, 0x604);   // QEMU default (PIIX4 PM1a_CNT)
     outw(0x2000, 0xB004);  // Bochs / older QEMU
     outw(0x3400, 0x4004);  // VirtualBox
@@ -198,12 +199,12 @@ void arch_shutdown(void) {
 
     // 3. Fallback infinite halt loop
     while (1) {
-        __asm__ __volatile__("hlt");
+        hlt();
     }
 }
 
 void arch_reboot(void) {
-    __asm__ __volatile__("cli");
+    cli();
 
     // 1. ACPI / PCI reset control register (0xCF9)
     outb(0x02, 0xCF9);
