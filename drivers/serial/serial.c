@@ -3,6 +3,9 @@
 #include "i386/io.h"
 
 int init_serial() {
+    #if !SERIAL_SUPPORT
+    return 1;
+    #else
     outb(0x00, PORT + 1); // Disable all interrupts
     outb(0x80, PORT + 3); // Enable DLAB (set baud rate divisor)
     outb(0x03, PORT + 0); // Set divisor to 3 (lo byte) 38400 baud
@@ -18,6 +21,7 @@ int init_serial() {
         return 1;
     }
     outb(0x0F, PORT + 4); // Set normal operation mode
+    #endif
     return 0;
 }
 
@@ -26,15 +30,24 @@ int is_transmit_empty() { return inb(PORT + 5) & 0x20; }
 int serial_received() { return inb(PORT + 5) & 1; }
 
 char read_serial() {
+    #if !SERIAL_SUPPORT
+    return 0;
+    #else
     while (serial_received() == 0) {
         ;
     }
     return (char)inb(PORT);
+    #endif
 }
 
 void write_serial(char a) {
+    #if !SERIAL_SUPPORT
+    (void)a;
+    return;
+    #else
     while (is_transmit_empty() == 0) {
         ;
     }
     outb(a, PORT);
+    #endif
 }

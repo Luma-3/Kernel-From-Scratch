@@ -47,9 +47,11 @@ static struct s_kchecker check_integrity(uint32_t mb_magic, uint32_t mb_info_add
 }
 
 static uint8_t display_integrity(struct s_kchecker status) {
+	#if SERIAL_SUPPORT
 	if (status.serial) {
 		return FAILLURE;
 	}
+	#endif
 	if (!status.magic) {
 		panic_serial("Invalid multiboot magic number");
 		return FAILLURE;
