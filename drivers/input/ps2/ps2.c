@@ -5,26 +5,28 @@
 
 #include <stdint.h>
 
-void cli()
+#define PS2_TIMEOUT 100000
+
+static int ps2_wait_input_empty()
 {
-	__asm__ volatile("cli");
+	uint32_t timeout = PS2_TIMEOUT;
+	while ((inb(PS2_STATUS_PORT) & 0x02) && --timeout)
+		;
+	return timeout > 0;
 }
 
-static void ps2_wait_input_empty()
+static int ps2_wait_output_full()
 {
-	while (inb(PS2_STATUS_PORT) & 0x02)
+	uint32_t timeout = PS2_TIMEOUT;
+	while (!(inb(PS2_STATUS_PORT) & 0x01) && --timeout)
 		;
-}
-
-static void ps2_wait_output_full()
-{
-	while (!(inb(PS2_STATUS_PORT) & 0x01))
-		;
+	return timeout > 0;
 }
 
 static void ps2_flush()
 {
-	while (inb(PS2_STATUS_PORT) & 0x01) {
+	uint32_t timeout = 1000;
+	while ((inb(PS2_STATUS_PORT) & 0x01) && --timeout) {
 		inb(PS2_DATA_PORT);
 	}
 }
@@ -32,63 +34,70 @@ static void ps2_flush()
 void ps2_init()
 {
 	// Disable first PS/2 port
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return;
 	outb(0xAD, PS2_STATUS_PORT);
 
 	ps2_flush(); // Flush port to prevent remanent value
 
 	// Get config byte
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return;
 	outb(0x20, PS2_STATUS_PORT); // read config byte
 	uint8_t config = ps2_read();
+	if (config == 0) {
+		return;
+	}
 
 	config &= ~0x01; // disable interrupt
 	config &= ~0x10; // enable clock
 
 	// Write config
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return;
 	outb(0x60, PS2_STATUS_PORT);
 
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return;
 	outb(config, PS2_DATA_PORT);
 
 	// Enable keyboard
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return;
 	outb(0xAE, PS2_STATUS_PORT);
 
 	ps2_write(0xFF);
 
-	if (ps2_read() != 0xFA) return; // ACK
-	if (ps2_read() != 0xAA) return; // Slef-test OK
+	(void)ps2_read(); // ACK (optionnel sur certaines machines)
+	(void)ps2_read(); // Self-test OK (optionnel sur certaines machines)
 }
 
 uint8_t ps2_read()
 {
-	ps2_wait_output_full();
+	if (!ps2_wait_output_full()) {
+		return 0;
+	}
 	return inb(PS2_DATA_PORT); // Read and return the data from the data port
 }
 
 void ps2_write(uint8_t data)
 {
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) {
+		return;
+	}
 	outb(data, PS2_DATA_PORT);
 }
 
 uint8_t ps2_get_scanset()
 {
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return 0xFF;
 	outb(0xF0, PS2_DATA_PORT);
 
-	ps2_wait_output_full(); // Wait ACK
+	if (!ps2_wait_output_full()) return 0xFF; // Wait ACK
 	if (inb(PS2_DATA_PORT) != 0xFA) return 0xFF;
 
-	ps2_wait_input_empty();
+	if (!ps2_wait_input_empty()) return 0xFF;
 	outb(0x00, PS2_DATA_PORT);
 
-	ps2_wait_output_full(); // Wait ACK
+	if (!ps2_wait_output_full()) return 0xFF; // Wait ACK
 	if (inb(PS2_DATA_PORT) != 0xFA) return 0xFF;
 
-	ps2_wait_output_full();
+	if (!ps2_wait_output_full()) return 0xFF;
 	return inb(PS2_DATA_PORT);
 }
 
@@ -109,14 +118,11 @@ struct key_event create_key_event(uint8_t scancode)
 
 void ps2_keyboard_poll()
 {
-	uint8_t			 scancode = ps2_read();
+	if (!ps2_has_data()) return;
+	uint8_t scancode = ps2_read();
+	if (scancode == 0) return;
 	struct key_event event = create_key_event(scancode);
 	kbd_handle_event(event);
-
-	// printk(KERNEL_LOG_LEVEL_DEBUG, "Scancode: %x -> Keycode: %x, State:
-	// %s\n",
-	//        scancode, event.keycode,
-	//        event.state.pressed ? "Pressed" : "Released");
 }
 
 uint8_t ps2_has_data()
