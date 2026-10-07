@@ -45,6 +45,9 @@ struct terminal {
     uint32_t id;
     const char *name;
     struct cursor_pos cursor;
+    uint8_t cursor_visible;
+    uint32_t cursor_color;
+    uint8_t color_universal;
 
     uint32_t char_by_line;
     uint32_t line_by_screen;
@@ -81,7 +84,7 @@ int32_t scroll(struct terminal *term);
 /// --- Cursor related ---
 ///
 
-int32_t print_cursor(const struct terminal *term, bool visible);
+int32_t print_cursor(struct terminal *term, bool visible);
 
 int32_t move_cursor(struct terminal *term, uint32_t x, uint32_t y);
 

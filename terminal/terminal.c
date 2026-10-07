@@ -5,7 +5,7 @@
 #include "string.h"
 #include "printf.h"
 #include "mem.h"
-#include "vbe.h"
+#include "display.h"
 
 #include <stdalign.h>
 #include <stddef.h>
@@ -17,22 +17,19 @@ static struct terminal terminals[MAX_TERMINALS];
 
 static uint8_t terminal_count = 0;
 
-static inline __attribute__((always_inline)) uint8_t *char_to_font(uint8_t c) {
-    return (uint8_t *)fontdata_8x8 + (c * 8);
-}
-
 static int32_t refresh_cell(struct terminal *term, uint32_t x, uint32_t y) {
     uint16_t cell = term->buffer[x + (y * term->char_by_line)];
 
     uint8_t c = cell & 0xFF;
-    uint32_t fg_color = ansii_color_codes[(cell >> 12) & 0xF];
-    uint32_t bg_color = ansii_color_codes[(cell >> 8) & 0xF];
+    uint32_t fg = (cell >> 12) & 0xF;
+    uint32_t bg = (cell >> 8) & 0xF;
 
-    uint8_t *font_buffer = char_to_font(c);
-
-    return vbe_draw_glyph_sized(x * term->font_width, y * term->font_height,
-                                font_buffer, 8, 8, fg_color, bg_color,
-                                term->font_width, term->font_height);
+    if(term->color_universal){
+        display_draw_cell_universal_color(x, y, c, fg, bg);
+    }else{
+        display_draw_cell(x, y, c, fg, bg);
+    }
+    return KTERM_SUCCESS;
 }
 
 static int32_t draw_term(struct terminal *term, uint8_t x, uint8_t y,
@@ -42,7 +39,7 @@ static int32_t draw_term(struct terminal *term, uint8_t x, uint8_t y,
     for (uint32_t j = y; j < y + height; j++) {
         for (uint32_t i = x; i < x + width; i++) {
             err = refresh_cell(term, i, j);
-            if (err != VBE_SUCCESS) {
+            if (err != KTERM_SUCCESS) {
                 return err;
             }
         }
@@ -80,9 +77,7 @@ static void backspace(struct terminal *term) {
     term->buffer[term->cursor.x + (term->cursor.y * term->char_by_line)] =
         (term->fg_color << 12) | (term->bg_color << 8) | ' ';
 
-    vbe_fill_rect(term->cursor.x * term->font_width,
-                  term->cursor.y * term->font_height, term->font_width,
-                  term->font_height, ansii_color_codes[term->bg_color]);
+    refresh_cell(term, term->cursor.x, term->cursor.y);
 }
 
 static int32_t handle_special_char(struct terminal *term, const uint8_t c) {
@@ -119,7 +114,7 @@ static int32_t putchar(struct terminal *term, const uint8_t c) {
     term->buffer[term->cursor.x + (term->cursor.y * term->char_by_line)] =
         (term->fg_color << 12) | (term->bg_color << 8) | c;
 
-    if (refresh_cell(term, term->cursor.x, term->cursor.y) != VBE_SUCCESS) {
+    if (refresh_cell(term, term->cursor.x, term->cursor.y) != KTERM_SUCCESS) {
         return KTERM_ERR_VBE_FAILURE;
     }
 
@@ -152,14 +147,17 @@ int32_t init_terminal(const char *name) {
     term->name = name;
     term->cursor.x = 0;
     term->cursor.y = 0;
-    term->char_by_line = CHAR_BY_LINE;
-    term->line_by_screen = LINE_BY_SCREEN;
+    term->cursor_visible = 1;
+    term->color_universal = 1;
+    term->cursor_color = DISPLAY_UNIVERSAL_COLOR_GREY;
+    term->char_by_line = display_get_cols();
+    term->line_by_screen = display_get_rows();
     term->font_height = FONT_HEIGHT;
     term->font_width = FONT_WIDTH;
-    term->bg_color = 0;
-    term->fg_color = 7;
+    term->bg_color = DISPLAY_UNIVERSAL_COLOR_BLACK;
+    term->fg_color = DISPLAY_UNIVERSAL_COLOR_GREY;
 
-    kmemset(term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
+    kmemsetw(        term->buffer, (term->fg_color << 12) | (term->bg_color << 8) | ' ',
             term->char_by_line * term->line_by_screen);
     term->read_buffer_index = 0;
     kmemset(term->read_buffer, 0, sizeof(uint8_t) * CHAR_BY_LINE);
@@ -171,6 +169,7 @@ int32_t init_terminal(const char *name) {
                20);
     printf("Terminal %s initialized\n", name);
 
+
     return KTERM_SUCCESS;
 }
 
@@ -181,6 +180,10 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
     }
 
     struct terminal *term = &terminals[term_id];
+    const uint8_t cursor_visible = term->cursor_visible;
+    if(cursor_visible){
+        print_cursor(term, false);
+    }
 
     // Constant Probleme, useless cast to
     uint8_t *it = (uint8_t *)data;
@@ -196,6 +199,10 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
         }
         ++it;
     }
+    if(cursor_visible){
+        print_cursor(term, true);
+    }
+
 
     return it - data;
 }
@@ -232,9 +239,8 @@ static void handle_history_read_line(const uint8_t shift)
 		return ;
 	}
 	if (term->read_buffer_index > 0) {
-		print_cursor(term, false);
 		for (uint32_t i = 0; i < term->read_buffer_index; i++) {
-			backspace(term);
+            term_write(term->id, (const uint8_t *)"\b", 1);
 			term->read_buffer[i % CHAR_BY_LINE] = 0;
 		}
 		term->read_buffer_index = 0;
@@ -243,7 +249,6 @@ static void handle_history_read_line(const uint8_t shift)
 	term_write(term->id, history_data, history_size);
 	kmemmove(term->read_buffer, history_data, history_size);
 	term->read_buffer_index = history_size;
-	print_cursor(term, true);
 }
 
 uint8_t term_get_keyevent() {
@@ -264,6 +269,12 @@ uint8_t term_get_keyevent() {
 		handle_history_read_line(event.state.shift);
 		return 0;
 	}
+
+    if(event.state.ctrl && event.keycode == KEY_SPACE) {
+        uint8_t cursor_visible = get_active_terminal()->cursor_visible;
+        print_cursor(get_active_terminal(), !cursor_visible);
+        return 0;
+    }
 
     uint8_t to_print = 0;
 
@@ -311,17 +322,14 @@ uint8_t *term_read_line(const char *prompt) {
         return nullptr;
     }
     if(c == 8 || c == 127) {
-    	print_cursor(term, false);
         if(term->read_buffer_index > 0) { // securite pour eviter de supprimer le prompt
             term_write(term->id, &c, 1);
             term->read_buffer_index--;
         	term->read_buffer[term->read_buffer_index % CHAR_BY_LINE] = 0;
         }
-        print_cursor(term, true);
         return nullptr;
     }
     term_write(term->id, &c, 1);
-    print_cursor(term, true);
     term->read_buffer[term->read_buffer_index++ % CHAR_BY_LINE] = c;
     if(term->read_buffer_index % CHAR_BY_LINE == 0 || c != '\n') {
         kmemset(line_buffer, 0, CHAR_BY_LINE);
