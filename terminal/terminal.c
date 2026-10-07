@@ -192,8 +192,11 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
     }
 
     struct terminal *term = get_active_terminal();
+    if (term == nullptr) {
+        return KTERM_ERR_INVALID_TERM;
+    }
     const uint8_t cursor_visible = term->cursor_visible;
-    if(cursor_visible && term){
+    if(cursor_visible){
         print_cursor(term, false);
     }
 
@@ -211,7 +214,7 @@ int32_t term_write(const uint8_t term_id, const uint8_t *data,
         }
         ++it;
     }
-    if(cursor_visible && term){
+    if(cursor_visible){
         print_cursor(term, true);
     }
 
