@@ -43,8 +43,9 @@ FPICFLAGS	?= -fPIC
 
 # Preprocesing flags' (commun C/C++) : inclusions of dependances .d
 COMFLAGS	+= -MMD -MP
+SERIAL_SUPPORT	?= 1
 
-CFLAGS		+= $(CSTD) $(WARNS) $(OPT_FLAGS)
+CFLAGS		+= $(CSTD) $(WARNS) $(OPT_FLAGS) -DSERIAL_SUPPORT=$(SERIAL_SUPPORT)
 ASFLAGS		+= 
 LDFLAGS		+= -ffreestanding $(OPT_FLAGS) -nostdlib
 

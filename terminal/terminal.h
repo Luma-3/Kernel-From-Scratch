@@ -10,6 +10,19 @@
 #define FONT_WIDTH 16u
 #define FONT_HEIGHT 16u
 
+#define CELL(c, fg, bg) (((fg) << 12) | ((bg) << 8) | (c))
+#define EMPTY_CELL(fg, bg) CELL(' ', fg, bg)
+#define CELL_TO_CHAR(cell) ((char)((cell) & 0xFF))
+#define CELL_TO_FG_COLOR(cell) (((cell) >> 12) & 0xF)
+#define CELL_TO_BG_COLOR(cell) (((cell) >> 8) & 0xF)
+#define BACKSPACE '\b'
+#define BACKSPACE_STR "\b"
+#define TAB '\t'
+#define NEWLINE '\n'
+#define CARRIAGE_RETURN '\r'
+#define ESCAPE '\033'
+#define ESCAPE_SEQ "\033["
+
 enum kterm_err {
     KTERM_SUCCESS = 0,
     KTERM_ERR_TOO_MANY_TERM = -1,
@@ -45,6 +58,9 @@ struct terminal {
     uint32_t id;
     const char *name;
     struct cursor_pos cursor;
+    uint8_t cursor_visible;
+    uint32_t cursor_color;
+    uint8_t color_universal;
 
     uint32_t char_by_line;
     uint32_t line_by_screen;
@@ -54,6 +70,9 @@ struct terminal {
     uint8_t fg_color;
     // 4 bit for fg, 4 bit for bg, 8 bit for char
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
+	uint8_t  read_buffer_history[4][CHAR_BY_LINE];
+	uint8_t read_buffer_history_cursor;
+	uint8_t read_buffer_history_index;
     uint8_t  read_buffer[CHAR_BY_LINE];
     uint32_t read_buffer_index;
 };
@@ -78,7 +97,7 @@ int32_t scroll(struct terminal *term);
 /// --- Cursor related ---
 ///
 
-int32_t print_cursor(const struct terminal *term, bool visible);
+int32_t print_cursor(struct terminal *term, bool visible);
 
 int32_t move_cursor(struct terminal *term, uint32_t x, uint32_t y);
 

@@ -18,6 +18,7 @@
 #include "ps2.h"
 #include "serial.h"
 #include "terminal.h"
+#include "display.h"
 #include "vbe.h"
 #include "klibc/debug/trace/ksyms.h"
 #include "command.h"
@@ -26,7 +27,7 @@ void kinit(multiboot_info_t *mbi)
 {
 	read_elf_sec((struct elf_sec *)&mbi->u.elf_sec);
 	init_gdt();
-	vbe_init(mbi);
+	display_init(mbi);
 	ps2_init();
 	init_command_system();
 }
@@ -46,9 +47,11 @@ static struct s_kchecker check_integrity(uint32_t mb_magic, uint32_t mb_info_add
 }
 
 static uint8_t display_integrity(struct s_kchecker status) {
+	#if SERIAL_SUPPORT
 	if (status.serial) {
 		return FAILLURE;
 	}
+	#endif
 	if (!status.magic) {
 		panic_serial("Invalid multiboot magic number");
 		return FAILLURE;

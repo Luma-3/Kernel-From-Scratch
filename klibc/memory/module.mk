@@ -4,4 +4,6 @@ INCLUDES += -Iklibc/memory
 
 SRCS	+=	klibc/memory/kmemcpy.c	\
 			klibc/memory/kmemmove.c	\
-			klibc/memory/kmemset.c
+			klibc/memory/kmemset.c \
+			klibc/memory/kmemsetw.c	\
+			klibc/memory/kmemsetl.c

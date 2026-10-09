@@ -6,9 +6,11 @@
 #include "pit.h"
 #include "command.h"
 
-void extract_counter( void *data, const uint8_t *src, size_t n) {
-    if (src == NULL || data == NULL) {
-        printk(KERNEL_LOG_LEVEL_ERROR, "Invalid arguments for extract_counter: src and data must not be NULL");
+#include "power/shutdown.h"
+
+static void extract_counter(void *data, const uint8_t *src, size_t n) {
+    if (src == nullptr || data == nullptr) {
+        printk(KERNEL_LOG_LEVEL_ERROR, "Invalid arguments for extract_counter: src and data must not be NULL\n");
         return;
     }
     (void)n;
@@ -33,6 +35,6 @@ int32_t reboot_command(int32_t argc, const uint8_t *argv) {
     printf("\r");
     printk(KERNEL_LOG_LEVEL_INFO, "Rebooting the system... \n");
     pit_sleep_ms(1500);
-    outb(0x06, 0xCF9); // method modern pour forcer le redémarrage du système par ACPI Reset Control Register
+    arch_reboot();
     return 0;
 }

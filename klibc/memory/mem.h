@@ -17,6 +17,22 @@
  */
 void *kmemset(void *s, int c, size_t n);
 
+/** Sets a block of memory to a specified value.
+ * @param s Pointer to the block of memory to fill.
+ * @param c The value to set (passed as an int, but interpreted as an unsigned
+ * char).
+ * @param n The number of bytes to set.
+ * @return A pointer to the block of memory filled with the specified value.
+ */
+void *kmemsetw(void *s, uint16_t c, size_t n);
+/** Sets a block of memory to a specified value.
+ * @param s Pointer to the block of memory to fill.
+ * @param c The value to set (passed as an int, but interpreted as an unsigned
+ * char).
+ * @param n The number of bytes to set.
+ * @return A pointer to the block of memory filled with the specified value.
+ */
+void *kmemsetl(void *s, uint32_t c, size_t n);
 /**
  * Moves count bytes from memory area src to memory area dest. The memory areas
  * may overlap: copying takes place as though the bytes in src are first copied
