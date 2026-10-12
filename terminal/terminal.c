@@ -237,9 +237,9 @@ static void handle_history_read_line(const uint8_t shift)
 	}
 	uint8_t *cursor = &term->read_buffer_history_cursor;
 	if (shift) {
-		(*cursor)--;
-	}else {
 		(*cursor)++;
+	}else {
+		(*cursor)--;
 	}
 	uint8_t *history_data = term->read_buffer_history[*cursor % 4];
 	if (*history_data == 0) {
@@ -356,7 +356,7 @@ uint8_t *term_read_line(const char *prompt) {
     }
     kmemmove(line_buffer, term->read_buffer, term->read_buffer_index % CHAR_BY_LINE);
     line_buffer[term->read_buffer_index % CHAR_BY_LINE - 1] = '\0';
-    kmemmove(term->read_buffer_history[term->read_buffer_history_index-- % 4], line_buffer, kstrlen((char *)line_buffer) + 1);
+    kmemmove(term->read_buffer_history[term->read_buffer_history_index % 4], line_buffer, kstrlen((char *)line_buffer) + 1);
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
     prompt_displayed = 0;
