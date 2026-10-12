@@ -174,14 +174,9 @@ int32_t init_terminal(const char *name) {
             term->char_by_line * term->line_by_screen);
     term->read_buffer_index = 0;
     kmemset(term->read_buffer, 0, sizeof(uint8_t) * CHAR_BY_LINE);
-	term->read_buffer_history_cursor = 0;
-	term->read_buffer_history_index = 0;
-	kmemset(term->read_buffer_history, 0, sizeof(uint8_t) * 4 * CHAR_BY_LINE);
-
     term_write(term->id, (const uint8_t *)"\033[32mWelcome to KFS\033[0m\n",
                20);
     printf("Terminal %s initialized\n", name);
-
 
     return KTERM_SUCCESS;
 }
@@ -229,35 +224,6 @@ int32_t term_refresh(const uint8_t term_id) {
     return draw_term(term, 0, 0, term->char_by_line, term->line_by_screen);
 }
 
-static void handle_history_read_line(const uint8_t shift)
-{
-	struct terminal *term = get_active_terminal();
-	if (term == nullptr) {
-		return;
-	}
-	uint8_t *cursor = &term->read_buffer_history_cursor;
-	if (shift) {
-		(*cursor)++;
-	}else {
-		(*cursor)--;
-	}
-	uint8_t *history_data = term->read_buffer_history[*cursor % 4];
-	if (*history_data == 0) {
-		return ;
-	}
-	if (term->read_buffer_index > 0) {
-		for (uint32_t i = 0; i < term->read_buffer_index; i++) {
-            term_write(term->id, (const uint8_t *)BACKSPACE_STR, 1);
-			term->read_buffer[i % CHAR_BY_LINE] = 0;
-		}
-		term->read_buffer_index = 0;
-	}
-	const size_t history_size = kstrlen((char *)history_data);
-	term_write(term->id, history_data, history_size);
-	kmemmove(term->read_buffer, history_data, history_size);
-	term->read_buffer_index = history_size;
-}
-
 static void handle_ctrl_shift_space() {
     struct terminal *term = get_active_terminal();
     if (term == nullptr) {
@@ -280,10 +246,9 @@ uint8_t term_get_keyevent() {
         return 0;
     }
 
-	if (event.keycode == KEY_TAB) {
-		handle_history_read_line(event.state.shift);
-		return 0;
-	}
+    if (event.keycode == KEY_TAB) {
+        return 0;
+    }
 
     if(event.keycode == KEY_SPACE && event.state.ctrl && event.state.shift) {
         handle_ctrl_shift_space();
@@ -322,7 +287,8 @@ static void display_prompt(struct terminal *term, const char *prompt) {
         return;
     }
     if (prompt != nullptr) {
-        term_write(term->id, (const uint8_t *)prompt, kstrlen(prompt));
+        size_t prompt_length = kstrlen(prompt);
+        term_write(term->id, (const uint8_t *)prompt, prompt_length);
     }
     prompt_displayed = 1;
 }
@@ -356,7 +322,6 @@ uint8_t *term_read_line(const char *prompt) {
     }
     kmemmove(line_buffer, term->read_buffer, term->read_buffer_index % CHAR_BY_LINE);
     line_buffer[term->read_buffer_index % CHAR_BY_LINE - 1] = '\0';
-    kmemmove(term->read_buffer_history[term->read_buffer_history_index % 4], line_buffer, kstrlen((char *)line_buffer) + 1);
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
     prompt_displayed = 0;
