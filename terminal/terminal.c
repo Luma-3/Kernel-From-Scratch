@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+
 uint8_t active_terminal = 0;
 
 static struct terminal terminals[MAX_TERMINALS];
@@ -354,8 +355,8 @@ uint8_t *term_read_line(const char *prompt) {
         return nullptr;
     }
     kmemmove(line_buffer, term->read_buffer, term->read_buffer_index % CHAR_BY_LINE);
-    line_buffer[term->read_buffer_index - 1] = '\0';
-    kmemmove(term->read_buffer_history[term->read_buffer_history_index++ % 4], line_buffer, term->read_buffer_index % CHAR_BY_LINE);
+    line_buffer[term->read_buffer_index % CHAR_BY_LINE - 1] = '\0';
+    kmemmove(term->read_buffer_history[term->read_buffer_history_index++ % 4], line_buffer, kstrlen((char *)line_buffer) + 1);
     kmemset(term->read_buffer, 0, term->read_buffer_index);
     term->read_buffer_index = 0;
     prompt_displayed = 0;
