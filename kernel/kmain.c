@@ -22,6 +22,7 @@
 #include "vbe.h"
 #include "klibc/debug/trace/ksyms.h"
 #include "command.h"
+#include "arch/i386/mm/mminfo_ram.h"
 
 void kinit(multiboot_info_t *mbi)
 {
@@ -82,9 +83,12 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr)
 
 	multiboot_info_t *mbi = (multiboot_info_t *)(uintptr_t)mb_info_addr;
 	kinit(mbi);
+	memory_detection_info_t mem_info = detect_memory(mbi);
 
 	init_terminal("Main Terminal");
 	term_refresh(0);
+	printf("Total usable RAM: %llu bytes\n", mem_info.total_usable_ram);
+	printf("Maximum physical address: %llu bytes\n", mem_info.max_physical_addr);
 
 	backtrace(16);
 	(void)term_read_line("trucOs>");

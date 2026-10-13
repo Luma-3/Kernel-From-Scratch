@@ -19,6 +19,13 @@
 #define MULTIBOOT_INFO_VBE_INFO (1u << 11)
 #define MULTIBOOT_INFO_FRAMEBUFFER_INFO (1u << 12)
 
+
+#define MULTIBOOT_MEMORY_AVAILABLE		1
+#define MULTIBOOT_MEMORY_RESERVED		2
+#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
+#define MULTIBOOT_MEMORY_NVS                    4
+#define MULTIBOOT_MEMORY_BADRAM                 5
+
 typedef struct multiboot_info {
     uint32_t flags;
     uint32_t mem_lower;
