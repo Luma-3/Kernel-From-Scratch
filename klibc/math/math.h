@@ -2,9 +2,8 @@
 // Created by gcaptari on 2/27/26.
 //
 
-#ifndef __KFS_MATH_H
-#define __KFS_MATH_H
-
+#ifndef KFS_MATH_H
+#define KFS_MATH_H
 
 #include <stddef.h>
 /**
@@ -33,7 +32,8 @@ int kmin(int a, int b);
 /**
  * Computes the power of an integer.
  * @param base The base value.
- * @param exp The exponent value. If exp is negative, the function returns 0 for simplicity.
+ * @param exp The exponent value. If exp is negative, the function returns 0 for
+ * simplicity.
  * @return The result of base raised to the power of exp.
  */
 int kpow(int base, int exp);
@@ -46,11 +46,11 @@ int kpow(int base, int exp);
 long klabs(long x);
 
 /**
-* Computes the maximum of two long integers.
-* @param a The first long integer.
-* @param b The second long integer.
-* @return The larger of the two long integers.
-*/
+ * Computes the maximum of two long integers.
+ * @param a The first long integer.
+ * @param b The second long integer.
+ * @return The larger of the two long integers.
+ */
 long klmax(long a, long b);
 
 /**
@@ -64,10 +64,10 @@ long klmin(long a, long b);
 /**
  * Computes the power of a long integer.
  * @param base The base value.
- * @param exp The exponent value. If exp is negative, the function returns 0 for simplicity.
+ * @param exp The exponent value. If exp is negative, the function returns 0 for
+ * simplicity.
  * @return
  */
 long klpow(long base, long exp);
 
-
-#endif //__KFS_MATH_H
+#endif // KFS_MATH_H

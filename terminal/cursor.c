@@ -1,18 +1,33 @@
 #include "terminal.h"
-#include "vbe.h"
+#include "display.h"
 #include <stdint.h>
 
-int32_t print_cursor(const struct terminal *term, bool visible) {
-
-    uint32_t height = term->font_height >> 2; // divide by 4
-    uint32_t x_pos = term->cursor.x * term->font_width;
-    uint32_t y_pos =
-        (term->cursor.y * term->font_height) + term->font_height - height;
-
-    uint32_t color = visible ? ansii_color_codes[term->fg_color]
-                             : ansii_color_codes[term->bg_color];
-
-    return vbe_fill_rect(x_pos, y_pos, term->font_width, height, color);
+int32_t print_cursor(struct terminal *term, bool visible) {
+    if (term == nullptr) {
+        return KTERM_ERR_INVALID_TERM;
+    }
+    uint8_t value_cursor = term->cursor_visible;
+    term->cursor_visible = visible;
+    if(term->color_universal){
+        if (visible) {
+            if(!value_cursor) {
+                display_reveal_cursor_universal_color(term->cursor.x, term->cursor.y, term->cursor_color);
+            }
+            display_set_cursor_universal_color(term->cursor.x, term->cursor.y, term->cursor_color);
+        }else {
+            display_hide_cursor_universal_color(term->cursor.x, term->cursor.y, term->bg_color);
+        }
+    }else{
+        if (visible) {
+            if(!value_cursor) {
+                display_reveal_cursor(term->cursor.x, term->cursor.y, term->cursor_color);
+            }
+            display_set_cursor(term->cursor.x, term->cursor.y, term->cursor_color);
+        }else {
+            display_hide_cursor(term->cursor.x, term->cursor.y, term->bg_color);
+        }
+    }
+    return KTERM_SUCCESS;
 }
 
 void advance_cursor(struct terminal *term) {

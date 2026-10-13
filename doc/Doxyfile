@@ -9,6 +9,9 @@ INPUT					= .
 FILE_PATTERNS			= *.c *.h *.md
 RECURSIVE				= YES
 
+# --- Exclude ---
+EXCLUDE_PATTERNS					= */tools/* ../third_party/
+
 # --- Extraction ---
 EXTRACT_ALL				= YES
 EXTRACT_PRIVATE			= NO

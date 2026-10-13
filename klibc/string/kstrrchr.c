@@ -6,7 +6,7 @@
 
 const char *kstrrchr(const char *str, int c) {
     const char *move = str;
-    const char *last_occurrence = NULL;
+    const char *last_occurrence = nullptr;
     c = (unsigned char)c;
 
     while (*move) {

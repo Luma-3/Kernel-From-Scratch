@@ -18,7 +18,7 @@ uint8_t decode_ansii_color(const char *color_str, uint32_t default_color) {
 
 void handle_ansii_esc_seq(struct terminal *term, const char **seq,
                           uint32_t default_color) {
-    if (kstarts_with(*seq, "\033[") == false) {
+    if (kstarts_with(*seq, ESCAPE_SEQ) == false) {
         return;
     }
 

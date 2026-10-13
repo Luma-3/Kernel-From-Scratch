@@ -1,5 +1,5 @@
-#ifndef __KFS_KEYEVENT_H
-#define __KFS_KEYEVENT_H
+#ifndef KFS_KEYEVENT_H
+#define KFS_KEYEVENT_H
 
 /**
  * Keycode definitions for the KFS operating system.
@@ -137,4 +137,4 @@ void kdb_push_event(struct key_event event);
  */
 struct key_event kbd_pop_event();
 
-#endif // !__KFS_KEYEVENT_H
+#endif // KFS_KEYEVENT_H

@@ -1,5 +1,5 @@
-#ifndef __KFS_TERMINAL_H
-#define __KFS_TERMINAL_H
+#ifndef KFS_TERMINAL_H
+#define KFS_TERMINAL_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -9,6 +9,19 @@
 #define LINE_BY_SCREEN 45
 #define FONT_WIDTH 16u
 #define FONT_HEIGHT 16u
+
+#define CELL(c, fg, bg) (((fg) << 12) | ((bg) << 8) | (c))
+#define EMPTY_CELL(fg, bg) CELL(' ', fg, bg)
+#define CELL_TO_CHAR(cell) ((char)((cell) & 0xFF))
+#define CELL_TO_FG_COLOR(cell) (((cell) >> 12) & 0xF)
+#define CELL_TO_BG_COLOR(cell) (((cell) >> 8) & 0xF)
+#define BACKSPACE '\b'
+#define BACKSPACE_STR "\b"
+#define TAB '\t'
+#define NEWLINE '\n'
+#define CARRIAGE_RETURN '\r'
+#define ESCAPE '\033'
+#define ESCAPE_SEQ "\033["
 
 enum kterm_err {
     KTERM_SUCCESS = 0,
@@ -45,6 +58,9 @@ struct terminal {
     uint32_t id;
     const char *name;
     struct cursor_pos cursor;
+    uint8_t cursor_visible;
+    uint32_t cursor_color;
+    uint8_t color_universal;
 
     uint32_t char_by_line;
     uint32_t line_by_screen;
@@ -54,21 +70,22 @@ struct terminal {
     uint8_t fg_color;
     // 4 bit for fg, 4 bit for bg, 8 bit for char
     uint16_t buffer[CHAR_BY_LINE * LINE_BY_SCREEN];
+    uint8_t  read_buffer[CHAR_BY_LINE];
+    uint32_t read_buffer_index;
 };
 
 extern uint8_t active_terminal;
 
 int32_t init_terminal(const char *name);
 
-int32_t term_write(const uint8_t term_id, const uint8_t *data,
-                   const uint32_t size);
+int32_t term_write(uint8_t term_id, const uint8_t *data, uint32_t size);
 
 void term_poll();
 
 void handle_ansii_esc_seq(struct terminal *term, const char **seq,
                           uint32_t default_color);
 
-int32_t term_refresh(const uint8_t term_id);
+int32_t term_refresh(uint8_t term_id);
 
 int32_t change_term(uint8_t new_term_id);
 
@@ -77,7 +94,7 @@ int32_t scroll(struct terminal *term);
 /// --- Cursor related ---
 ///
 
-int32_t print_cursor(const struct terminal *term, bool visible);
+int32_t print_cursor(struct terminal *term, bool visible);
 
 int32_t move_cursor(struct terminal *term, uint32_t x, uint32_t y);
 
@@ -87,4 +104,6 @@ void newline(struct terminal *term);
 
 void tab(struct terminal *term);
 
-#endif
+uint8_t *term_read_line(const char *prompt);
+
+#endif // KFS_TERMINAL_H

@@ -1,5 +1,5 @@
-#ifndef __KFS_PS2_H
-#define __KFS_PS2_H
+#ifndef KFS_PS2_H
+#define KFS_PS2_H
 
 #include "keyevent.h"
 
@@ -215,4 +215,10 @@ uint8_t ps2_set1_to_keycode(uint8_t scancode);
  */
 void ps2_keyboard_poll();
 
-#endif // __KFS_PS2_H
+/**
+ * Checks whether data is available to read from the PS/2 controller.
+ */
+uint8_t ps2_has_data();
+
+#endif // KFS_PS2_H
+
