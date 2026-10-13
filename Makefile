@@ -42,7 +42,7 @@ DEPS	:= $(OBJS:.o=.d)
 $(BIN_DIR)/$(TARGET): $(OBJS) $(LDSCRIPT)
 	@$(MKDIR) $(BIN_DIR)
 	@$(ECHO) " $(COLOR_LD)[LD]$(COLOR_RESET) %s\n" $@
-	@$(LD) $(LDFLAGS) -T $(LDSCRIPT) $(OBJS) -o $@
+	@$(LD) $(LDFLAGS) -T $(LDSCRIPT) $(OBJS) -o $@ -lgcc
 
 $(BUILD_DIR)/%.c.o: %.c
 	@$(MKDIR) $(dir $@)
