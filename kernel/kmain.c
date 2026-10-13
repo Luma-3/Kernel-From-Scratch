@@ -62,11 +62,11 @@ static uint8_t display_integrity(struct s_kchecker status) {
 		panic_serial("ELF section header table not present");
 		return FAILLURE;
 	}
-	/*
+	
 	if (!status.info_mem) {
-		return SUCCESS; TODO: kfs 3
+		panic_serial("Memory information not present");
+		return FAILLURE;
 	}
-	*/
 	if(!status.vbe) {
 		panic_serial("VBE mode not present");
 		return FAILLURE;
