@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers
 
 #--- Sub directories ---
 

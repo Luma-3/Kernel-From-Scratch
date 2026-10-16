@@ -1,4 +1,3 @@
-INCLUDES += -Iklibc/math
 
 # --- Sources to be compiled ---
 

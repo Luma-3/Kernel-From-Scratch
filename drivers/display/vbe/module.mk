@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers/display/vbe
 
 # --- Sources to be compiled ---
 

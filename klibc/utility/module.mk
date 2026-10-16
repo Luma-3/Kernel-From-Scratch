@@ -1,4 +1,3 @@
-INCLUDES	+= -Iklibc/utility
 
 # --- Sources to be compiled ---
 

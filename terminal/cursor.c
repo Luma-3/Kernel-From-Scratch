@@ -1,5 +1,5 @@
-#include "terminal.h"
-#include "display.h"
+#include "terminal/terminal.h"
+#include "drivers/display/display.h"
 #include <stdint.h>
 
 int32_t print_cursor(struct terminal *term, bool visible) {

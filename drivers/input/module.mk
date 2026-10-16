@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers/input
 
 #--- Sources to be compiled ---
 

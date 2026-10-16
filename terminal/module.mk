@@ -1,4 +1,3 @@
-INCLUDES	+= -Iterminal -Icommand
 
 # --- Object to be compiled ---
 

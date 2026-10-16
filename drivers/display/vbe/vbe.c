@@ -1,7 +1,7 @@
 
-#include "vbe.h"
-#include "mem.h"
-#include "multiboot.h"
+#include "drivers/display/vbe/vbe.h"
+#include "klibc/memory/mem.h"
+#include "boot/multiboot.h"
 static struct s_vbe_info vbe_info = {0};
 
 uintptr_t vbe_get_framebuffer_addr() {

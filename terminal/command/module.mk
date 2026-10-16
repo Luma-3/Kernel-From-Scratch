@@ -1,4 +1,3 @@
-INCLUDES += -Iterminal/command
 
 # --- Sources to be compiled ---
 

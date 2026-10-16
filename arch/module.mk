@@ -1,4 +1,3 @@
-INCLUDES += -Iarch
 
 # --- Submodules ---
 

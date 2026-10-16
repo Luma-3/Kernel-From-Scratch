@@ -1,7 +1,7 @@
 #ifndef KFS_ASCII_H
 #define KFS_ASCII_H
 
-#include "keyevent.h"
+#include "drivers/input/keyevent.h"
 #include <stdint.h>
 
 /**

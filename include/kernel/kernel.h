@@ -1,9 +1,9 @@
 #ifndef KFS_KERNEL_H
 #define KFS_KERNEL_H
 
-#include "math.h"
-#include "mem.h"
-#include "string.h"
+#include "klibc/math/math.h"
+#include "klibc/memory/mem.h"
+#include "klibc/string/string.h"
 #include "klibc/kunistd.h"
 
 struct s_kchecker {

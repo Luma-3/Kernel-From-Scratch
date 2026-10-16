@@ -2,7 +2,7 @@
 // Created by gcaptari on 2/27/26.
 //
 
-#include "string.h"
+#include "klibc/string/string.h"
 
 int kstrcmp(const char *s1, const char *s2) {
     const unsigned char *p1 = (const unsigned char*) s1;

@@ -1,7 +1,7 @@
-#include "ps2.h"
-#include "i386/io.h"
-#include "kdebug.h"
-#include "keyevent.h"
+#include "drivers/input/ps2/ps2.h"
+#include "arch/i386/io.h"
+#include "klibc/debug/kdebug.h"
+#include "drivers/input/keyevent.h"
 
 #include <stdint.h>
 

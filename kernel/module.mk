@@ -1,5 +1,4 @@
 
-INCLUDES += -Ikernel
 
 # --- Sources to be compiled ---
 

@@ -1,5 +1,5 @@
-#include "string.h"
-#include "terminal.h"
+#include "klibc/string/string.h"
+#include "terminal/terminal.h"
 
 int putchar(char c) {
     return (term_write(active_terminal, (const uint8_t *)&c, 1));

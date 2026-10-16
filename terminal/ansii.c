@@ -1,5 +1,5 @@
-#include "string.h"
-#include "terminal.h"
+#include "klibc/string/string.h"
+#include "terminal/terminal.h"
 #include <stddef.h>
 #include <stdint.h>
 

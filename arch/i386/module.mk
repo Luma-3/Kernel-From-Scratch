@@ -1,4 +1,3 @@
-INCLUDES += -Iarch/i386
 
 # --- Sources to be compiled ---
 

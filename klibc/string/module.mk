@@ -1,4 +1,3 @@
-INCLUDES += -Iklibc/string
 
 # --- Sources to be compiled ---
 

@@ -1,4 +1,3 @@
-INCLUDES += -Idemo
 
 
 # --- Source files ---

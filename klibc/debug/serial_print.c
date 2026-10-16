@@ -1,5 +1,5 @@
-#include "kdebug.h"
-#include "serial/serial.h"
+#include "klibc/debug/kdebug.h"
+#include "drivers/serial/serial.h"
 
 void print_serial(const char *str)
 {

@@ -1,6 +1,6 @@
 
-#include "serial/serial.h"
-#include "i386/io.h"
+#include "drivers/serial/serial.h"
+#include "arch/i386/io.h"
 
 int init_serial() {
     #if !SERIAL_SUPPORT

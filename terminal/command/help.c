@@ -1,4 +1,4 @@
-#include "help.h"
+#include "terminal/command/help.h"
 #include "terminal/command.h"
 #include <stddef.h>
 #include "klibc/utility/printf.h"

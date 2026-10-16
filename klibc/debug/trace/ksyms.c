@@ -1,7 +1,7 @@
 
 #include <stdint.h>
-#include "ksyms.h"
-#include "kdebug.h"
+#include "klibc/debug/trace/ksyms.h"
+#include "klibc/debug/kdebug.h"
 
 static elf32_shdr *symtab = nullptr;
 static elf32_shdr *strtab = nullptr;

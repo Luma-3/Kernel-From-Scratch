@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers/display/vga
 
 # --- Sources to be compiled ---
 

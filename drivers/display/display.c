@@ -1,7 +1,7 @@
-#include "display.h"
-#include "vbe/vbe.h"
-#include "vga/vga.h"
-#include "font/font.h"
+#include "drivers/display/display.h"
+#include "drivers/display/vbe/vbe.h"
+#include "drivers/display/vga/vga.h"
+#include "terminal/font/font.h"
 #include "klibc/debug/kdebug.h"
 
 static enum display_mode active_mode = DISPLAY_MODE_NONE;

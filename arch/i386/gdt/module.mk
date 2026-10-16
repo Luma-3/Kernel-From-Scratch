@@ -1,4 +1,3 @@
-INCLUDES += -Igdt
 
 # --- Sources to be compiled ---
 

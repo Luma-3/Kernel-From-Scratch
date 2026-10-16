@@ -1,4 +1,3 @@
-INCLUDES += -Iklibc/memory
 
 # --- Sources to be compiled ---
 

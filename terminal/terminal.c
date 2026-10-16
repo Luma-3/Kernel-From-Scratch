@@ -1,11 +1,11 @@
-#include "terminal.h"
-#include "ascii.h"
-#include "font.h"
-#include "keyevent.h"
-#include "string.h"
-#include "printf.h"
-#include "mem.h"
-#include "display.h"
+#include "terminal/terminal.h"
+#include "drivers/input/ascii.h"
+#include "terminal/font/font.h"
+#include "drivers/input/keyevent.h"
+#include "klibc/string/string.h"
+#include "klibc/utility/printf.h"
+#include "klibc/memory/mem.h"
+#include "drivers/display/display.h"
 
 #include <stdalign.h>
 #include <stddef.h>

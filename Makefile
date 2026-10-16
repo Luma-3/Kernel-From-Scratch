@@ -13,7 +13,7 @@ all:	$(BIN_DIR)/$(TARGET)
 # ============================================
 
 SRCS		:=
-INCLUDES	:= -I.
+INCLUDES	:= -Iinclude
 
 include boot/module.mk
 include arch/module.mk

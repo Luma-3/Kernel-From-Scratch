@@ -1,9 +1,9 @@
-#include "shutdown.h"
-#include "power/shutdown.h"
-#include "printk.h"
-#include "printf.h"
-#include "pit.h"
-#include "command.h"
+#include "terminal/command/shutdown.h"
+#include "arch/i386/power/shutdown.h"
+#include "klibc/debug/printk.h"
+#include "klibc/utility/printf.h"
+#include "arch/i386/timer/pit.h"
+#include "terminal/command.h"
 #include "klibc/string/string.h"
 
 static void extract_shutdown_counter(void *data, const uint8_t *src, size_t n) {

@@ -1,4 +1,4 @@
-#include "mminfo_ram.h"
+#include "arch/i386/mm/mminfo_ram.h"
 #include "boot/multiboot.h"
 memory_detection_info_t detect_memory(multiboot_info_t *mbi) {
     memory_detection_info_t info = {0, 0};

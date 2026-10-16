@@ -1,5 +1,5 @@
-#include "vga.h"
-#include "i386/io.h"
+#include "drivers/display/vga/vga.h"
+#include "arch/i386/io.h"
 
 static volatile uint16_t *const vga_buffer = (volatile uint16_t *)VGA_MEMORY;
 static uint8_t cursor_x = 0;

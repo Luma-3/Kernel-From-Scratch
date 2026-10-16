@@ -1,4 +1,3 @@
-INCLUDES += -Iarch/i386/timer
 
 # --- Sources to be compiled ---
 

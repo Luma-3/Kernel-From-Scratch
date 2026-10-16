@@ -1,7 +1,7 @@
 #ifndef KFS_PS2_H
 #define KFS_PS2_H
 
-#include "keyevent.h"
+#include "drivers/input/keyevent.h"
 
 #include <stdint.h>
 

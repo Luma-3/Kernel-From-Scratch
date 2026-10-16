@@ -1,4 +1,3 @@
-INCLUDES += -Iarch/i386/power
 
 # --- Sources to be compiled ---
 

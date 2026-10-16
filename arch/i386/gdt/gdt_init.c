@@ -1,4 +1,4 @@
-#include "gdt.h"
+#include "arch/i386/gdt/gdt.h"
 #include <stdint.h>
 
 struct gdt_entry *gdt = (struct gdt_entry *)0x00000800;

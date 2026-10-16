@@ -1,8 +1,8 @@
-#include "vbe.h"
-#include "kpixel_art.h"
-#include "pit.h"
-#include "keyevent.h"
-#include "ps2.h"
+#include "drivers/display/vbe/vbe.h"
+#include "demo/kpixel_art.h"
+#include "arch/i386/timer/pit.h"
+#include "drivers/input/keyevent.h"
+#include "drivers/input/ps2/ps2.h"
 #include <stdint.h>
 
 

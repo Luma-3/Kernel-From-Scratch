@@ -1,7 +1,7 @@
 #ifndef KDEBUG_H
 #define KDEBUG_H
 
-#include "printk.h"
+#include "klibc/debug/printk.h"
 
 /**
  * Prints a character to the serial port.

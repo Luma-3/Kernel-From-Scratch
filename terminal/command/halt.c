@@ -1,4 +1,4 @@
-#include "halt.h"
+#include "terminal/command/halt.h"
 
 int32_t halt_command(int32_t argc, const uint8_t *argv) {
     (void)argc;

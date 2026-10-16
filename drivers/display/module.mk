@@ -1,5 +1,4 @@
 
-INCLUDES += -Idrivers/display
 
 SRCS += drivers/display/display.c
 

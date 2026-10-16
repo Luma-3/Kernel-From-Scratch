@@ -2,7 +2,7 @@
 // Created by gcaptari on 2/27/26.
 //
 
-#include "mem.h"
+#include "klibc/memory/mem.h"
 
 void *kmemset(void *s, int c, size_t n) {
     unsigned char *p = (unsigned char*) s;

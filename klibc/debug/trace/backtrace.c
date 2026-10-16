@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include "i386/stack/stack_trace.h"
-#include "printf.h"
-#include "trace/ksyms.h"
+#include "arch/i386/stack/stack_trace.h"
+#include "klibc/utility/printf.h"
+#include "klibc/debug/trace/ksyms.h"
 
 static void format_print(uint32_t index, uint32_t addr, const char *symbol,
 						 uint32_t offset)

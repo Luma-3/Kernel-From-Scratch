@@ -1,5 +1,5 @@
-#include "printk.h"
-#include "print_utility.h"
+#include "klibc/debug/printk.h"
+#include "klibc/utility/print_utility.h"
 #include <stdarg.h>
 
 static int parse_print(const char *format, va_list *args) {

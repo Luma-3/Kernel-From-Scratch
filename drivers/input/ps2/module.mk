@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers/input/ps2
 
 #--- Sources to be compiled ---
 

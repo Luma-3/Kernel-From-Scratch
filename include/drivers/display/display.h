@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "multiboot.h"
+#include "boot/multiboot.h"
 
 enum display_mode {
     DISPLAY_MODE_NONE = 0,

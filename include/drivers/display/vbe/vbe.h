@@ -1,7 +1,7 @@
 #ifndef KFS_VBE_H
 #define KFS_VBE_H
 
-#include "multiboot.h"
+#include "boot/multiboot.h"
 #include <stdbool.h>
 #include <stdint.h>
 

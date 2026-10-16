@@ -1,4 +1,3 @@
-INCLUDES += -Idrivers/serial
 
 # --- Sources for this module ---
 

@@ -1,4 +1,4 @@
-#include "string.h"
+#include "klibc/string/string.h"
 
 int katoi(const char *str) {
     if (!str) {

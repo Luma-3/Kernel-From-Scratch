@@ -1,5 +1,5 @@
-#include "pit.h"
-#include "io.h"
+#include "arch/i386/timer/pit.h"
+#include "arch/i386/io.h"
 
 /**
  * @brief Performs a single hardware delay slice of up to 20,000 microseconds (20 ms).

@@ -1,12 +1,12 @@
-#include "reboot.h"
-#include "i386/io.h"
-#include "printk.h"
-#include "printf.h"
+#include "terminal/command/reboot.h"
+#include "arch/i386/io.h"
+#include "klibc/debug/printk.h"
+#include "klibc/utility/printf.h"
 #include "klibc/string/string.h"
-#include "pit.h"
-#include "command.h"
+#include "arch/i386/timer/pit.h"
+#include "terminal/command.h"
 
-#include "power/shutdown.h"
+#include "arch/i386/power/shutdown.h"
 
 static void extract_counter(void *data, const uint8_t *src, size_t n) {
     if (src == nullptr || data == nullptr) {

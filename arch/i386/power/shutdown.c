@@ -1,7 +1,7 @@
-#include "shutdown.h"
-#include "i386/io.h"
-#include "i386/cpu.h"
-#include "pit.h"
+#include "arch/i386/power/shutdown.h"
+#include "arch/i386/io.h"
+#include "arch/i386/cpu.h"
+#include "arch/i386/timer/pit.h"
 #include "klibc/string/string.h"
 
 // --- ACPI Table Structures ---

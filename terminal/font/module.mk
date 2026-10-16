@@ -1,4 +1,3 @@
-INCLUDES += -Iterminal/font
 
 #--- Object to be compiled ---
 

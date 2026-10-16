@@ -8,20 +8,20 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "kernel.h"
+#include "kernel/kernel.h"
 
-#include "i386/gdt/gdt.h"
-#include "kdebug.h"
-#include "kpixel_art.h"
-#include "multiboot.h"
-#include "printf.h"
-#include "ps2.h"
-#include "serial.h"
-#include "terminal.h"
-#include "display.h"
-#include "vbe.h"
+#include "arch/i386/gdt/gdt.h"
+#include "klibc/debug/kdebug.h"
+#include "demo/kpixel_art.h"
+#include "boot/multiboot.h"
+#include "klibc/utility/printf.h"
+#include "drivers/input/ps2/ps2.h"
+#include "drivers/serial/serial.h"
+#include "terminal/terminal.h"
+#include "drivers/display/display.h"
+#include "drivers/display/vbe/vbe.h"
 #include "klibc/debug/trace/ksyms.h"
-#include "command.h"
+#include "terminal/command.h"
 #include "arch/i386/mm/mminfo_ram.h"
 
 void kinit(multiboot_info_t *mbi)
