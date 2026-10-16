@@ -21,12 +21,10 @@ void init_pmm(multiboot_info_t *mbi) {
 		return;
 	}
 
-	// 1. Détection de la RAM via mminfo_ram.c
 	memory_detection_info_t mem_info = detect_memory(mbi);
 	size_t total_pfn = (size_t)(mem_info.max_physical_addr >> PAGE_SHIFT);
 	size_t present_pfn = (size_t)(mem_info.total_usable_ram >> PAGE_SHIFT);
 
-	// 2. Allocation du tableau mem_map juste après __kernel_end (Bump allocation)
 	size_t mem_map_bytes = total_pfn * sizeof(struct page);
 	mem_map = (struct page *)(uintptr_t)__kernel_end;
 	kmemset(mem_map, 0, mem_map_bytes);
@@ -34,13 +32,11 @@ void init_pmm(multiboot_info_t *mbi) {
 	uintptr_t mem_map_end = (uintptr_t)mem_map + mem_map_bytes;
 	size_t reserved_pfn_limit = (mem_map_end + PAGE_SIZE - 1) >> PAGE_SHIFT;
 
-	// 3. Initialisation du Nœud Global UMA (g_contig_node)
 	g_contig_node.node_start_pfn     = 0;
 	g_contig_node.node_present_pages = present_pfn;
 	g_contig_node.node_spanned_pages = total_pfn;
 	g_contig_node.node_mem_map       = mem_map;
 
-	// 4. Découpage des 3 zones physiques du nœud UMA
 	size_t dma_end_pfn     = (total_pfn < ZONE_DMA_MAX_PFN) ? total_pfn : ZONE_DMA_MAX_PFN;
 	size_t normal_end_pfn  = (total_pfn < ZONE_NORMAL_MAX_PFN) ? total_pfn : ZONE_NORMAL_MAX_PFN;
 	size_t highmem_end_pfn = total_pfn;
@@ -53,7 +49,6 @@ void init_pmm(multiboot_info_t *mbi) {
 		init_single_zone(&g_contig_node.node_zones[ZONE_HIGHMEM], "HighMem", 0, 0);
 	}
 
-	// 5. Marquer initialement tous les cadres comme PG_RESERVED et leur rattacher leur zone_id
 	for (size_t p = 0; p < total_pfn; p++) {
 		mem_map[p].flags = PG_RESERVED;
 		mem_map[p]._count = 1;
@@ -68,7 +63,6 @@ void init_pmm(multiboot_info_t *mbi) {
 			mem_map[p].zone_id = ZONE_HIGHMEM;
 	}
 
-	// 6. Libération des pages disponibles dans le Buddy Allocator
 	multiboot_mmap_entry_t *mmap = (multiboot_mmap_entry_t *)(uintptr_t)mbi->mmap_addr;
 	uintptr_t mmap_end = mbi->mmap_addr + mbi->mmap_length;
 
@@ -81,11 +75,9 @@ void init_pmm(multiboot_info_t *mbi) {
 				uint8_t ztype = mem_map[pfn].zone_id;
 				g_contig_node.node_zones[ztype].present_pages++;
 
-				// Protéger le premier Mo (PFN < 256 : BIOS/VGA) et l'image noyau + mem_map
 				if (pfn >= 256 && pfn >= reserved_pfn_limit) {
 					mem_map[pfn].flags = 0;
 					mem_map[pfn]._count = 0;
-					// free_pages() insère la page dans sa zone et fusionne les blocs adjacents
 					free_pages(&mem_map[pfn], 0);
 				}
 			}
