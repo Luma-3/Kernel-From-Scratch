@@ -23,6 +23,8 @@
 #include "klibc/debug/trace/ksyms.h"
 #include "terminal/command.h"
 #include "arch/i386/mm/mminfo_ram.h"
+#include "arch/i386/mm/pmm.h"
+#include "arch/i386/mm/buddy.h"
 
 void kinit(multiboot_info_t *mbi)
 {
@@ -31,6 +33,7 @@ void kinit(multiboot_info_t *mbi)
 	display_init(mbi);
 	ps2_init();
 	init_command_system();
+	init_pmm(mbi);
 }
 
 static struct s_kchecker check_integrity(uint32_t mb_magic, uint32_t mb_info_addr) {
@@ -90,6 +93,7 @@ void kmain(uint32_t mb_magic, uint32_t mb_info_addr)
 	printf("Total usable RAM: %llu bytes\n", mem_info.total_usable_ram);
 	printf("Maximum physical address: %llu bytes\n", mem_info.max_physical_addr);
 
+	print_buddy_stats();
 	backtrace(16);
 	(void)term_read_line("trucOs>");
 	while (1) {
